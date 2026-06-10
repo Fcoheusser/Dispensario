@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Semana</title>
+<style>
+:root{
+  --fondo:#101114;
+  --tarjeta:#282b34;
+  --tinta:#f2f3f5;
+  --gris:#9a9da3;
+  --gris-claro:#363a45;
+  --azul:#3d8bff;
+  --linea:#3c4049;
+  --verde:#2eaf6f;
+  --ambar:#f59e0b;
+  --cielo:#2f7cf6;
+  --rojo:#ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,'SF Pro',BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{background:var(--fondo);color:var(--tinta);min-height:100vh}
+
+header{
+  background:rgba(16,17,20,.9);
+  backdrop-filter:blur(10px);
+  padding:18px 16px 12px;
+  position:sticky;top:0;z-index:50;
+}
+.head-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+header h1{font-size:1.9rem;font-weight:800;letter-spacing:-.5px;color:var(--tinta)}
+header h1 span{color:var(--azul)}
+.nav-sem{display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center}
+.nav-sem button{
+  background:var(--tarjeta);border:none;color:var(--tinta);
+  padding:8px 16px;border-radius:999px;cursor:pointer;font-size:.95rem;font-weight:600;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+.nav-sem button:hover{background:#272a31}
+.nav-sem .btn-hoy{background:var(--azul);color:#fff}
+.nav-sem .btn-hoy:hover{background:#2468d4}
+#rangoSemana{font-size:.95rem;font-weight:700;min-width:170px;text-align:center;color:var(--tinta)}
+.acciones{display:flex;gap:6px}
+.acciones button{
+  background:var(--tarjeta);border:none;color:var(--gris);
+  padding:7px 12px;border-radius:999px;cursor:pointer;font-size:.78rem;font-weight:600;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+.acciones button:hover{color:var(--tinta)}
+
+#resumen{
+  display:flex;gap:10px;justify-content:center;margin-top:12px;
+  font-size:.8rem;flex-wrap:wrap;
+}
+#resumen span{background:var(--tarjeta);padding:5px 14px;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.06);color:var(--gris);font-weight:600}
+#resumen b{color:var(--azul)}
+
+main{max-width:1300px;margin:0 auto;padding:14px}
+.grilla{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:12px;
+}
+.dia{
+  background:var(--tarjeta);
+  border-radius:18px;
+  padding:14px 12px;
+  min-height:150px;
+  display:flex;flex-direction:column;
+  box-shadow:0 1px 4px rgba(0,0,0,.35);
+}
+.dia.hoy{
+  box-shadow:0 6px 24px rgba(61,139,255,.3);outline:2px solid var(--azul);
+  background:#2e3240;padding:18px 14px;
+}
+.dia.hoy .dia-fecha{font-size:1.6rem}
+.dia.hoy .turno{font-size:.82rem;padding:5px 14px}
+.dia.hoy .sug-turno{font-size:.8rem}
+.dia.hoy .tarea{font-size:.92rem;padding:11px 12px}
+.dia.hoy .btn-add{width:36px;height:36px;font-size:1.4rem}
+.dia-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.dia-nombre{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--gris)}
+.dia.hoy .dia-nombre{color:#101114;background:var(--tinta);padding:3px 10px;border-radius:8px;display:inline-block}
+.dia-fecha{font-size:1.15rem;color:var(--tinta);font-weight:800;margin-top:3px}
+.btn-add{
+  background:var(--gris-claro);color:var(--azul);border:none;width:30px;height:30px;
+  border-radius:50%;cursor:pointer;font-size:1.25rem;line-height:1;font-weight:700;
+}
+.btn-add:hover{background:var(--azul);color:#fff}
+
+.turno{
+  display:inline-block;margin-top:7px;padding:4px 12px;border-radius:999px;
+  font-size:.74rem;font-weight:700;color:#fff;cursor:pointer;border:none;
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+.turno:hover{filter:brightness(1.08)}
+.tu-Tarde{background:#f6a224}
+.tu-Manana{background:#3b82f6}
+.tu-MananaNoche{background:linear-gradient(90deg,#3b82f6 50%,#34c759 50%)}
+.tu-Noche{background:#34c759}
+.tu-Reposo{background:#f04438}
+.tu-Libre{background:#1899a4}
+.sug-turno{font-size:.72rem;color:var(--gris);margin:6px 0 10px;line-height:1.35}
+
+.tarea{
+  background:var(--gris-claro);
+  border-radius:12px;
+  padding:9px 10px;
+  margin-bottom:7px;
+  font-size:.85rem;
+  display:flex;align-items:flex-start;gap:8px;
+  border-left:none;position:relative;
+}
+.tarea::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:4px;background:var(--gris)}
+.tarea.cat-dispensario::before{background:var(--verde)}
+.tarea.cat-casa::before{background:var(--ambar)}
+.tarea.cat-personal::before{background:var(--cielo)}
+.tarea.cat-ejercicio::before{background:#a855f7}
+.prog{display:flex;align-items:center;gap:7px;margin:0 0 10px}
+.prog-barra{flex:1;height:7px;background:var(--gris-claro);border-radius:99px;overflow:hidden}
+.prog-relleno{height:100%;background:var(--azul);border-radius:99px;transition:width .3s}
+.prog-relleno.lleno{background:var(--verde)}
+.prog-num{font-size:.72rem;font-weight:800;color:var(--gris);min-width:32px;text-align:right}
+.tarea.lista{opacity:.5}
+.tarea.lista .t-texto{text-decoration:line-through}
+.tarea input[type=checkbox]{margin-top:2px;margin-left:6px;accent-color:var(--azul);cursor:pointer;width:16px;height:16px}
+.t-cuerpo{flex:1;min-width:0}
+.t-texto{word-wrap:break-word;font-weight:500}
+.t-meta{font-size:.72rem;color:var(--gris);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.t-hora{font-weight:700;color:var(--azul)}
+.t-rep{font-size:.7rem}
+.t-botones{display:flex;flex-direction:column;gap:2px}
+.t-botones button{
+  background:none;border:none;cursor:pointer;font-size:.75rem;
+  color:var(--gris);padding:1px 4px;border-radius:6px;
+}
+.t-botones button:hover{background:#454956;color:var(--tinta)}
+.vacio{color:#6b6f78;font-size:.78rem;text-align:center;margin-top:16px}
+
+/* Vista mensual */
+.grilla.modo-mes{grid-template-columns:repeat(7,1fr);gap:6px}
+.celda-dow{text-align:center;font-size:.7rem;font-weight:800;color:var(--gris);text-transform:uppercase;padding:4px 0}
+.celda-mes{
+  background:var(--tarjeta);border-radius:10px;padding:6px 5px;min-height:62px;
+  cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);
+}
+.celda-mes:hover{outline:1.5px solid var(--azul)}
+.celda-mes.fuera{opacity:.3}
+.celda-mes.hoy{outline:2px solid var(--azul);background:#2e3240}
+.cm-num{font-size:.85rem;font-weight:800}
+.celda-mes.hoy .cm-num{color:var(--azul)}
+.mini-turno{height:5px;border-radius:99px;margin-top:5px}
+.mini-tareas{font-size:.64rem;color:var(--gris);margin-top:4px;font-weight:700}
+
+/* Estadísticas */
+.st-tit{font-size:.72rem;text-transform:uppercase;color:var(--gris);letter-spacing:.7px;margin:14px 0 8px}
+.st-tit:first-child{margin-top:0}
+.st-fila{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.8rem}
+.st-lbl{min-width:92px;font-weight:600}
+.st-bar{flex:1;height:8px;background:#454956;border-radius:99px;overflow:hidden}
+.st-fill{height:100%;background:var(--azul);border-radius:99px}
+.st-fill.lleno{background:var(--verde)}
+.st-num{min-width:46px;text-align:right;font-weight:800;font-size:.74rem;color:var(--gris)}
+.st-dato{background:var(--gris-claro);border-radius:12px;padding:10px 12px;font-size:.85rem;margin-bottom:4px}
+.st-dato b{color:#f6a224}
+
+/* Modal */
+.modal-fondo{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:100;align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(3px);
+}
+.modal-fondo.abierto{display:flex}
+.modal{
+  background:var(--tarjeta);border-radius:22px;padding:22px;width:100%;max-width:380px;
+  box-shadow:0 16px 50px rgba(0,0,0,.25);
+}
+.modal h2{font-size:1.15rem;font-weight:800;margin-bottom:14px;color:var(--tinta)}
+.modal label{display:block;font-size:.78rem;font-weight:700;margin:12px 0 5px;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.modal input[type=text],.modal input[type=time],.modal select{
+  width:100%;padding:11px;border:none;border-radius:12px;
+  font-size:.95rem;background:var(--gris-claro);color:var(--tinta);
+}
+.modal input:focus,.modal select:focus{outline:2px solid var(--azul)}
+.fila-cats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.chip{
+  flex:1;padding:9px 4px;border-radius:12px;border:2px solid transparent;
+  background:var(--gris-claro);cursor:pointer;font-size:.78rem;text-align:center;font-weight:600;color:var(--gris);
+}
+.chip.sel-dispensario{border-color:var(--verde);background:rgba(46,175,111,.18);color:var(--tinta)}
+.chip.sel-casa{border-color:var(--ambar);background:rgba(245,158,11,.18);color:var(--tinta)}
+.chip.sel-personal{border-color:var(--cielo);background:rgba(61,139,255,.18);color:var(--tinta)}
+.chip.sel-ejercicio{border-color:#a855f7;background:rgba(168,85,247,.2);color:var(--tinta)}
+.check-rep{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:.85rem}
+.check-rep input{accent-color:var(--azul);width:17px;height:17px}
+.modal-botones{display:flex;gap:8px;margin-top:18px}
+.modal-botones button{flex:1;padding:12px;border-radius:999px;border:none;cursor:pointer;font-size:.95rem;font-weight:700}
+.btn-guardar{background:var(--azul);color:#fff}
+.btn-guardar:hover{background:#2468d4}
+.btn-cancelar{background:var(--gris-claro);color:var(--tinta)}
+.btn-borrar{background:rgba(239,68,68,.15);color:#ff6b61;margin-top:10px;width:100%;padding:11px;border:none;border-radius:999px;cursor:pointer;font-weight:700}
+.btn-borrar:hover{background:var(--rojo);color:#fff}
+
+.fila-turnos{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+.fila-turnos button{
+  padding:11px 14px;border-radius:12px;border:2px solid transparent;
+  background:var(--gris-claro);cursor:pointer;font-size:.92rem;text-align:left;font-weight:600;
+}
+.fila-turnos button:hover{border-color:var(--azul);background:rgba(61,139,255,.15)}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#454956;color:#fff;padding:11px 20px;border-radius:999px;
+  font-size:.85rem;font-weight:600;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);
+}
+.toast.ver{opacity:1}
+
+/* Objetivos */
+.panel-obj{
+  background:var(--tarjeta);border-radius:18px;padding:14px;
+  margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.35);
+}
+.obj-head{display:flex;justify-content:space-between;align-items:center}
+.obj-head h2{font-size:1.05rem;font-weight:800}
+.obj-grupo{margin-top:12px}
+.obj-grupo h3{font-size:.7rem;text-transform:uppercase;color:var(--gris);letter-spacing:.7px;margin-bottom:6px}
+.obj-item{display:flex;align-items:center;gap:8px;background:var(--gris-claro);border-radius:12px;padding:8px 10px;margin-bottom:6px;font-size:.85rem;flex-wrap:wrap}
+.obj-texto{flex:1;font-weight:600;min-width:120px}
+.obj-item.cumplido .obj-texto{color:var(--verde)}
+.obj-bar{flex:2;height:7px;background:#454956;border-radius:99px;overflow:hidden;min-width:70px}
+.obj-fill{height:100%;background:var(--azul);border-radius:99px;transition:width .3s}
+.obj-fill.lleno{background:var(--verde)}
+.obj-num{font-size:.72rem;font-weight:800;color:var(--gris);min-width:44px;text-align:right}
+.obj-btns{display:flex;gap:4px}
+.obj-btns button{background:#454956;border:none;color:var(--tinta);width:26px;height:26px;border-radius:8px;cursor:pointer;font-weight:800;font-size:.9rem}
+.obj-btns button:hover{background:var(--azul)}
+.obj-vacio{color:#6b6f78;font-size:.8rem;margin-top:10px;text-align:center}
+.racha{
+  background:rgba(246,162,36,.15);color:#f6a224;padding:4px 12px;
+  border-radius:999px;font-size:.76rem;font-weight:800;margin-left:8px;
+  vertical-align:middle;display:inline-block;
+}
+.btn-hist{
+  background:var(--gris-claro);color:var(--gris);border:none;width:30px;height:30px;
+  border-radius:50%;cursor:pointer;font-size:.95rem;line-height:1;
+}
+.btn-hist:hover{background:var(--azul);color:#fff}
+.hist-grupo{margin-top:12px}
+.hist-grupo h3{font-size:.7rem;text-transform:uppercase;color:var(--gris);letter-spacing:.7px;margin-bottom:6px}
+.hist-obj{font-weight:700;font-size:.85rem;margin:8px 0 4px}
+.hist-item{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--gris-claro);border-radius:10px;padding:7px 10px;
+  margin-bottom:5px;font-size:.8rem;
+}
+.hist-item .ok{color:var(--verde);font-weight:800}
+.hist-item .nook{color:var(--gris);font-weight:800}
+.hist-vacio{color:#6b6f78;font-size:.82rem;text-align:center;margin:14px 0}
+.modal-scroll{max-height:60vh;overflow-y:auto}
+
+@media(max-width:900px){
+  .grilla{grid-template-columns:1fr}
+  .dia{min-height:auto}
+  header h1{font-size:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-top">
+    <h1>Mi <span>Semana</span></h1>
+    <div class="acciones">
+      <button onclick="abrirStats()" title="Estadísticas">📊</button>
+      <button id="estadoNube" onclick="nubeCargar(true)" title="Estado de sincronización — toca para actualizar">☁️ ...</button>
+      <button onclick="exportar()" title="Respaldar datos">⬇ Respaldo</button>
+      <button onclick="document.getElementById('archivoImport').click()" title="Importar respaldo">⬆ Importar</button>
+      <input type="file" id="archivoImport" accept=".json" style="display:none" onchange="importar(this)">
+    </div>
+  </div>
+  <div class="nav-sem">
+    <button onclick="cambiarSemana(-1)">◀</button>
+    <span id="rangoSemana"></span>
+    <button onclick="cambiarSemana(1)">▶</button>
+    <button class="btn-hoy" onclick="irHoy()">Hoy</button>
+    <button id="btnVista" onclick="toggleVista()">Mes</button>
+  </div>
+  <div id="resumen"></div>
+</header>
+
+<main>
+  <section class="panel-obj">
+    <div class="obj-head">
+      <h2>🎯 Objetivos<span class="racha" id="rachaBadge" style="display:none"></span></h2>
+      <div style="display:flex;gap:6px">
+        <button class="btn-hist" onclick="abrirHistorial()" title="Historial de objetivos">📜</button>
+        <button class="btn-add" onclick="abrirModalObj()" title="Nuevo objetivo">+</button>
+      </div>
+    </div>
+    <div id="contObjetivos"></div>
+  </section>
+  <div class="grilla" id="grilla"></div>
+</main>
+
+<!-- Modal nueva/editar tarea -->
+<div class="modal-fondo" id="modalFondo" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal">
+    <h2 id="modalTitulo">Nueva tarea</h2>
+    <label>¿Qué hay que hacer?</label>
+    <input type="text" id="inpTexto" placeholder="Ej: pedido de stock, ir al doctor..." maxlength="120">
+    <label>Hora (opcional)</label>
+    <input type="time" id="inpHora">
+    <label>Categoría</label>
+    <div class="fila-cats">
+      <button type="button" class="chip" id="chipDispensario" onclick="elegirCat('dispensario')">🌿 Dispensario</button>
+      <button type="button" class="chip" id="chipCasa" onclick="elegirCat('casa')">🏠 Casa</button>
+      <button type="button" class="chip" id="chipPersonal" onclick="elegirCat('personal')">⭐ Personal</button>
+      <button type="button" class="chip" id="chipEjercicio" onclick="elegirCat('ejercicio')">💪 Ejercicio</button>
+    </div>
+    <label>Repetición</label>
+    <select id="inpRepetir">
+      <option value="no">No se repite</option>
+      <option value="dia">📅 Todos los días</option>
+      <option value="sem">🔁 Cada semana (este día)</option>
+    </select>
+    <div class="modal-botones">
+      <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-guardar" onclick="guardarTarea()">Guardar</button>
+    </div>
+    <button class="btn-borrar" id="btnBorrar" style="display:none" onclick="borrarTarea()">🗑 Eliminar tarea</button>
+  </div>
+</div>
+
+<!-- Modal cambiar turno -->
+<div class="modal-fondo" id="modalTurnoFondo" onclick="if(event.target===this)cerrarModalTurno()">
+  <div class="modal">
+    <h2 id="modalTurnoTitulo">Cambiar turno</h2>
+    <div class="fila-turnos" id="opcionesTurno"></div>
+  </div>
+</div>
+
+<!-- Modal objetivo -->
+<div class="modal-fondo" id="modalObjFondo" onclick="if(event.target===this)cerrarModalObj()">
+  <div class="modal">
+    <h2 id="modalObjTitulo">Nuevo objetivo</h2>
+    <label>¿Cuál es el objetivo?</label>
+    <input type="text" id="inpObjTexto" placeholder="Ej: hacer ejercicio 5 veces, leer 2 libros..." maxlength="120">
+    <label>Plazo</label>
+    <select id="inpObjAmbito">
+      <option value="sem">📆 Semanal (se reinicia cada semana)</option>
+      <option value="mes">🗓️ Mensual (se reinicia cada mes)</option>
+      <option value="año">🏆 Anual</option>
+    </select>
+    <label>Meta (cuántas veces / unidades)</label>
+    <input type="text" id="inpObjMeta" inputmode="numeric" placeholder="Ej: 5">
+    <div class="modal-botones">
+      <button class="btn-cancelar" onclick="cerrarModalObj()">Cancelar</button>
+      <button class="btn-guardar" onclick="guardarObjetivo()">Guardar</button>
+    </div>
+    <button class="btn-borrar" id="btnBorrarObj" style="display:none" onclick="borrarObjetivo()">🗑 Eliminar objetivo</button>
+  </div>
+</div>
+
+<!-- Modal historial -->
+<div class="modal-fondo" id="modalHistFondo" onclick="if(event.target===this)cerrarHistorial()">
+  <div class="modal">
+    <h2>📜 Historial de objetivos</h2>
+    <div class="modal-scroll" id="contHistorial"></div>
+    <div class="modal-botones">
+      <button class="btn-cancelar" onclick="cerrarHistorial()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal estadísticas -->
+<div class="modal-fondo" id="modalStatsFondo" onclick="if(event.target===this)cerrarStats()">
+  <div class="modal">
+    <h2>📊 Estadísticas</h2>
+    <div class="modal-scroll" id="contStats"></div>
+    <div class="modal-botones">
+      <button class="btn-cancelar" onclick="cerrarStats()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CLAVE = 'miSemanaData';
+const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+let tareas = cargar();
+// compatibilidad con datos antiguos (repetir era true/false)
+tareas.forEach(t=>{ if(t.repetir===true) t.repetir='sem'; if(!t.repetir) t.repetir='no'; });
+// primera vez: crear tarea de ejercicio diaria
+if(!localStorage.getItem('miSemanaSeedEj')){
+  if(!tareas.some(t=>t.repetir==='dia' && /ejercicio/i.test(t.texto||''))){
+    tareas.push({id:'ej'+Date.now().toString(36), texto:'Ejercicio', hora:'', cat:'ejercicio', repetir:'dia', desde:fmtFecha(lunesDe(new Date())), hechas:[]});
+  }
+  localStorage.setItem('miSemanaSeedEj','1');
+  localStorage.setItem(CLAVE, JSON.stringify(tareas));
+}
+let lunesActual = lunesDe(new Date());
+let editandoId = null;
+let fechaModal = null;
+let catSel = 'dispensario';
+
+// ===== TURNOS: ciclo de 8 días =====
+// Ancla: 8 jun 2026 = día 0 del ciclo (Tarde)
+const CLAVE_TURNOS = 'miSemanaTurnos';
+const ANCLA = new Date(2026,5,8); // 8 junio 2026
+const CICLO = ['Tarde','Tarde','Mañana','Mañana/Noche','Noche','Reposo','Libre','Libre'];
+const TURNO_CLASE = {'Tarde':'tu-Tarde','Mañana':'tu-Manana','Mañana/Noche':'tu-MananaNoche','Noche':'tu-Noche','Reposo':'tu-Reposo','Libre':'tu-Libre'};
+const SUGERENCIAS = {
+  'Tarde':'☀️ Mañana libre: ejercicio o dispensario',
+  'Mañana':'🌆 Tarde libre: casa o dispensario',
+  'Mañana/Noche':'⚡ Día doble: solo lo esencial',
+  'Noche':'😴 AM descanso · PM cosas livianas',
+  'Reposo':'🛌 Recuperación post noche',
+  'Libre':'🌿 Día libre: familia, casa, dispensario'
+};
+let turnosOverride = (()=>{ try{ return JSON.parse(localStorage.getItem(CLAVE_TURNOS))||{}; }catch(e){ return {}; } })();
+function guardarTurnos(){ localStorage.setItem(CLAVE_TURNOS, JSON.stringify(turnosOverride)); marcaLocal(); nubeGuardar(); }
+
+function turnoDe(fechaStr){
+  if(turnosOverride[fechaStr]) return turnosOverride[fechaStr];
+  const d = new Date(fechaStr+'T00:00:00');
+  const dias = Math.round((d - ANCLA)/86400000);
+  return CICLO[((dias % 8)+8)%8];
+}
+
+let fechaTurnoEdit = null;
+function abrirModalTurno(fechaStr){
+  fechaTurnoEdit = fechaStr;
+  const d = new Date(fechaStr+'T00:00:00');
+  document.getElementById('modalTurnoTitulo').textContent = 'Turno del '+d.getDate()+' '+MESES[d.getMonth()];
+  const cont = document.getElementById('opcionesTurno');
+  cont.innerHTML = '';
+  ['Tarde','Mañana','Mañana/Noche','Noche','Reposo','Libre'].forEach(t=>{
+    const b = document.createElement('button');
+    b.textContent = t;
+    b.onclick = ()=>{ turnosOverride[fechaTurnoEdit]=t; guardarTurnos(); cerrarModalTurno(); render(); };
+    cont.appendChild(b);
+  });
+  const auto = document.createElement('button');
+  auto.textContent = '🔄 Volver al automático (ciclo 8 días)';
+  auto.onclick = ()=>{ delete turnosOverride[fechaTurnoEdit]; guardarTurnos(); cerrarModalTurno(); render(); };
+  cont.appendChild(auto);
+  document.getElementById('modalTurnoFondo').classList.add('abierto');
+}
+function cerrarModalTurno(){ document.getElementById('modalTurnoFondo').classList.remove('abierto'); }
+// ===== fin turnos =====
+
+function cargar(){
+  try{ return JSON.parse(localStorage.getItem(CLAVE)) || []; }
+  catch(e){ return []; }
+}
+function marcaLocal(){ localStorage.setItem('miSemanaTs', String(Date.now())); }
+function guardar(){ localStorage.setItem(CLAVE, JSON.stringify(tareas)); marcaLocal(); nubeGuardar(); }
+
+function lunesDe(d){
+  const x = new Date(d); x.setHours(0,0,0,0);
+  const dia = (x.getDay()+6)%7; // lunes=0
+  x.setDate(x.getDate()-dia);
+  return x;
+}
+function fmtFecha(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function hoyStr(){ return fmtFecha(new Date()); }
+
+let vistaMes = false;
+let mesActual = new Date();
+
+function cambiarSemana(n){
+  if(vistaMes){ mesActual = new Date(mesActual.getFullYear(), mesActual.getMonth()+n, 1); render(); return; }
+  lunesActual.setDate(lunesActual.getDate()+n*7);
+  render();
+}
+function irHoy(){
+  lunesActual = lunesDe(new Date());
+  mesActual = new Date();
+  render();
+}
+function toggleVista(){
+  vistaMes = !vistaMes;
+  if(vistaMes) mesActual = new Date(lunesActual.getFullYear(), lunesActual.getMonth(), 1);
+  document.getElementById('btnVista').textContent = vistaMes ? 'Semana' : 'Mes';
+  render();
+}
+
+function tareasDelDia(fechaStr, dow){
+  return tareas.filter(t=>{
+    if(t.repetir==='dia') return !t.desde || t.desde<=fechaStr;
+    if(t.repetir==='sem') return t.dow===dow && (!t.desde || t.desde<=fechaStr);
+    return t.fecha===fechaStr;
+  }).sort((a,b)=> (a.hora||'99:99').localeCompare(b.hora||'99:99'));
+}
+function estaLista(t, fechaStr){
+  if(t.repetir!=='no') return (t.hechas||[]).includes(fechaStr);
+  return !!t.lista;
+}
+
+function render(){
+  const g = document.getElementById('grilla');
+  if(vistaMes){ g.classList.add('modo-mes'); renderMes(); }
+  else { g.classList.remove('modo-mes'); renderSemana(); }
+}
+
+const NOMBRE_MES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function renderMes(){
+  const g = document.getElementById('grilla');
+  g.style.gridTemplateColumns = '';
+  g.innerHTML = '';
+  const hoy = hoyStr();
+  const y = mesActual.getFullYear(), m = mesActual.getMonth();
+  ['L','M','M','J','V','S','D'].forEach(x=>{
+    const c = document.createElement('div');
+    c.className = 'celda-dow'; c.textContent = x;
+    g.appendChild(c);
+  });
+  const inicio = lunesDe(new Date(y,m,1));
+  const finMes = new Date(y,m+1,0);
+  const finGrilla = lunesDe(finMes); finGrilla.setDate(finGrilla.getDate()+6);
+  let pendM=0, hechM=0;
+  const d = new Date(inicio);
+  while(d <= finGrilla){
+    const fs = fmtFecha(d);
+    const dow = (d.getDay()+6)%7;
+    const lista = tareasDelDia(fs, dow);
+    const done = lista.filter(t=>estaLista(t,fs)).length;
+    if(d.getMonth()===m){ hechM+=done; pendM+=lista.length-done; }
+    const turno = turnoDe(fs);
+    const c = document.createElement('div');
+    c.className = 'celda-mes'+(d.getMonth()!==m?' fuera':'')+(fs===hoy?' hoy':'');
+    c.innerHTML = `<div class="cm-num">${d.getDate()}</div>
+      <div class="mini-turno ${TURNO_CLASE[turno]}"></div>
+      ${lista.length?`<div class="mini-tareas">${done}/${lista.length}${done===lista.length?' ✔':''}</div>`:''}`;
+    const fsC = fs;
+    c.onclick = ()=>{
+      lunesActual = lunesDe(new Date(fsC+'T00:00:00'));
+      vistaMes = false;
+      document.getElementById('btnVista').textContent = 'Mes';
+      render();
+    };
+    g.appendChild(c);
+    d.setDate(d.getDate()+1);
+  }
+  document.getElementById('rangoSemana').textContent = NOMBRE_MES[m]+' '+y;
+  const pctM = (pendM+hechM) ? Math.round(hechM/(pendM+hechM)*100) : 0;
+  document.getElementById('resumen').innerHTML =
+    `<span>Pendientes: <b>${pendM}</b></span><span>Listas: <b>${hechM}</b></span><span>Mes: <b>${pctM}%</b></span>`;
+  if(typeof pintarRacha==='function') pintarRacha();
+}
+
+function renderSemana(){
+  const grilla = document.getElementById('grilla');
+  grilla.innerHTML = '';
+  const hoy = hoyStr();
+  let pend=0, hechas=0;
+
+  for(let i=0;i<7;i++){
+    const f = new Date(lunesActual); f.setDate(f.getDate()+i);
+    const fs = fmtFecha(f);
+    const lista = tareasDelDia(fs, i);
+    const hechosDia = lista.filter(t=>estaLista(t,fs)).length;
+    const pct = lista.length ? Math.round(hechosDia/lista.length*100) : 0;
+
+    const div = document.createElement('div');
+    div.className = 'dia' + (fs===hoy ? ' hoy' : '');
+    const turno = turnoDe(fs);
+    div.innerHTML = `
+      <div class="dia-head">
+        <div>
+          <div class="dia-nombre">${DIAS[i]}${fs===hoy?' · HOY':''}</div>
+          <div class="dia-fecha">${f.getDate()} ${MESES[f.getMonth()]}</div>
+          <button class="turno ${TURNO_CLASE[turno]}" onclick="abrirModalTurno('${fs}')" title="Toca para cambiar el turno">${turno}${turnosOverride[fs]?' ✎':''}</button>
+        </div>
+        <button class="btn-add" onclick="abrirModal('${fs}',${i})" title="Agregar tarea">+</button>
+      </div>
+      <div class="sug-turno">${SUGERENCIAS[turno]}</div>
+      ${lista.length?`<div class="prog"><div class="prog-barra"><div class="prog-relleno${pct===100?' lleno':''}" style="width:${pct}%"></div></div><span class="prog-num">${pct}%</span></div>`:''}
+      <div class="lista-tareas"></div>
+    `;
+    const cont = div.querySelector('.lista-tareas');
+
+    if(lista.length===0){
+      cont.innerHTML = '<div class="vacio">Sin tareas</div>';
+    }
+    lista.forEach(t=>{
+      const done = estaLista(t, fs);
+      if(done) hechas++; else pend++;
+      const el = document.createElement('div');
+      el.className = `tarea cat-${t.cat}` + (done?' lista':'');
+      el.innerHTML = `
+        <input type="checkbox" ${done?'checked':''} onchange="toggle('${t.id}','${fs}')">
+        <div class="t-cuerpo">
+          <div class="t-texto">${escapar(t.texto)}</div>
+          <div class="t-meta">
+            ${t.hora?`<span class="t-hora">⏰ ${t.hora}</span>`:''}
+            ${t.repetir==='sem'?'<span class="t-rep">🔁 semanal</span>':t.repetir==='dia'?'<span class="t-rep">📅 diaria</span>':''}
+          </div>
+        </div>
+        <div class="t-botones">
+          <button onclick="abrirEditar('${t.id}','${fs}',${i})" title="Editar">✏️</button>
+          <button onclick="mover('${t.id}',-1)" title="Mover al día anterior">◀</button>
+          <button onclick="mover('${t.id}',1)" title="Mover al día siguiente">▶</button>
+        </div>
+      `;
+      cont.appendChild(el);
+    });
+    grilla.appendChild(div);
+  }
+
+  // Columna de hoy más ancha (solo escritorio)
+  let idxHoy = -1;
+  for(let i=0;i<7;i++){
+    const f = new Date(lunesActual); f.setDate(f.getDate()+i);
+    if(fmtFecha(f)===hoy){ idxHoy = i; break; }
+  }
+  if(idxHoy>=0 && window.matchMedia('(min-width:901px)').matches){
+    grilla.style.gridTemplateColumns = Array.from({length:7},(_,i)=>i===idxHoy?'1.7fr':'1fr').join(' ');
+  } else {
+    grilla.style.gridTemplateColumns = '';
+  }
+
+  // Rango semana
+  const fin = new Date(lunesActual); fin.setDate(fin.getDate()+6);
+  document.getElementById('rangoSemana').textContent =
+    `${lunesActual.getDate()} ${MESES[lunesActual.getMonth()]} – ${fin.getDate()} ${MESES[fin.getMonth()]} ${fin.getFullYear()}`;
+
+  const pctSem = (pend+hechas) ? Math.round(hechas/(pend+hechas)*100) : 0;
+  document.getElementById('resumen').innerHTML =
+    `<span>Pendientes: <b>${pend}</b></span><span>Listas: <b>${hechas}</b></span><span>Semana: <b>${pctSem}%</b></span>`;
+  if(typeof pintarRacha==='function' && document.getElementById('rachaBadge')) pintarRacha();
+}
+
+function escapar(s){
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+
+function toggle(id, fechaStr){
+  const t = tareas.find(x=>x.id===id); if(!t) return;
+  if(t.repetir!=='no'){
+    t.hechas = t.hechas||[];
+    const i = t.hechas.indexOf(fechaStr);
+    if(i>=0) t.hechas.splice(i,1); else t.hechas.push(fechaStr);
+  } else {
+    t.lista = !t.lista;
+  }
+  guardar(); render();
+}
+
+function mover(id, dir){
+  const t = tareas.find(x=>x.id===id); if(!t) return;
+  if(t.repetir==='dia'){
+    avisar('Esta tarea es diaria, sale todos los días'); return;
+  }
+  if(t.repetir==='sem'){
+    t.dow = (t.dow + dir + 7) % 7;
+  } else {
+    const d = new Date(t.fecha+'T00:00:00');
+    d.setDate(d.getDate()+dir);
+    t.fecha = fmtFecha(d);
+  }
+  guardar(); render();
+}
+
+function abrirModal(fechaStr, dow){
+  editandoId = null;
+  fechaModal = {fecha:fechaStr, dow};
+  document.getElementById('modalTitulo').textContent = 'Nueva tarea — '+DIAS[dow];
+  document.getElementById('inpTexto').value = '';
+  document.getElementById('inpHora').value = '';
+  document.getElementById('inpRepetir').value = 'no';
+  document.getElementById('btnBorrar').style.display = 'none';
+  elegirCat('dispensario');
+  document.getElementById('modalFondo').classList.add('abierto');
+  setTimeout(()=>document.getElementById('inpTexto').focus(),100);
+}
+
+function abrirEditar(id, fechaStr, dow){
+  const t = tareas.find(x=>x.id===id); if(!t) return;
+  editandoId = id;
+  fechaModal = {fecha:fechaStr, dow};
+  document.getElementById('modalTitulo').textContent = 'Editar tarea';
+  document.getElementById('inpTexto').value = t.texto;
+  document.getElementById('inpHora').value = t.hora||'';
+  document.getElementById('inpRepetir').value = t.repetir||'no';
+  document.getElementById('btnBorrar').style.display = 'block';
+  elegirCat(t.cat);
+  document.getElementById('modalFondo').classList.add('abierto');
+}
+
+function elegirCat(c){
+  catSel = c;
+  ['dispensario','casa','personal','ejercicio'].forEach(x=>{
+    const chip = document.getElementById('chip'+x.charAt(0).toUpperCase()+x.slice(1));
+    chip.className = 'chip' + (x===c ? ' sel-'+x : '');
+  });
+}
+
+function cerrarModal(){
+  document.getElementById('modalFondo').classList.remove('abierto');
+}
+
+function guardarTarea(){
+  const texto = document.getElementById('inpTexto').value.trim();
+  if(!texto){ avisar('Escribe qué hay que hacer'); return; }
+  const hora = document.getElementById('inpHora').value;
+  const rep = document.getElementById('inpRepetir').value; // 'no' | 'dia' | 'sem'
+
+  if(editandoId){
+    const t = tareas.find(x=>x.id===editandoId);
+    const fueHecha = estaLista(t, fechaModal.fecha);
+    t.texto = texto; t.hora = hora; t.cat = catSel;
+    if(rep !== t.repetir){
+      if(rep==='no'){
+        t.fecha = fechaModal.fecha; t.lista = fueHecha;
+        delete t.dow; delete t.hechas; delete t.desde;
+      } else {
+        t.desde = t.desde || fechaModal.fecha;
+        t.hechas = fueHecha ? [fechaModal.fecha] : [];
+        if(rep==='sem') t.dow = fechaModal.dow; else delete t.dow;
+        delete t.fecha; delete t.lista;
+      }
+      t.repetir = rep;
+    }
+  } else {
+    const t = {
+      id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+      texto, hora, cat: catSel, repetir: rep
+    };
+    if(rep==='no'){ t.fecha = fechaModal.fecha; t.lista = false; }
+    else { t.desde = fechaModal.fecha; t.hechas = []; if(rep==='sem') t.dow = fechaModal.dow; }
+    tareas.push(t);
+  }
+  guardar(); cerrarModal(); render();
+  avisar('Guardada ✔');
+}
+
+function borrarTarea(){
+  if(!editandoId) return;
+  if(!confirm('¿Eliminar esta tarea?')) return;
+  tareas = tareas.filter(t=>t.id!==editandoId);
+  guardar(); cerrarModal(); render();
+  avisar('Eliminada');
+}
+
+function exportar(){
+  const datos = {tareas, turnos: turnosOverride, objetivos};
+  const blob = new Blob([JSON.stringify(datos,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mi_semana_respaldo_'+hoyStr()+'.json';
+  a.click();
+  avisar('Respaldo descargado');
+}
+
+function importar(input){
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = e=>{
+    try{
+      const datos = JSON.parse(e.target.result);
+      if(Array.isArray(datos)){ // respaldo formato antiguo
+        tareas = datos;
+      } else {
+        tareas = datos.tareas||[];
+        turnosOverride = datos.turnos||{};
+        objetivos = datos.objetivos||[];
+        guardarTurnos(); guardarObj(); renderObjetivos();
+      }
+      guardar(); render();
+      avisar('Datos importados ✔');
+    }catch(err){ avisar('Archivo no válido'); }
+  };
+  r.readAsText(file);
+  input.value = '';
+}
+
+let toastTimer;
+function avisar(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('ver');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('ver'),2200);
+}
+
+// Enter para guardar en el modal
+document.getElementById('inpTexto').addEventListener('keydown', e=>{
+  if(e.key==='Enter') guardarTarea();
+});
+
+
+
+// ===== SINCRONIZACIÓN FIREBASE =====
+const FB_URL = 'https://mi-agenda-c50ad-default-rtdb.firebaseio.com/miSemana.json';
+let _fbTimer = null;
+let _fbSubiendo = false;
+
+function estadoNube(txt){
+  const e = document.getElementById('estadoNube');
+  if(e) e.textContent = txt;
+}
+
+function nubeGuardar(){
+  clearTimeout(_fbTimer);
+  estadoNube('☁️ ⏳');
+  _fbTimer = setTimeout(async ()=>{
+    _fbSubiendo = true;
+    try{
+      const ts = parseInt(localStorage.getItem('miSemanaTs'))||Date.now();
+      const r = await fetch(FB_URL, {
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({tareas, turnos: turnosOverride, objetivos, actualizado: ts})
+      });
+      estadoNube(r.ok ? '☁️ ✔' : '☁️ ⚠');
+    }catch(e){
+      estadoNube('📴 local');
+    }
+    _fbSubiendo = false;
+  }, 800);
+}
+
+async function nubeCargar(manual){
+  if(_fbSubiendo) return;
+  estadoNube('☁️ ⏳');
+  try{
+    const r = await fetch(FB_URL);
+    if(!r.ok) throw new Error();
+    const remoto = await r.json();
+    const localTs = parseInt(localStorage.getItem('miSemanaTs'))||0;
+    if(remoto && remoto.actualizado && remoto.actualizado > localTs){
+      tareas = remoto.tareas||[];
+      tareas.forEach(t=>{ if(t.repetir===true) t.repetir='sem'; if(!t.repetir) t.repetir='no'; });
+      turnosOverride = remoto.turnos||{};
+      objetivos = remoto.objetivos||[];
+      localStorage.setItem(CLAVE, JSON.stringify(tareas));
+      localStorage.setItem(CLAVE_TURNOS, JSON.stringify(turnosOverride));
+      localStorage.setItem(CLAVE_OBJ, JSON.stringify(objetivos));
+      localStorage.setItem('miSemanaTs', String(remoto.actualizado));
+      render(); renderObjetivos();
+      estadoNube('☁️ ✔');
+      if(manual) avisar('Datos actualizados desde la nube ✔');
+    } else if(localTs > 0 && (!remoto || !remoto.actualizado || remoto.actualizado < localTs)){
+      nubeGuardar();
+    } else {
+      estadoNube('☁️ ✔');
+      if(manual) avisar('Ya estabas al día ✔');
+    }
+  }catch(e){
+    estadoNube('📴 local');
+    if(manual) avisar('Sin conexión — trabajando local');
+  }
+}
+
+// al volver a la app (cambio de pestaña o desbloquear el celular), revisar la nube
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible') nubeCargar(false);
+});
+// ===== fin firebase =====
+
+// ===== ESTADÍSTICAS =====
+function filaStat(lbl, pct, txt){
+  return `<div class="st-fila"><span class="st-lbl">${lbl}</span>`+
+    `<div class="st-bar"><div class="st-fill${pct===100?' lleno':''}" style="width:${pct}%"></div></div>`+
+    `<span class="st-num">${txt}</span></div>`;
+}
+
+function abrirStats(){
+  let html = '';
+  const hoyD = new Date(); hoyD.setHours(0,0,0,0);
+
+  // Cumplimiento últimas 8 semanas
+  html += '<h3 class="st-tit">📈 Cumplimiento últimas 8 semanas</h3>';
+  for(let w=7; w>=0; w--){
+    const lun = lunesDe(new Date());
+    lun.setDate(lun.getDate()-7*w);
+    let tot=0, don=0;
+    for(let i=0;i<7;i++){
+      const d = new Date(lun); d.setDate(d.getDate()+i);
+      if(d > hoyD) break;
+      const fs = fmtFecha(d);
+      const l = tareasDelDia(fs, i);
+      tot += l.length;
+      don += l.filter(t=>estaLista(t,fs)).length;
+    }
+    const pct = tot ? Math.round(don/tot*100) : 0;
+    html += filaStat('Sem '+lun.getDate()+' '+MESES[lun.getMonth()], pct, tot? pct+'%' : '—');
+  }
+
+  // Racha de ejercicio
+  const fechasEj = new Set();
+  tareas.filter(t=>t.cat==='ejercicio').forEach(t=>{
+    (t.hechas||[]).forEach(f=>fechasEj.add(f));
+    if(t.repetir==='no' && t.lista && t.fecha) fechasEj.add(t.fecha);
+  });
+  const orden = [...fechasEj].sort();
+  let max=0, act=0, prev=null;
+  orden.forEach(f=>{
+    if(prev){
+      const dif = new Date(f+'T00:00:00') - new Date(prev+'T00:00:00');
+      act = (dif===86400000) ? act+1 : 1;
+    } else act = 1;
+    if(act>max) max = act;
+    prev = f;
+  });
+  html += '<h3 class="st-tit">🔥 Racha de ejercicio</h3>';
+  html += '<div class="st-dato">Actual: <b>'+calcRacha()+' días</b> &nbsp;·&nbsp; Récord: <b>'+max+' días</b> &nbsp;·&nbsp; Total días: <b>'+orden.length+'</b></div>';
+
+  // Por categoría últimos 28 días
+  html += '<h3 class="st-tit">🏷️ Por categoría (últimos 28 días)</h3>';
+  const cats = {
+    dispensario:['🌿 Dispensario',0,0], casa:['🏠 Casa',0,0],
+    personal:['⭐ Personal',0,0], ejercicio:['💪 Ejercicio',0,0]
+  };
+  for(let i=27;i>=0;i--){
+    const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
+    const fs = fmtFecha(d), dow = (d.getDay()+6)%7;
+    tareasDelDia(fs,dow).forEach(t=>{
+      if(cats[t.cat]){ cats[t.cat][1]++; if(estaLista(t,fs)) cats[t.cat][2]++; }
+    });
+  }
+  let hayCat = false;
+  Object.values(cats).forEach(c=>{
+    if(!c[1]) return;
+    hayCat = true;
+    const p = Math.round(c[2]/c[1]*100);
+    html += filaStat(c[0], p, c[2]+'/'+c[1]);
+  });
+  if(!hayCat) html += '<div class="hist-vacio">Aún no hay tareas en este período.</div>';
+
+  document.getElementById('contStats').innerHTML = html;
+  document.getElementById('modalStatsFondo').classList.add('abierto');
+}
+function cerrarStats(){ document.getElementById('modalStatsFondo').classList.remove('abierto'); }
+// ===== fin estadísticas =====
+
+// ===== OBJETIVOS =====
+const CLAVE_OBJ = 'miSemanaObjetivos';
+let objetivos = (()=>{ try{ return JSON.parse(localStorage.getItem(CLAVE_OBJ))||[]; }catch(e){ return []; } })();
+function guardarObj(){ localStorage.setItem(CLAVE_OBJ, JSON.stringify(objetivos)); marcaLocal(); nubeGuardar(); }
+
+function periodoKey(ambito){
+  const d = new Date();
+  if(ambito==='sem') return 'S'+fmtFecha(lunesDe(d));
+  if(ambito==='mes') return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  return String(d.getFullYear());
+}
+function avanceDe(o){ return (o.avances||{})[periodoKey(o.ambito)]||0; }
+
+function sumarObj(id, n){
+  const o = objetivos.find(x=>x.id===id); if(!o) return;
+  o.avances = o.avances||{};
+  const k = periodoKey(o.ambito);
+  o.avances[k] = Math.max(0, Math.min(o.meta, (o.avances[k]||0)+n));
+  guardarObj(); renderObjetivos();
+  if(o.avances[k]===o.meta && n>0) avisar('🎯 ¡Objetivo cumplido!');
+}
+
+const NOMBRE_AMBITO = {sem:'📆 Esta semana', mes:'🗓️ Este mes', 'año':'🏆 Este año'};
+
+// ===== RACHA de ejercicio =====
+function calcRacha(){
+  const ej = tareas.filter(t=>t.cat==='ejercicio');
+  if(!ej.length) return 0;
+  const hechoEl = f => ej.some(t=>{
+    if(t.repetir!=='no') return (t.hechas||[]).includes(f);
+    return t.fecha===f && t.lista;
+  });
+  let racha = 0;
+  const d = new Date(); d.setHours(0,0,0,0);
+  if(!hechoEl(fmtFecha(d))) d.setDate(d.getDate()-1); // hoy aún no cuenta en contra
+  while(hechoEl(fmtFecha(d))){ racha++; d.setDate(d.getDate()-1); }
+  return racha;
+}
+function pintarRacha(){
+  const b = document.getElementById('rachaBadge');
+  const r = calcRacha();
+  if(r>0){ b.style.display='inline-block'; b.textContent = '🔥 '+r+(r===1?' día':' días'); }
+  else b.style.display='none';
+}
+
+// ===== HISTORIAL =====
+function etiquetaPeriodo(ambito, k){
+  if(ambito==='sem'){
+    const d = new Date(k.slice(1)+'T00:00:00');
+    return 'Semana del '+d.getDate()+' '+MESES[d.getMonth()]+' '+d.getFullYear();
+  }
+  if(ambito==='mes'){
+    const p = k.split('-');
+    return MESES[parseInt(p[1],10)-1].toUpperCase()+' '+p[0];
+  }
+  return 'Año '+k;
+}
+function abrirHistorial(){
+  const cont = document.getElementById('contHistorial');
+  cont.innerHTML = '';
+  let hay = false;
+  ['sem','mes','año'].forEach(a=>{
+    const grupo = objetivos.filter(o=>o.ambito===a && o.avances && Object.keys(o.avances).length);
+    if(!grupo.length) return;
+    const g = document.createElement('div');
+    g.className = 'hist-grupo';
+    g.innerHTML = '<h3>'+NOMBRE_AMBITO[a].replace('Esta semana','Semanales').replace('Este mes','Mensuales').replace('Este año','Anuales')+'</h3>';
+    grupo.forEach(o=>{
+      const claves = Object.keys(o.avances).sort().reverse();
+      if(!claves.length) return;
+      hay = true;
+      const t = document.createElement('div');
+      t.className = 'hist-obj';
+      t.textContent = o.texto;
+      g.appendChild(t);
+      claves.forEach(k=>{
+        const av = o.avances[k];
+        const esActual = k===periodoKey(a);
+        const fila = document.createElement('div');
+        fila.className = 'hist-item';
+        fila.innerHTML = '<span>'+etiquetaPeriodo(a,k)+(esActual?' (actual)':'')+'</span>'+
+          '<span class="'+(av>=o.meta?'ok':'nook')+'">'+av+'/'+o.meta+(av>=o.meta?' ✔':'')+'</span>';
+        g.appendChild(fila);
+      });
+    });
+    cont.appendChild(g);
+  });
+  if(!hay) cont.innerHTML = '<div class="hist-vacio">Todavía no hay historial.<br>Cuando avances en tus objetivos, acá quedará el registro de cada semana, mes y año.</div>';
+  document.getElementById('modalHistFondo').classList.add('abierto');
+}
+function cerrarHistorial(){ document.getElementById('modalHistFondo').classList.remove('abierto'); }
+
+function renderObjetivos(){
+  pintarRacha();
+  const cont = document.getElementById('contObjetivos');
+  cont.innerHTML = '';
+  if(objetivos.length===0){
+    cont.innerHTML = '<div class="obj-vacio">Sin objetivos aún. Toca + para crear el primero.</div>';
+    return;
+  }
+  ['sem','mes','año'].forEach(a=>{
+    const grupo = objetivos.filter(o=>o.ambito===a);
+    if(!grupo.length) return;
+    const g = document.createElement('div');
+    g.className = 'obj-grupo';
+    g.innerHTML = '<h3>'+NOMBRE_AMBITO[a]+'</h3>';
+    grupo.forEach(o=>{
+      const av = avanceDe(o);
+      const pct = Math.round(av/o.meta*100);
+      const item = document.createElement('div');
+      item.className = 'obj-item'+(pct===100?' cumplido':'');
+      item.innerHTML = `
+        <span class="obj-texto">${escapar(o.texto)}${pct===100?' ✔':''}</span>
+        <div class="obj-bar"><div class="obj-fill${pct===100?' lleno':''}" style="width:${pct}%"></div></div>
+        <span class="obj-num">${av}/${o.meta}</span>
+        <div class="obj-btns">
+          <button onclick="sumarObj('${o.id}',-1)" title="Quitar 1">−</button>
+          <button onclick="sumarObj('${o.id}',1)" title="Sumar 1">+</button>
+          <button onclick="abrirEditarObj('${o.id}')" title="Editar">✏️</button>
+        </div>`;
+      g.appendChild(item);
+    });
+    cont.appendChild(g);
+  });
+}
+
+let editandoObjId = null;
+function abrirModalObj(){
+  editandoObjId = null;
+  document.getElementById('modalObjTitulo').textContent = 'Nuevo objetivo';
+  document.getElementById('inpObjTexto').value = '';
+  document.getElementById('inpObjAmbito').value = 'sem';
+  document.getElementById('inpObjMeta').value = '';
+  document.getElementById('btnBorrarObj').style.display = 'none';
+  document.getElementById('modalObjFondo').classList.add('abierto');
+  setTimeout(()=>document.getElementById('inpObjTexto').focus(),100);
+}
+function abrirEditarObj(id){
+  const o = objetivos.find(x=>x.id===id); if(!o) return;
+  editandoObjId = id;
+  document.getElementById('modalObjTitulo').textContent = 'Editar objetivo';
+  document.getElementById('inpObjTexto').value = o.texto;
+  document.getElementById('inpObjAmbito').value = o.ambito;
+  document.getElementById('inpObjMeta').value = o.meta;
+  document.getElementById('btnBorrarObj').style.display = 'block';
+  document.getElementById('modalObjFondo').classList.add('abierto');
+}
+function cerrarModalObj(){ document.getElementById('modalObjFondo').classList.remove('abierto'); }
+
+function guardarObjetivo(){
+  const texto = document.getElementById('inpObjTexto').value.trim();
+  if(!texto){ avisar('Escribe el objetivo'); return; }
+  const ambito = document.getElementById('inpObjAmbito').value;
+  let meta = parseInt(document.getElementById('inpObjMeta').value,10);
+  if(!meta || meta<1) meta = 1;
+  if(editandoObjId){
+    const o = objetivos.find(x=>x.id===editandoObjId);
+    o.texto = texto; o.ambito = ambito; o.meta = meta;
+  } else {
+    objetivos.push({
+      id: 'o'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+      texto, ambito, meta, avances:{}
+    });
+  }
+  guardarObj(); cerrarModalObj(); renderObjetivos();
+  avisar('Objetivo guardado ✔');
+}
+function borrarObjetivo(){
+  if(!editandoObjId) return;
+  if(!confirm('¿Eliminar este objetivo?')) return;
+  objetivos = objetivos.filter(o=>o.id!==editandoObjId);
+  guardarObj(); cerrarModalObj(); renderObjetivos();
+  avisar('Objetivo eliminado');
+}
+// ===== fin objetivos =====
+
+let _rsz;
+window.addEventListener('resize', ()=>{ clearTimeout(_rsz); _rsz = setTimeout(render, 200); });
+
+render();
+renderObjetivos();
+nubeCargar(false);
+// en celular, partir mirando el día de hoy
+if(window.innerWidth<=900){
+  setTimeout(()=>{
+    const d = document.querySelector('.dia.hoy');
+    if(d) d.scrollIntoView({block:'start', behavior:'smooth'});
+  }, 250);
+}
+</script>
+</body>
+</html>
