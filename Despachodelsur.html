@@ -864,7 +864,7 @@ function renderRows(){
         <div></div>
         <div class="prods-section"><div class="prods-section-title">Productos pedidos</div><div class="prods-grid">
           ${products.map(p=>`<div class="prod-cell"><label>${p.emoji||''}<br>${esc(p.name)}</label>
-            <input type="number" value="${row.qtys[p.id]||''}" placeholder="0" min="0" step="0.1" oninput="setQty('${row.id}','${p.id}',this.value)" onclick="event.stopPropagation()">
+            <input type="number" value="${row.qtys[p.id]||''}" placeholder="0" min="0" step="any" oninput="setQty('${row.id}','${p.id}',this.value)" onclick="event.stopPropagation()">
             <span class="sub">${fmt(p.price)}/u</span></div>`).join('')}
         </div></div>
         <div class="expand-foot">
