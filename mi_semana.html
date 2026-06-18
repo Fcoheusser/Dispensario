@@ -18,7 +18,8 @@
   --cielo:#2f7cf6;
   --rojo:#ef4444;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,'SF Pro',BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 body{background:var(--fondo);color:var(--tinta);min-height:100vh}
 
 header{
@@ -28,8 +29,19 @@ header{
   position:sticky;top:0;z-index:50;
 }
 .head-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-header h1{font-size:1.9rem;font-weight:800;letter-spacing:-.5px;color:var(--tinta)}
-header h1 span{color:var(--azul)}
+.titulo-zona{display:flex;flex-direction:column}
+.saludo{font-size:.82rem;font-weight:600;color:var(--gris);letter-spacing:.2px;margin-bottom:1px;opacity:0;animation:fadeDown .6s ease .1s forwards}
+header h1{font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:600;letter-spacing:-.5px;color:var(--tinta);line-height:1.05;opacity:0;animation:fadeDown .6s ease .2s forwards}
+header h1 span{color:var(--azul);font-style:italic}
+.frase-dia{
+  text-align:center;font-size:.8rem;color:var(--gris);font-style:italic;
+  margin-top:10px;padding:0 12px;opacity:0;animation:fadeIn .8s ease .5s forwards;
+}
+.frase-dia::before{content:'“'}
+.frase-dia::after{content:'”'}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes subir{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .nav-sem{display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center}
 .nav-sem button{
   background:var(--tarjeta);border:none;color:var(--tinta);
@@ -68,16 +80,32 @@ main{max-width:1300px;margin:0 auto;padding:14px}
   min-height:150px;
   display:flex;flex-direction:column;
   box-shadow:0 1px 4px rgba(0,0,0,.35);
+  animation:subir .4s ease backwards;
+  transition:transform .2s ease, box-shadow .2s ease;
 }
+.dia:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.dia-abrir:hover .dia-fecha{color:var(--azul)}
 .dia.hoy{
-  box-shadow:0 6px 24px rgba(61,139,255,.3);outline:2px solid var(--azul);
-  background:#2e3240;padding:18px 14px;
+  background:linear-gradient(160deg,#2f3545 0%,#272b38 100%);
+  padding:20px 16px;position:relative;border:none;
+  box-shadow:0 10px 32px rgba(61,139,255,.28), 0 0 0 2px var(--azul);
+  animation:subir .4s ease backwards, latido 3.5s ease-in-out 1s infinite;
 }
-.dia.hoy .dia-fecha{font-size:1.6rem}
+.dia.hoy::before{
+  content:'HOY';position:absolute;top:-9px;left:16px;
+  background:var(--azul);color:#fff;font-size:.62rem;font-weight:800;
+  letter-spacing:1.5px;padding:3px 12px;border-radius:999px;
+  box-shadow:0 3px 10px rgba(61,139,255,.5);
+}
+.dia.hoy:hover{transform:translateY(-3px)}
+.dia.hoy .dia-fecha{font-size:1.9rem;background:linear-gradient(120deg,#fff,#9ec5ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dia.hoy .dia-nombre{display:inline-block;color:#9ec5ff;background:none;padding:0;font-size:.78rem}
 .dia.hoy .turno{font-size:.82rem;padding:5px 14px}
-.dia.hoy .sug-turno{font-size:.8rem}
-.dia.hoy .tarea{font-size:.92rem;padding:11px 12px}
-.dia.hoy .btn-add{width:36px;height:36px;font-size:1.4rem}
+.dia.hoy .sug-turno{font-size:.82rem;color:#aab4c5}
+.dia.hoy .tarea{font-size:.92rem;padding:11px 12px;background:rgba(255,255,255,.05)}
+.dia.hoy .btn-add{width:38px;height:38px;font-size:1.5rem;background:var(--azul);color:#fff}
+.dia.hoy .prog-relleno{background:linear-gradient(90deg,var(--azul),#9ec5ff)}
+@keyframes latido{0%,100%{box-shadow:0 10px 32px rgba(61,139,255,.28), 0 0 0 2px var(--azul)}50%{box-shadow:0 10px 38px rgba(61,139,255,.45), 0 0 0 2px #5b9dff}}
 .dia-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .dia-nombre{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--gris)}
 .dia.hoy .dia-nombre{color:#101114;background:var(--tinta);padding:3px 10px;border-radius:8px;display:inline-block}
@@ -116,14 +144,20 @@ main{max-width:1300px;margin:0 auto;padding:14px}
 .tarea.cat-casa::before{background:var(--ambar)}
 .tarea.cat-personal::before{background:var(--cielo)}
 .tarea.cat-ejercicio::before{background:#a855f7}
+.tarea.cat-tomas::before{background:#38bdf8}
+.tarea.cat-enzo::before{background:#34d399}
 .prog{display:flex;align-items:center;gap:7px;margin:0 0 10px}
 .prog-barra{flex:1;height:7px;background:var(--gris-claro);border-radius:99px;overflow:hidden}
 .prog-relleno{height:100%;background:var(--azul);border-radius:99px;transition:width .3s}
 .prog-relleno.lleno{background:var(--verde)}
 .prog-num{font-size:.72rem;font-weight:800;color:var(--gris);min-width:32px;text-align:right}
+.tarea.prio{box-shadow:inset 0 0 0 1.5px rgba(246,162,36,.5)}
+.tarea.prio .t-texto::before{content:'⭐ ';font-size:.8rem}
 .tarea.lista{opacity:.5}
 .tarea.lista .t-texto{text-decoration:line-through}
 .tarea input[type=checkbox]{margin-top:2px;margin-left:6px;accent-color:var(--azul);cursor:pointer;width:16px;height:16px}
+.tarea{transition:opacity .25s ease, transform .15s ease}
+.tarea:active{transform:scale(.98)}
 .t-cuerpo{flex:1;min-width:0}
 .t-texto{word-wrap:break-word;font-weight:500}
 .t-meta{font-size:.72rem;color:var(--gris);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -136,6 +170,60 @@ main{max-width:1300px;margin:0 auto;padding:14px}
 }
 .t-botones button:hover{background:#454956;color:var(--tinta)}
 .vacio{color:#6b6f78;font-size:.78rem;text-align:center;margin-top:16px}
+
+/* Modo Enfoque */
+#vistaEnfoque{animation:fadeIn .5s ease}
+.enf-hero{
+  background:linear-gradient(160deg,#2f3545 0%,#23262f 100%);
+  border-radius:22px;padding:24px 20px;margin-bottom:14px;position:relative;
+  box-shadow:0 10px 32px rgba(61,139,255,.18), 0 0 0 1.5px rgba(61,139,255,.4);
+}
+.enf-fecha{font-family:'Fraunces',Georgia,serif;font-size:2.5rem;font-weight:600;line-height:1;
+  background:linear-gradient(120deg,#fff,#9ec5ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.enf-diasem{font-size:.9rem;color:#9ec5ff;font-weight:600;text-transform:capitalize;margin-bottom:14px}
+.enf-turno-linea{display:flex;align-items:center;gap:10px;margin-top:6px}
+.enf-turno{display:inline-block;padding:5px 16px;border-radius:999px;font-size:.82rem;font-weight:700;color:#fff}
+.enf-sug{font-size:.82rem;color:#aab4c5}
+.enf-prog{display:flex;align-items:center;gap:10px;margin-top:16px}
+.enf-prog .prog-barra{flex:1;height:9px;background:rgba(255,255,255,.12)}
+.enf-prog .prog-relleno{background:linear-gradient(90deg,var(--azul),#9ec5ff)}
+.enf-prog .prog-num{font-size:.85rem;color:#fff;font-weight:800}
+.enf-racha{background:rgba(246,162,36,.18);color:#f6a224;padding:3px 12px;border-radius:999px;font-size:.78rem;font-weight:800;margin-left:6px}
+.enf-bloque{background:var(--tarjeta);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.enf-bloque h3{font-family:'Fraunces',Georgia,serif;font-size:1.05rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.enf-bh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.enf-bh h3{margin-bottom:0}
+.enf-add{background:var(--azul);color:#fff;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.25rem;line-height:1;font-weight:700}
+.enf-add:hover{background:#2468d4}
+.enf-vacio{color:#6b6f78;font-size:.84rem;text-align:center;padding:8px 0}
+.enf-tarea{display:flex;align-items:center;gap:10px;background:var(--gris-claro);border-radius:12px;padding:11px 12px;margin-bottom:7px;font-size:.9rem}
+.enf-tarea input{accent-color:var(--azul);width:18px;height:18px;cursor:pointer;flex-shrink:0}
+.enf-tarea.lista{opacity:.5}
+.enf-tarea.lista .et-txt{text-decoration:line-through}
+.et-txt{flex:1;font-weight:500}
+.et-cat{font-size:.7rem;color:var(--gris);font-weight:700}
+.et-hora{font-size:.74rem;font-weight:700;color:var(--azul)}
+.enf-prio-sem{display:flex;align-items:center;gap:10px;background:var(--gris-claro);border-radius:12px;padding:10px 12px;margin-bottom:6px;font-size:.86rem}
+.enf-prio-dia{font-size:.68rem;font-weight:800;color:#fff;background:var(--azul);padding:2px 9px;border-radius:999px;white-space:nowrap}
+.enf-prio-txt{flex:1;font-weight:500}
+.enf-prio-sem.lista{opacity:.45}
+.enf-prio-sem.lista .enf-prio-txt{text-decoration:line-through}
+.btn-versemana{
+  width:100%;padding:14px;border-radius:999px;border:none;cursor:pointer;
+  background:var(--azul);color:#fff;font-size:.95rem;font-weight:700;margin-top:4px;
+  font-family:'Inter',sans-serif;
+}
+.btn-versemana:hover{background:#2468d4}
+
+/* Bandeja de entrada */
+.bandeja-cont{background:var(--azul);color:#fff;font-size:.7rem;font-weight:800;padding:1px 9px;border-radius:999px;margin-left:8px;font-family:'Inter',sans-serif}
+.idea-item{display:flex;align-items:center;gap:8px;background:var(--gris-claro);border-radius:12px;padding:9px 11px;margin-bottom:6px;font-size:.86rem}
+.idea-texto{flex:1;font-weight:500}
+.idea-btns{display:flex;gap:5px}
+.idea-btns button{background:#454956;border:none;color:var(--tinta);padding:5px 11px;border-radius:8px;cursor:pointer;font-size:.74rem;font-weight:700}
+.idea-btns .bt-agendar{background:var(--azul);color:#fff}
+.idea-btns button:hover{filter:brightness(1.15)}
+.bandeja-vacia{color:#6b6f78;font-size:.82rem;text-align:center;margin:8px 0}
 
 /* Vista mensual */
 .grilla.modo-mes{grid-template-columns:repeat(7,1fr);gap:6px}
@@ -175,7 +263,7 @@ main{max-width:1300px;margin:0 auto;padding:14px}
   background:var(--tarjeta);border-radius:22px;padding:22px;width:100%;max-width:380px;
   box-shadow:0 16px 50px rgba(0,0,0,.25);
 }
-.modal h2{font-size:1.15rem;font-weight:800;margin-bottom:14px;color:var(--tinta)}
+.modal h2{font-family:'Fraunces',Georgia,serif;font-size:1.3rem;font-weight:600;margin-bottom:14px;color:var(--tinta)}
 .modal label{display:block;font-size:.78rem;font-weight:700;margin:12px 0 5px;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
 .modal input[type=text],.modal input[type=time],.modal select{
   width:100%;padding:11px;border:none;border-radius:12px;
@@ -191,6 +279,8 @@ main{max-width:1300px;margin:0 auto;padding:14px}
 .chip.sel-casa{border-color:var(--ambar);background:rgba(245,158,11,.18);color:var(--tinta)}
 .chip.sel-personal{border-color:var(--cielo);background:rgba(61,139,255,.18);color:var(--tinta)}
 .chip.sel-ejercicio{border-color:#a855f7;background:rgba(168,85,247,.2);color:var(--tinta)}
+.chip.sel-tomas{border-color:#38bdf8;background:rgba(56,189,248,.18);color:var(--tinta)}
+.chip.sel-enzo{border-color:#34d399;background:rgba(52,211,153,.18);color:var(--tinta)}
 .check-rep{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:.85rem}
 .check-rep input{accent-color:var(--azul);width:17px;height:17px}
 .modal-botones{display:flex;gap:8px;margin-top:18px}
@@ -222,7 +312,7 @@ main{max-width:1300px;margin:0 auto;padding:14px}
   margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.35);
 }
 .obj-head{display:flex;justify-content:space-between;align-items:center}
-.obj-head h2{font-size:1.05rem;font-weight:800}
+.obj-head h2{font-family:'Fraunces',Georgia,serif;font-size:1.15rem;font-weight:600}
 .obj-grupo{margin-top:12px}
 .obj-grupo h3{font-size:.7rem;text-transform:uppercase;color:var(--gris);letter-spacing:.7px;margin-bottom:6px}
 .obj-item{display:flex;align-items:center;gap:8px;background:var(--gris-claro);border-radius:12px;padding:8px 10px;margin-bottom:6px;font-size:.85rem;flex-wrap:wrap}
@@ -270,7 +360,10 @@ main{max-width:1300px;margin:0 auto;padding:14px}
 
 <header>
   <div class="head-top">
-    <h1>Mi <span>Semana</span></h1>
+    <div class="titulo-zona">
+      <div class="saludo" id="saludo"></div>
+      <h1>Mi <span>Semana</span></h1>
+    </div>
     <div class="acciones">
       <button onclick="abrirStats()" title="Estadísticas">📊</button>
       <button id="estadoNube" onclick="nubeCargar(true)" title="Estado de sincronización — toca para actualizar">☁️ ...</button>
@@ -287,9 +380,12 @@ main{max-width:1300px;margin:0 auto;padding:14px}
     <button id="btnVista" onclick="toggleVista()">Mes</button>
   </div>
   <div id="resumen"></div>
+  <div class="frase-dia" id="fraseDia"></div>
 </header>
 
 <main>
+  <section id="vistaEnfoque" style="display:none"></section>
+  <div id="vistaNormal">
   <section class="panel-obj">
     <div class="obj-head">
       <h2>🎯 Objetivos<span class="racha" id="rachaBadge" style="display:none"></span></h2>
@@ -300,7 +396,15 @@ main{max-width:1300px;margin:0 auto;padding:14px}
     </div>
     <div id="contObjetivos"></div>
   </section>
+  <section class="panel-obj" id="panelBandeja">
+    <div class="obj-head">
+      <h2>📥 Bandeja de entrada<span class="bandeja-cont" id="bandejaCont"></span></h2>
+      <button class="btn-add" onclick="abrirModalIdea()" title="Anotar idea rápida">+</button>
+    </div>
+    <div id="contBandeja"></div>
+  </section>
   <div class="grilla" id="grilla"></div>
+  </div>
 </main>
 
 <!-- Modal nueva/editar tarea -->
@@ -317,6 +421,8 @@ main{max-width:1300px;margin:0 auto;padding:14px}
       <button type="button" class="chip" id="chipCasa" onclick="elegirCat('casa')">🏠 Casa</button>
       <button type="button" class="chip" id="chipPersonal" onclick="elegirCat('personal')">⭐ Personal</button>
       <button type="button" class="chip" id="chipEjercicio" onclick="elegirCat('ejercicio')">💪 Ejercicio</button>
+      <button type="button" class="chip" id="chipTomas" onclick="elegirCat('tomas')">🧒🏼 Tomás</button>
+      <button type="button" class="chip" id="chipEnzo" onclick="elegirCat('enzo')">👶🏼 Enzo</button>
     </div>
     <label>Repetición</label>
     <select id="inpRepetir">
@@ -324,6 +430,10 @@ main{max-width:1300px;margin:0 auto;padding:14px}
       <option value="dia">📅 Todos los días</option>
       <option value="sem">🔁 Cada semana (este día)</option>
     </select>
+    <div class="check-rep">
+      <input type="checkbox" id="inpPrioridad">
+      <label for="inpPrioridad" style="margin:0;font-weight:600;text-transform:none;letter-spacing:0;color:var(--tinta)">⭐ Marcar como prioridad del día</label>
+    </div>
     <div class="modal-botones">
       <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
       <button class="btn-guardar" onclick="guardarTarea()">Guardar</button>
@@ -369,6 +479,43 @@ main{max-width:1300px;margin:0 auto;padding:14px}
     <div class="modal-scroll" id="contHistorial"></div>
     <div class="modal-botones">
       <button class="btn-cancelar" onclick="cerrarHistorial()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nueva idea (bandeja) -->
+<div class="modal-fondo" id="modalIdeaFondo" onclick="if(event.target===this)cerrarModalIdea()">
+  <div class="modal">
+    <h2>📥 Anotar idea</h2>
+    <label>¿Qué se te ocurrió?</label>
+    <input type="text" id="inpIdea" placeholder="Ej: cotizar vitrina, llamar al contador..." maxlength="120">
+    <p style="font-size:.76rem;color:var(--gris);margin-top:8px;line-height:1.4">Guárdala sin fecha. Cuando sepas tu semana, la agendas al día que te acomode.</p>
+    <div class="modal-botones">
+      <button class="btn-cancelar" onclick="cerrarModalIdea()">Cancelar</button>
+      <button class="btn-guardar" onclick="guardarIdea()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal agendar idea -->
+<div class="modal-fondo" id="modalAgendarFondo" onclick="if(event.target===this)cerrarAgendar()">
+  <div class="modal">
+    <h2>📅 Agendar idea</h2>
+    <p id="agendarTexto" style="font-weight:600;margin-bottom:6px"></p>
+    <label>¿Para qué día?</label>
+    <input type="date" id="inpAgendarFecha" style="width:100%;padding:11px;border:none;border-radius:12px;font-size:.95rem;background:var(--gris-claro);color:var(--tinta)">
+    <label>Categoría</label>
+    <div class="fila-cats" id="agendarCats">
+      <button type="button" class="chip" onclick="agendarCat('dispensario',this)">🌿 Dispensario</button>
+      <button type="button" class="chip" onclick="agendarCat('casa',this)">🏠 Casa</button>
+      <button type="button" class="chip" onclick="agendarCat('personal',this)">⭐ Personal</button>
+      <button type="button" class="chip" onclick="agendarCat('ejercicio',this)">💪 Ejercicio</button>
+      <button type="button" class="chip" onclick="agendarCat('tomas',this)">🧒🏼 Tomás</button>
+      <button type="button" class="chip" onclick="agendarCat('enzo',this)">👶🏼 Enzo</button>
+    </div>
+    <div class="modal-botones">
+      <button class="btn-cancelar" onclick="cerrarAgendar()">Cancelar</button>
+      <button class="btn-guardar" onclick="confirmarAgendar()">Agendar</button>
     </div>
   </div>
 </div>
@@ -496,7 +643,10 @@ function tareasDelDia(fechaStr, dow){
     if(t.repetir==='dia') return !t.desde || t.desde<=fechaStr;
     if(t.repetir==='sem') return t.dow===dow && (!t.desde || t.desde<=fechaStr);
     return t.fecha===fechaStr;
-  }).sort((a,b)=> (a.hora||'99:99').localeCompare(b.hora||'99:99'));
+  }).sort((a,b)=>{
+    if(!!b.prio !== !!a.prio) return b.prio?1:-1;
+    return (a.hora||'99:99').localeCompare(b.hora||'99:99');
+  });
 }
 function estaLista(t, fechaStr){
   if(t.repetir!=='no') return (t.hechas||[]).includes(fechaStr);
@@ -571,13 +721,14 @@ function renderSemana(){
 
     const div = document.createElement('div');
     div.className = 'dia' + (fs===hoy ? ' hoy' : '');
+    div.style.animationDelay = (i*0.04)+'s';
     const turno = turnoDe(fs);
     div.innerHTML = `
       <div class="dia-head">
-        <div>
-          <div class="dia-nombre">${DIAS[i]}${fs===hoy?' · HOY':''}</div>
+        <div class="dia-abrir" onclick="abrirEnfoque('${fs}')" title="Ver este día en detalle" style="cursor:pointer">
+          <div class="dia-nombre">${DIAS[i]}</div>
           <div class="dia-fecha">${f.getDate()} ${MESES[f.getMonth()]}</div>
-          <button class="turno ${TURNO_CLASE[turno]}" onclick="abrirModalTurno('${fs}')" title="Toca para cambiar el turno">${turno}${turnosOverride[fs]?' ✎':''}</button>
+          <button class="turno ${TURNO_CLASE[turno]}" onclick="event.stopPropagation();abrirModalTurno('${fs}')" title="Toca para cambiar el turno">${turno}${turnosOverride[fs]?' ✎':''}</button>
         </div>
         <button class="btn-add" onclick="abrirModal('${fs}',${i})" title="Agregar tarea">+</button>
       </div>
@@ -594,7 +745,7 @@ function renderSemana(){
       const done = estaLista(t, fs);
       if(done) hechas++; else pend++;
       const el = document.createElement('div');
-      el.className = `tarea cat-${t.cat}` + (done?' lista':'');
+      el.className = `tarea cat-${t.cat}` + (done?' lista':'') + (t.prio?' prio':'');
       el.innerHTML = `
         <input type="checkbox" ${done?'checked':''} onchange="toggle('${t.id}','${fs}')">
         <div class="t-cuerpo">
@@ -676,6 +827,7 @@ function abrirModal(fechaStr, dow){
   document.getElementById('inpTexto').value = '';
   document.getElementById('inpHora').value = '';
   document.getElementById('inpRepetir').value = 'no';
+  document.getElementById('inpPrioridad').checked = false;
   document.getElementById('btnBorrar').style.display = 'none';
   elegirCat('dispensario');
   document.getElementById('modalFondo').classList.add('abierto');
@@ -690,6 +842,7 @@ function abrirEditar(id, fechaStr, dow){
   document.getElementById('inpTexto').value = t.texto;
   document.getElementById('inpHora').value = t.hora||'';
   document.getElementById('inpRepetir').value = t.repetir||'no';
+  document.getElementById('inpPrioridad').checked = !!t.prio;
   document.getElementById('btnBorrar').style.display = 'block';
   elegirCat(t.cat);
   document.getElementById('modalFondo').classList.add('abierto');
@@ -697,7 +850,7 @@ function abrirEditar(id, fechaStr, dow){
 
 function elegirCat(c){
   catSel = c;
-  ['dispensario','casa','personal','ejercicio'].forEach(x=>{
+  ['dispensario','casa','personal','ejercicio','tomas','enzo'].forEach(x=>{
     const chip = document.getElementById('chip'+x.charAt(0).toUpperCase()+x.slice(1));
     chip.className = 'chip' + (x===c ? ' sel-'+x : '');
   });
@@ -716,7 +869,7 @@ function guardarTarea(){
   if(editandoId){
     const t = tareas.find(x=>x.id===editandoId);
     const fueHecha = estaLista(t, fechaModal.fecha);
-    t.texto = texto; t.hora = hora; t.cat = catSel;
+    t.texto = texto; t.hora = hora; t.cat = catSel; t.prio = document.getElementById('inpPrioridad').checked;
     if(rep !== t.repetir){
       if(rep==='no'){
         t.fecha = fechaModal.fecha; t.lista = fueHecha;
@@ -732,13 +885,15 @@ function guardarTarea(){
   } else {
     const t = {
       id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
-      texto, hora, cat: catSel, repetir: rep
+      texto, hora, cat: catSel, repetir: rep,
+      prio: document.getElementById('inpPrioridad').checked
     };
     if(rep==='no'){ t.fecha = fechaModal.fecha; t.lista = false; }
     else { t.desde = fechaModal.fecha; t.hechas = []; if(rep==='sem') t.dow = fechaModal.dow; }
     tareas.push(t);
   }
   guardar(); cerrarModal(); render();
+  if(enEnfoque) renderEnfoque();
   avisar('Guardada ✔');
 }
 
@@ -747,11 +902,12 @@ function borrarTarea(){
   if(!confirm('¿Eliminar esta tarea?')) return;
   tareas = tareas.filter(t=>t.id!==editandoId);
   guardar(); cerrarModal(); render();
+  if(enEnfoque) renderEnfoque();
   avisar('Eliminada');
 }
 
 function exportar(){
-  const datos = {tareas, turnos: turnosOverride, objetivos};
+  const datos = {tareas, turnos: turnosOverride, objetivos, bandeja};
   const blob = new Blob([JSON.stringify(datos,null,2)],{type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -772,7 +928,8 @@ function importar(input){
         tareas = datos.tareas||[];
         turnosOverride = datos.turnos||{};
         objetivos = datos.objetivos||[];
-        guardarTurnos(); guardarObj(); renderObjetivos();
+        bandeja = datos.bandeja||[];
+        guardarTurnos(); guardarObj(); guardarBandeja(); renderObjetivos(); renderBandeja();
       }
       guardar(); render();
       avisar('Datos importados ✔');
@@ -798,6 +955,45 @@ document.getElementById('inpTexto').addEventListener('keydown', e=>{
 
 
 
+
+// ===== SALUDO + FRASE DEL DÍA =====
+function pintarSaludo(){
+  const hora = new Date().getHours();
+  let saludo;
+  if(hora<6) saludo='Buenas noches';
+  else if(hora<12) saludo='Buenos días';
+  else if(hora<20) saludo='Buenas tardes';
+  else saludo='Buenas noches';
+  const el = document.getElementById('saludo');
+  if(el) el.textContent = saludo + ', Fco';
+}
+
+const FRASES = [
+  'Un día a la vez, paso a paso.',
+  'Lo importante no es la prisa, sino la constancia.',
+  'Cada tarea hecha es terreno ganado.',
+  'Hoy es un buen día para avanzar.',
+  'La disciplina vence a la motivación.',
+  'Pequeños pasos, grandes cambios.',
+  'Ordena el día y el día te ordenará.',
+  'El descanso también es productividad.',
+  'Hazlo simple, pero hazlo.',
+  'Tu yo de mañana te lo agradecerá.',
+  'Lo que se mide, mejora.',
+  'Constancia hoy, libertad mañana.',
+  'No cuenta solo terminar, sino seguir.',
+  'Cuida tu energía, no solo tu tiempo.',
+  'Avanza aunque sea un poco.'
+];
+function pintarFrase(){
+  // frase fija por día (no cambia al refrescar)
+  const d = new Date();
+  const semilla = d.getFullYear()*1000 + (d.getMonth()*31 + d.getDate());
+  const el = document.getElementById('fraseDia');
+  if(el) el.textContent = FRASES[semilla % FRASES.length];
+}
+// ===== fin saludo/frase =====
+
 // ===== SINCRONIZACIÓN FIREBASE =====
 const FB_URL = 'https://mi-agenda-c50ad-default-rtdb.firebaseio.com/miSemana.json';
 let _fbTimer = null;
@@ -818,7 +1014,7 @@ function nubeGuardar(){
       const r = await fetch(FB_URL, {
         method:'PUT',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({tareas, turnos: turnosOverride, objetivos, actualizado: ts})
+        body: JSON.stringify({tareas, turnos: turnosOverride, objetivos, bandeja, actualizado: ts})
       });
       estadoNube(r.ok ? '☁️ ✔' : '☁️ ⚠');
     }catch(e){
@@ -841,11 +1037,14 @@ async function nubeCargar(manual){
       tareas.forEach(t=>{ if(t.repetir===true) t.repetir='sem'; if(!t.repetir) t.repetir='no'; });
       turnosOverride = remoto.turnos||{};
       objetivos = remoto.objetivos||[];
+      bandeja = remoto.bandeja||[];
       localStorage.setItem(CLAVE, JSON.stringify(tareas));
       localStorage.setItem(CLAVE_TURNOS, JSON.stringify(turnosOverride));
       localStorage.setItem(CLAVE_OBJ, JSON.stringify(objetivos));
+      localStorage.setItem(CLAVE_BANDEJA, JSON.stringify(bandeja));
       localStorage.setItem('miSemanaTs', String(remoto.actualizado));
-      render(); renderObjetivos();
+      render(); renderObjetivos(); renderBandeja();
+      if(enEnfoque) renderEnfoque();
       estadoNube('☁️ ✔');
       if(manual) avisar('Datos actualizados desde la nube ✔');
     } else if(localTs > 0 && (!remoto || !remoto.actualizado || remoto.actualizado < localTs)){
@@ -865,6 +1064,222 @@ document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='visible') nubeCargar(false);
 });
 // ===== fin firebase =====
+
+
+
+// ===== MODO ENFOQUE =====
+let enEnfoque = false;
+let fechaEnfoque = null;
+const DIAS_CORTO = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+function abrirEnfoque(fechaStr){
+  enEnfoque = true;
+  fechaEnfoque = fechaStr || hoyStr();
+  document.getElementById('vistaNormal').style.display = 'none';
+  document.getElementById('vistaEnfoque').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+  renderEnfoque();
+}
+function cerrarEnfoque(){
+  enEnfoque = false;
+  document.getElementById('vistaEnfoque').style.display = 'none';
+  document.getElementById('vistaNormal').style.display = 'block';
+  lunesActual = lunesDe(new Date());
+  vistaMes = false;
+  document.getElementById('btnVista').textContent = 'Mes';
+  render();
+}
+
+function renderEnfoque(){
+  const cont = document.getElementById('vistaEnfoque');
+  const hoy = new Date(fechaEnfoque+'T00:00:00');
+  const fs = fechaEnfoque;
+  const esHoy = (fs===hoyStr());
+  const dow = (hoy.getDay()+6)%7;
+  const turno = turnoDe(fs);
+
+  // tareas de hoy
+  const lista = tareasDelDia(fs, dow);
+  const hechas = lista.filter(t=>estaLista(t,fs)).length;
+  const pct = lista.length ? Math.round(hechas/lista.length*100) : 0;
+  const prioHoy = lista.filter(t=>t.prio);
+  const restoHoy = lista.filter(t=>!t.prio);
+
+  // prioridades de toda la semana (excepto hoy)
+  const lun = lunesDe(hoy);
+  let prioSemana = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(lun); d.setDate(d.getDate()+i);
+    const dfs = fmtFecha(d);
+    if(dfs===fs) continue;
+    tareasDelDia(dfs, i).filter(t=>t.prio).forEach(t=>{
+      prioSemana.push({t, fs:dfs, dia:DIAS_CORTO[i], esPasado:dfs<fs});
+    });
+  }
+
+  const hh = new Date().getHours();
+  const saludo = hh<6?'Buenas noches':hh<12?'Buenos días':hh<20?'Buenas tardes':'Buenas noches';
+  const encabezado = esHoy ? (saludo+', Fco · '+DIAS[dow]+(esHoy?' · HOY':'')) : DIAS[dow];
+  const racha = calcRacha();
+
+  let html = '';
+  // HERO
+  html += `<div class="enf-hero">
+    <div class="enf-diasem">${encabezado}</div>
+    <div class="enf-fecha">${hoy.getDate()} ${MESES[hoy.getMonth()]}</div>
+    <div class="enf-turno-linea">
+      <span class="enf-turno ${TURNO_CLASE[turno]}">${turno}</span>
+      <span class="enf-sug">${SUGERENCIAS[turno]}</span>
+    </div>
+    <div class="enf-prog">
+      <div class="prog-barra"><div class="prog-relleno${pct===100?' lleno':''}" style="width:${pct}%"></div></div>
+      <span class="prog-num">${pct}%</span>
+      ${esHoy&&racha>0?`<span class="enf-racha">🔥 ${racha}</span>`:''}
+    </div>
+  </div>`;
+
+  // PRIORIDADES DEL DÍA
+  html += `<div class="enf-bloque"><div class="enf-bh"><h3>⭐ Prioridades</h3>
+    <button class="enf-add" onclick="abrirModal('${fs}',${dow})" title="Agregar tarea a este día">+</button></div>`;
+  if(prioHoy.length===0){
+    html += `<div class="enf-vacio">Sin prioridades este día.</div>`;
+  } else {
+    prioHoy.forEach(t=>{ html += filaEnf(t, fs); });
+  }
+  html += `</div>`;
+
+  // RESTO DEL DÍA
+  html += `<div class="enf-bloque"><h3>📋 Pendientes del día</h3>`;
+  if(restoHoy.length===0){
+    html += `<div class="enf-vacio">Nada más pendiente.</div>`;
+  } else {
+    restoHoy.forEach(t=>{ html += filaEnf(t, fs); });
+  }
+  html += `</div>`;
+
+  // PRIORIDADES DE LA SEMANA (solo si estás viendo hoy)
+  if(esHoy){
+    html += `<div class="enf-bloque"><h3>🗓️ Prioridades de la semana</h3>`;
+    if(prioSemana.length===0){
+      html += `<div class="enf-vacio">Sin otras prioridades esta semana.</div>`;
+    } else {
+      prioSemana.sort((a,b)=>a.fs.localeCompare(b.fs));
+      prioSemana.forEach(p=>{
+        const done = estaLista(p.t, p.fs);
+        html += `<div class="enf-prio-sem${done?' lista':''}" onclick="abrirEnfoque('${p.fs}')" style="cursor:pointer">
+          <span class="enf-prio-dia">${p.dia}</span>
+          <span class="enf-prio-txt">${escapar(p.t.texto)}</span>
+          ${p.t.hora?`<span class="et-hora">${p.t.hora}</span>`:''}
+        </div>`;
+      });
+    }
+    html += `</div>`;
+  }
+
+  html += `<button class="btn-versemana" onclick="cerrarEnfoque()">← Volver a la semana</button>`;
+
+  cont.innerHTML = html;
+}
+
+function filaEnf(t, fs){
+  const done = estaLista(t, fs);
+  const emojiCat = {dispensario:'🌿',casa:'🏠',personal:'⭐',ejercicio:'💪',tomas:'🧒🏼',enzo:'👶🏼'}[t.cat]||'';
+  return `<div class="enf-tarea${done?' lista':''}">
+    <input type="checkbox" ${done?'checked':''} onchange="toggleEnf('${t.id}','${fs}')">
+    <span class="et-txt">${escapar(t.texto)}</span>
+    ${t.hora?`<span class="et-hora">${t.hora}</span>`:`<span class="et-cat">${emojiCat}</span>`}
+  </div>`;
+}
+function toggleEnf(id, fs){
+  toggle(id, fs);
+  renderEnfoque();
+}
+// ===== fin enfoque =====
+
+// ===== BANDEJA DE ENTRADA =====
+const CLAVE_BANDEJA = 'miSemanaBandeja';
+let bandeja = (()=>{ try{ return JSON.parse(localStorage.getItem(CLAVE_BANDEJA))||[]; }catch(e){ return []; } })();
+function guardarBandeja(){ localStorage.setItem(CLAVE_BANDEJA, JSON.stringify(bandeja)); marcaLocal(); nubeGuardar(); }
+
+function renderBandeja(){
+  const cont = document.getElementById('contBandeja');
+  const badge = document.getElementById('bandejaCont');
+  if(!cont) return;
+  badge.textContent = bandeja.length || '';
+  badge.style.display = bandeja.length ? 'inline-block' : 'none';
+  if(bandeja.length===0){
+    cont.innerHTML = '<div class="bandeja-vacia">Vacía. Toca + para anotar una idea suelta sin fecha.</div>';
+    return;
+  }
+  cont.innerHTML = '';
+  bandeja.forEach(idea=>{
+    const el = document.createElement('div');
+    el.className = 'idea-item';
+    el.innerHTML = `<span class="idea-texto">${escapar(idea.texto)}</span>
+      <div class="idea-btns">
+        <button class="bt-agendar" onclick="abrirAgendar('${idea.id}')">📅 Agendar</button>
+        <button onclick="borrarIdea('${idea.id}')">🗑</button>
+      </div>`;
+    cont.appendChild(el);
+  });
+}
+
+function abrirModalIdea(){
+  document.getElementById('inpIdea').value = '';
+  document.getElementById('modalIdeaFondo').classList.add('abierto');
+  setTimeout(()=>document.getElementById('inpIdea').focus(),100);
+}
+function cerrarModalIdea(){ document.getElementById('modalIdeaFondo').classList.remove('abierto'); }
+function guardarIdea(){
+  const texto = document.getElementById('inpIdea').value.trim();
+  if(!texto){ avisar('Escribe la idea'); return; }
+  bandeja.push({id:'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), texto});
+  guardarBandeja(); cerrarModalIdea(); renderBandeja();
+  avisar('Anotada en la bandeja ✔');
+}
+function borrarIdea(id){
+  bandeja = bandeja.filter(x=>x.id!==id);
+  guardarBandeja(); renderBandeja();
+}
+
+let ideaAgendando = null;
+let agendarCatSel = 'personal';
+function abrirAgendar(id){
+  ideaAgendando = bandeja.find(x=>x.id===id); if(!ideaAgendando) return;
+  document.getElementById('agendarTexto').textContent = ideaAgendando.texto;
+  document.getElementById('inpAgendarFecha').value = hoyStr();
+  agendarCat('personal', null);
+  document.getElementById('modalAgendarFondo').classList.add('abierto');
+}
+function cerrarAgendar(){ document.getElementById('modalAgendarFondo').classList.remove('abierto'); }
+function agendarCat(c, btn){
+  agendarCatSel = c;
+  document.querySelectorAll('#agendarCats .chip').forEach(ch=>ch.className='chip');
+  if(btn) btn.className = 'chip sel-'+c;
+  else {
+    const botones = document.querySelectorAll('#agendarCats .chip');
+    botones.forEach(b=>{ if(b.getAttribute('onclick').includes("'"+c+"'")) b.className='chip sel-'+c; });
+  }
+}
+function confirmarAgendar(){
+  if(!ideaAgendando) return;
+  const fecha = document.getElementById('inpAgendarFecha').value;
+  if(!fecha){ avisar('Elige un día'); return; }
+  tareas.push({
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    texto: ideaAgendando.texto, hora:'', cat: agendarCatSel,
+    repetir:'no', fecha, lista:false, prio:false
+  });
+  bandeja = bandeja.filter(x=>x.id!==ideaAgendando.id);
+  guardar(); guardarBandeja();
+  cerrarAgendar(); renderBandeja(); render();
+  // ir a la semana del día agendado
+  lunesActual = lunesDe(new Date(fecha+'T00:00:00'));
+  vistaMes = false; document.getElementById('btnVista').textContent='Mes';
+  render();
+  avisar('Agendada ✔');
+}
+// ===== fin bandeja =====
 
 // ===== ESTADÍSTICAS =====
 function filaStat(lbl, pct, txt){
@@ -918,7 +1333,8 @@ function abrirStats(){
   html += '<h3 class="st-tit">🏷️ Por categoría (últimos 28 días)</h3>';
   const cats = {
     dispensario:['🌿 Dispensario',0,0], casa:['🏠 Casa',0,0],
-    personal:['⭐ Personal',0,0], ejercicio:['💪 Ejercicio',0,0]
+    personal:['⭐ Personal',0,0], ejercicio:['💪 Ejercicio',0,0],
+    tomas:['🧒🏼 Tomás',0,0], enzo:['👶🏼 Enzo',0,0]
   };
   for(let i=27;i>=0;i--){
     const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
@@ -1121,8 +1537,11 @@ function borrarObjetivo(){
 let _rsz;
 window.addEventListener('resize', ()=>{ clearTimeout(_rsz); _rsz = setTimeout(render, 200); });
 
+pintarSaludo();
+pintarFrase();
 render();
 renderObjetivos();
+renderBandeja();
 nubeCargar(false);
 // en celular, partir mirando el día de hoy
 if(window.innerWidth<=900){
