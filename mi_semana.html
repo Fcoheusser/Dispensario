@@ -281,6 +281,23 @@ main{max-width:1300px;margin:0 auto;padding:14px}
 .chip.sel-ejercicio{border-color:#a855f7;background:rgba(168,85,247,.2);color:var(--tinta)}
 .chip.sel-tomas{border-color:#38bdf8;background:rgba(56,189,248,.18);color:var(--tinta)}
 .chip.sel-enzo{border-color:#34d399;background:rgba(52,211,153,.18);color:var(--tinta)}
+.rango-fechas{display:flex;align-items:center;gap:8px;margin-top:4px}
+.rango-fechas input{flex:1;padding:11px;border:none;border-radius:12px;font-size:.9rem;background:var(--gris-claro);color:var(--tinta)}
+.rutina-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.rut-chip{
+  padding:11px 6px;border-radius:10px;border:2px solid transparent;
+  background:var(--gris-claro);color:var(--gris);cursor:pointer;
+  font-size:.82rem;font-weight:600;text-align:center;
+}
+.rut-chip.on{border-color:#a855f7;background:rgba(168,85,247,.2);color:var(--tinta)}
+.rut-otro{border-style:dashed;border-color:var(--linea)}
+.dias-sem{display:flex;gap:5px;margin-top:4px}
+.dia-chip{
+  flex:1;height:38px;border-radius:10px;border:2px solid transparent;
+  background:var(--gris-claro);color:var(--gris);cursor:pointer;
+  font-size:.85rem;font-weight:800;
+}
+.dia-chip.on{border-color:var(--azul);background:rgba(61,139,255,.18);color:var(--tinta)}
 .check-rep{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:.85rem}
 .check-rep input{accent-color:var(--azul);width:17px;height:17px}
 .modal-botones{display:flex;gap:8px;margin-top:18px}
@@ -424,12 +441,44 @@ main{max-width:1300px;margin:0 auto;padding:14px}
       <button type="button" class="chip" id="chipTomas" onclick="elegirCat('tomas')">🧒🏼 Tomás</button>
       <button type="button" class="chip" id="chipEnzo" onclick="elegirCat('enzo')">👶🏼 Enzo</button>
     </div>
+    <div id="zonaRutina" style="display:none">
+      <label>¿Qué entrenas? (toca uno)</label>
+      <div class="rutina-grid" id="rutinaGrid">
+        <button type="button" class="rut-chip" onclick="elegirRutina('Abdomen',this)">🔥 Abdomen</button>
+        <button type="button" class="rut-chip" onclick="elegirRutina('Pecho + Tríceps',this)">💪 Pecho + Tríceps</button>
+        <button type="button" class="rut-chip" onclick="elegirRutina('Espalda + Bíceps',this)">🔙 Espalda + Bíceps</button>
+        <button type="button" class="rut-chip" onclick="elegirRutina('Pierna',this)">🦵 Pierna</button>
+        <button type="button" class="rut-chip" onclick="elegirRutina('Hombro',this)">🎯 Hombro</button>
+        <button type="button" class="rut-chip rut-otro" onclick="elegirRutinaOtro()">＋ Otro</button>
+      </div>
+    </div>
     <label>Repetición</label>
-    <select id="inpRepetir">
+    <select id="inpRepetir" onchange="toggleDiasSemana()">
       <option value="no">No se repite</option>
       <option value="dia">📅 Todos los días</option>
-      <option value="sem">🔁 Cada semana (este día)</option>
+      <option value="sem">🔁 Cada semana (días que elijas)</option>
+      <option value="rango">📆 Por unos días seguidos (con fin)</option>
     </select>
+    <div id="zonaRango" style="display:none">
+      <label>Desde / hasta</label>
+      <div class="rango-fechas">
+        <input type="date" id="inpRangoDesde">
+        <span style="color:var(--gris);font-weight:700">→</span>
+        <input type="date" id="inpRangoHasta">
+      </div>
+    </div>
+    <div id="zonaDiasSemana" style="display:none">
+      <label>¿Qué días se repite?</label>
+      <div class="dias-sem" id="diasSem">
+        <button type="button" class="dia-chip" data-dow="0" onclick="toggleDow(0)">L</button>
+        <button type="button" class="dia-chip" data-dow="1" onclick="toggleDow(1)">M</button>
+        <button type="button" class="dia-chip" data-dow="2" onclick="toggleDow(2)">M</button>
+        <button type="button" class="dia-chip" data-dow="3" onclick="toggleDow(3)">J</button>
+        <button type="button" class="dia-chip" data-dow="4" onclick="toggleDow(4)">V</button>
+        <button type="button" class="dia-chip" data-dow="5" onclick="toggleDow(5)">S</button>
+        <button type="button" class="dia-chip" data-dow="6" onclick="toggleDow(6)">D</button>
+      </div>
+    </div>
     <div class="check-rep">
       <input type="checkbox" id="inpPrioridad">
       <label for="inpPrioridad" style="margin:0;font-weight:600;text-transform:none;letter-spacing:0;color:var(--tinta)">⭐ Marcar como prioridad del día</label>
@@ -553,6 +602,34 @@ let lunesActual = lunesDe(new Date());
 let editandoId = null;
 let fechaModal = null;
 let catSel = 'dispensario';
+let dowsSel = [];  // días seleccionados para repetición semanal
+
+function toggleDiasSemana(){
+  const rep = document.getElementById('inpRepetir').value;
+  const zona = document.getElementById('zonaDiasSemana');
+  const zr = document.getElementById('zonaRango');
+  zona.style.display = (rep==='sem') ? 'block' : 'none';
+  zr.style.display = (rep==='rango') ? 'block' : 'none';
+  if(rep==='sem' && dowsSel.length===0 && fechaModal){
+    dowsSel = [fechaModal.dow];
+    pintarDows();
+  }
+  if(rep==='rango' && fechaModal && !document.getElementById('inpRangoDesde').value){
+    document.getElementById('inpRangoDesde').value = fechaModal.fecha;
+    document.getElementById('inpRangoHasta').value = fechaModal.fecha;
+  }
+}
+function toggleDow(d){
+  const i = dowsSel.indexOf(d);
+  if(i>=0) dowsSel.splice(i,1); else dowsSel.push(d);
+  pintarDows();
+}
+function pintarDows(){
+  document.querySelectorAll('#diasSem .dia-chip').forEach(b=>{
+    const d = parseInt(b.getAttribute('data-dow'));
+    b.className = 'dia-chip' + (dowsSel.includes(d) ? ' on' : '');
+  });
+}
 
 // ===== TURNOS: ciclo de 8 días =====
 // Ancla: 8 jun 2026 = día 0 del ciclo (Tarde)
@@ -641,7 +718,11 @@ function toggleVista(){
 function tareasDelDia(fechaStr, dow){
   return tareas.filter(t=>{
     if(t.repetir==='dia') return !t.desde || t.desde<=fechaStr;
-    if(t.repetir==='sem') return t.dow===dow && (!t.desde || t.desde<=fechaStr);
+    if(t.repetir==='sem'){
+      const dias = t.dows || (t.dow!=null ? [t.dow] : []);
+      return dias.includes(dow) && (!t.desde || t.desde<=fechaStr);
+    }
+    if(t.repetir==='rango') return fechaStr>=t.desde && fechaStr<=t.hasta;
     return t.fecha===fechaStr;
   }).sort((a,b)=>{
     if(!!b.prio !== !!a.prio) return b.prio?1:-1;
@@ -752,7 +833,7 @@ function renderSemana(){
           <div class="t-texto">${escapar(t.texto)}</div>
           <div class="t-meta">
             ${t.hora?`<span class="t-hora">⏰ ${t.hora}</span>`:''}
-            ${t.repetir==='sem'?'<span class="t-rep">🔁 semanal</span>':t.repetir==='dia'?'<span class="t-rep">📅 diaria</span>':''}
+            ${t.repetir==='sem'?`<span class="t-rep">🔁 ${nombreDows(t)}</span>`:t.repetir==='dia'?'<span class="t-rep">📅 diaria</span>':t.repetir==='rango'?'<span class="t-rep">📆 tramo</span>':''}
           </div>
         </div>
         <div class="t-botones">
@@ -789,6 +870,11 @@ function renderSemana(){
   if(typeof pintarRacha==='function' && document.getElementById('rachaBadge')) pintarRacha();
 }
 
+function nombreDows(t){
+  const ini = ['L','Ma','Mi','J','V','S','D'];
+  const dias = t.dows || (t.dow!=null ? [t.dow] : []);
+  return dias.slice().sort((a,b)=>a-b).map(d=>ini[d]).join('·');
+}
 function escapar(s){
   const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
 }
@@ -810,8 +896,14 @@ function mover(id, dir){
   if(t.repetir==='dia'){
     avisar('Esta tarea es diaria, sale todos los días'); return;
   }
-  if(t.repetir==='sem'){
-    t.dow = (t.dow + dir + 7) % 7;
+  if(t.repetir==='rango'){
+    const d1=new Date(t.desde+'T00:00:00'); d1.setDate(d1.getDate()+dir);
+    const d2=new Date(t.hasta+'T00:00:00'); d2.setDate(d2.getDate()+dir);
+    t.desde=fmtFecha(d1); t.hasta=fmtFecha(d2);
+  } else if(t.repetir==='sem'){
+    const dias = t.dows || (t.dow!=null ? [t.dow] : []);
+    t.dows = dias.map(d=>(d + dir + 7) % 7);
+    delete t.dow;
   } else {
     const d = new Date(t.fecha+'T00:00:00');
     d.setDate(d.getDate()+dir);
@@ -828,8 +920,15 @@ function abrirModal(fechaStr, dow){
   document.getElementById('inpHora').value = '';
   document.getElementById('inpRepetir').value = 'no';
   document.getElementById('inpPrioridad').checked = false;
+  dowsSel = [];
+  document.getElementById('zonaDiasSemana').style.display = 'none';
+  document.getElementById('zonaRango').style.display = 'none';
+  document.getElementById('inpRangoDesde').value = '';
+  document.getElementById('inpRangoHasta').value = '';
+  pintarDows();
   document.getElementById('btnBorrar').style.display = 'none';
   elegirCat('dispensario');
+  document.querySelectorAll('#rutinaGrid .rut-chip').forEach(b=>b.classList.remove('on'));
   document.getElementById('modalFondo').classList.add('abierto');
   setTimeout(()=>document.getElementById('inpTexto').focus(),100);
 }
@@ -843,19 +942,42 @@ function abrirEditar(id, fechaStr, dow){
   document.getElementById('inpHora').value = t.hora||'';
   document.getElementById('inpRepetir').value = t.repetir||'no';
   document.getElementById('inpPrioridad').checked = !!t.prio;
+  dowsSel = (t.repetir==='sem') ? (t.dows ? [...t.dows] : (t.dow!=null ? [t.dow] : [])) : [];
+  document.getElementById('zonaDiasSemana').style.display = (t.repetir==='sem') ? 'block' : 'none';
+  document.getElementById('zonaRango').style.display = (t.repetir==='rango') ? 'block' : 'none';
+  document.getElementById('inpRangoDesde').value = t.desde || '';
+  document.getElementById('inpRangoHasta').value = t.hasta || '';
+  pintarDows();
   document.getElementById('btnBorrar').style.display = 'block';
   elegirCat(t.cat);
+  document.querySelectorAll('#rutinaGrid .rut-chip').forEach(b=>{
+    b.classList.remove('on');
+    if(t.cat==='ejercicio' && t.texto && t.texto.includes(b.textContent.replace(/^[^ ]+ /,''))) b.classList.add('on');
+  });
   document.getElementById('modalFondo').classList.add('abierto');
 }
 
 function elegirCat(c){
   catSel = c;
+  const zr = document.getElementById('zonaRutina');
+  if(zr) zr.style.display = (c==='ejercicio') ? 'block' : 'none';
   ['dispensario','casa','personal','ejercicio','tomas','enzo'].forEach(x=>{
     const chip = document.getElementById('chip'+x.charAt(0).toUpperCase()+x.slice(1));
     chip.className = 'chip' + (x===c ? ' sel-'+x : '');
   });
 }
 
+function elegirRutina(nombre, btn){
+  document.getElementById('inpTexto').value = 'Ejercicio — ' + nombre;
+  document.querySelectorAll('#rutinaGrid .rut-chip').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+}
+function elegirRutinaOtro(){
+  document.querySelectorAll('#rutinaGrid .rut-chip').forEach(b=>b.classList.remove('on'));
+  const inp = document.getElementById('inpTexto');
+  inp.value = 'Ejercicio — ';
+  inp.focus();
+}
 function cerrarModal(){
   document.getElementById('modalFondo').classList.remove('abierto');
 }
@@ -866,21 +988,46 @@ function guardarTarea(){
   const hora = document.getElementById('inpHora').value;
   const rep = document.getElementById('inpRepetir').value; // 'no' | 'dia' | 'sem'
 
+  // Validar días seleccionados si es semanal
+  let dias = [];
+  if(rep==='sem'){
+    dias = [...dowsSel].sort((a,b)=>a-b);
+    if(dias.length===0){ avisar('Elige al menos un día'); return; }
+  }
+  // Validar rango de fechas
+  let rDesde, rHasta;
+  if(rep==='rango'){
+    rDesde = document.getElementById('inpRangoDesde').value;
+    rHasta = document.getElementById('inpRangoHasta').value;
+    if(!rDesde || !rHasta){ avisar('Elige fecha de inicio y fin'); return; }
+    if(rHasta < rDesde){ const tmp=rDesde; rDesde=rHasta; rHasta=tmp; }
+  }
+
   if(editandoId){
     const t = tareas.find(x=>x.id===editandoId);
     const fueHecha = estaLista(t, fechaModal.fecha);
     t.texto = texto; t.hora = hora; t.cat = catSel; t.prio = document.getElementById('inpPrioridad').checked;
-    if(rep !== t.repetir){
-      if(rep==='no'){
-        t.fecha = fechaModal.fecha; t.lista = fueHecha;
-        delete t.dow; delete t.hechas; delete t.desde;
-      } else {
-        t.desde = t.desde || fechaModal.fecha;
-        t.hechas = fueHecha ? [fechaModal.fecha] : [];
-        if(rep==='sem') t.dow = fechaModal.dow; else delete t.dow;
-        delete t.fecha; delete t.lista;
-      }
-      t.repetir = rep;
+
+    if(rep==='no'){
+      t.repetir = 'no';
+      t.fecha = fechaModal.fecha; t.lista = fueHecha;
+      delete t.dow; delete t.dows; delete t.hechas; delete t.desde; delete t.hasta;
+    } else if(rep==='dia'){
+      t.repetir = 'dia';
+      t.desde = t.desde || fechaModal.fecha;
+      if(!t.hechas) t.hechas = fueHecha ? [fechaModal.fecha] : [];
+      delete t.dow; delete t.dows; delete t.fecha; delete t.lista; delete t.hasta;
+    } else if(rep==='sem'){
+      t.repetir = 'sem';
+      t.desde = t.desde || fechaModal.fecha;
+      t.dows = dias;
+      if(!t.hechas) t.hechas = fueHecha ? [fechaModal.fecha] : [];
+      delete t.dow; delete t.fecha; delete t.lista; delete t.hasta;
+    } else { // rango
+      t.repetir = 'rango';
+      t.desde = rDesde; t.hasta = rHasta;
+      if(!t.hechas) t.hechas = fueHecha ? [fechaModal.fecha] : [];
+      delete t.dow; delete t.dows; delete t.fecha; delete t.lista;
     }
   } else {
     const t = {
@@ -889,7 +1036,9 @@ function guardarTarea(){
       prio: document.getElementById('inpPrioridad').checked
     };
     if(rep==='no'){ t.fecha = fechaModal.fecha; t.lista = false; }
-    else { t.desde = fechaModal.fecha; t.hechas = []; if(rep==='sem') t.dow = fechaModal.dow; }
+    else if(rep==='dia'){ t.desde = fechaModal.fecha; t.hechas = []; }
+    else if(rep==='sem'){ t.desde = fechaModal.fecha; t.hechas = []; t.dows = dias; }
+    else { t.desde = rDesde; t.hasta = rHasta; t.hechas = []; }
     tareas.push(t);
   }
   guardar(); cerrarModal(); render();
