@@ -4,6 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dispensario del Sur</title>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyB0Q1XEQKatOfGSfhJeB28Ym-8pFdo5sTg",
+  authDomain: "reservaclubdelsur.firebaseapp.com",
+  databaseURL: "https://reservaclubdelsur-default-rtdb.firebaseio.com",
+  projectId: "reservaclubdelsur",
+  storageBucket: "reservaclubdelsur.firebasestorage.app",
+  messagingSenderId: "906547471650",
+  appId: "1:906547471650:web:6303da7e6106d78d75f17b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const DB_PATH = 'dispensario';
+
+// Guardar en Firebase + localStorage
+function fbSet(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }catch{}
+  db.ref(DB_PATH+'/'+key).set(value).catch(e=>console.warn('FB write error:',e));
+}
+// Leer desde localStorage (Firebase carga al inicio)
+function fbGet(key, def){
+  try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch{ return def; }
+}
+// Indicador de conexión
+db.ref('.info/connected').on('value', snap=>{
+  const el = document.getElementById('fbStatus');
+  if(el) el.style.background = snap.val() ? '#25d366' : '#e74c3c';
+});
+// Sincronizar desde Firebase al abrir
+function syncFromFirebase(callback){
+  db.ref(DB_PATH).once('value').then(snap=>{
+    const data = snap.val();
+    if(data){
+      Object.entries(data).forEach(([k,v])=>{
+        try{ localStorage.setItem(k, typeof v==='string'?v:JSON.stringify(v)); }catch{}
+      });
+    }
+    callback();
+  }).catch(()=>callback());
+}
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
 :root{
@@ -186,6 +230,7 @@ td.right{text-align:right;font-weight:600}
     <div class="topbar">
       <div class="topbar-title" id="topbarTitle">Pedidos de la semana</div>
       <div class="topbar-actions">
+        <span id="fbStatus" title="Firebase" style="width:10px;height:10px;border-radius:50%;background:#e74c3c;display:inline-block;flex-shrink:0" title="Conexión nube"></span>
         <button class="btn" id="btnCSV">↓ CSV</button>
         <button class="btn" id="btnGuardarArchivo" style="background:#1e3a5f;color:#fff;border-color:#1e3a5f;font-weight:700">💾 Guardar</button>
         <button class="btn btn-primary" id="topbarAddBtn">+ Agregar cliente</button>
@@ -649,6 +694,20 @@ function sortWeeks(){weeks.sort((a,b)=>labelToDate(b.label)-labelToDate(a.label)
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 
+function saveAll(){
+  const data={
+    dds_prods:products,dds_weeks:weeks,dds_cur:curId,dds_desp:despPrice,
+    dds_clientes:clientesDB,dds_rep:repartidorTel,dds_periodos:periodos,
+    dds_periodo_actual:periodoActual,dds_stock:stockDB,dds_socios:sociosDB
+  };
+  Object.entries(data).forEach(([k,v])=>lsSet(k,v));
+  // Guardar en Firebase con debounce 1.5s
+  clearTimeout(window._fbSaveTimer);
+  window._fbSaveTimer=setTimeout(()=>{
+    db.ref(DB_PATH).update(data).catch(e=>console.warn('FB save:',e));
+  },1500);
+}
+
 
 let products=lsGet('dds_prods',[]);
 const ALL_PRODUCTS=[
@@ -732,7 +791,6 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').repla
 function rowTotal(r){let s=r.hasDesp?despPrice:0;products.forEach(p=>s+=(r.qtys[p.id]||0)*p.price);return s}
 function rowSinDesp(r){let s=0;products.forEach(p=>s+=(r.qtys[p.id]||0)*p.price);return s}
 function normalizeNombre(n){return(n||'').toLowerCase().trim().replace(/\s+/g,' ')}
-function saveAll(){lsSet('dds_prods',products);lsSet('dds_weeks',weeks);lsSet('dds_cur',curId);lsSet('dds_desp',despPrice);lsSet('dds_clientes',clientesDB);lsSet('dds_rep',repartidorTel);lsSet('dds_periodos',periodos);lsSet('dds_periodo_actual',periodoActual);lsSet('dds_stock',stockDB);lsSet('dds_socios',sociosDB);}
 function toast(msg,dur=2400){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 
 // ── MODAL ─────────────────────────────────────────────────────────
@@ -3051,6 +3109,8 @@ function exportCSV(){
 
 // ── EVENT LISTENERS ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
+  // Sincronizar desde Firebase primero, luego iniciar la app
+  syncFromFirebase(()=>{
   // Nav
   document.getElementById('nav-pedidos').addEventListener('click',()=>showTab('pedidos'));
   document.getElementById('nav-preparar').addEventListener('click',()=>showTab('preparar'));
@@ -3177,7 +3237,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
   // Init
   renderWeekSel();renderRows();
-});
+// fin init
 
 // ── PARSEAR ───────────────────────────────────────────────────────
 function parsearMensaje(){
@@ -3237,8 +3297,11 @@ document.getElementById('recetasFiltro').addEventListener('change',renderRecetas
 document.getElementById('btnRecetasLimpiar').addEventListener('click',()=>showModal('Limpiar recetas','¿Eliminar todas las recetas importadas?',()=>{recetasDB=[];lsSet('dds_recetas',[]);updateRecetasBadge();renderRecetas();toast('✅ Recetas eliminadas');},'Limpiar'));
 // Badge al iniciar
 updateRecetasBadge();
+updateStockBadge();
+updateSociosBadge();
 // Mostrar modal si no hay datos
 setTimeout(checkRestaurar, 100);
-</script>
+}); // fin syncFromFirebase
+}); // fin DOMContentLoaded</script>
 </body>
 </html>
