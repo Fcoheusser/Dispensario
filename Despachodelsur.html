@@ -331,6 +331,9 @@ td.right{text-align:right;font-weight:600}
               <button class="btn tpl-tab on" data-tpl="confirmacion">✅ Confirmación</button>
               <button class="btn tpl-tab" data-tpl="cobro">💰 Cobro pendiente</button>
               <button class="btn tpl-tab" data-tpl="llegada">🚚 Aviso llegada</button>
+              <button class="btn tpl-tab" data-tpl="ingreso">🤝 Ingreso al club</button>
+              <button class="btn tpl-tab" data-tpl="cuenta">🏦 Cuenta corriente</button>
+              <button class="btn tpl-tab" data-tpl="renovacion">📄 Renovación receta</button>
             </div>
             <div style="padding:16px 18px">
               <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.8">
@@ -382,6 +385,9 @@ td.right{text-align:right;font-weight:600}
             <button class="btn wa-ptab on" data-tpl="confirmacion">✅ Confirmación</button>
             <button class="btn wa-ptab" data-tpl="cobro">💰 Cobro</button>
             <button class="btn wa-ptab" data-tpl="llegada">🚚 Llegada</button>
+            <button class="btn wa-ptab" data-tpl="ingreso">🤝 Ingreso</button>
+            <button class="btn wa-ptab" data-tpl="cuenta">🏦 Cuenta</button>
+            <button class="btn wa-ptab" data-tpl="renovacion">📄 Renovación</button>
           </div>
           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius);padding:12px 14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:280px;overflow-y:auto;font-family:inherit;color:#1a3a1a" id="waPreviewText"></div>
           <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap">
@@ -2180,9 +2186,15 @@ function importarRecetasExcel(file) {
 const TPL_DEFAULT={
   confirmacion:'🌿 *Dispensario del Sur*\nHola {nombre}, tu pedido está confirmado:\n\n{productos}\n{delivery}\n💰 *Total: {total}*\n{direccion}{obs}',
   cobro:'🌿 *Dispensario del Sur*\nHola {nombre} 👋\nTe recordamos que tienes un pago pendiente de *{total}*.\n¡Gracias por confiar en nosotros! 🙏',
-  llegada:'🌿 *Dispensario del Sur*\nHola {nombre}, tu pedido está en camino 🚚\nLlegada estimada: pronto.\n📍 {direccion}\n¡Cualquier duda escríbenos!'
+  llegada:'🌿 *Dispensario del Sur*\nHola {nombre}, tu pedido está en camino 🚚\nLlegada estimada: pronto.\n📍 {direccion}\n¡Cualquier duda escríbenos!',
+  ingreso:'🌿 *Ingreso Club del Sur*\n\nNecesitamos que nos envíes un mail a:\n📧 *contacto.clubdelsur2024@gmail.com*\npara realizar tu carpeta de entrada.\n\nPor favor envía la siguiente información y documentación:\n\n📋 *Datos personales:*\n• RUT\n• Fecha de nacimiento\n• Estado civil\n• Profesión u oficio\n• Domicilio (detallando comuna y ciudad)\n• Correo electrónico\n• Teléfono\n\n📄 *Documentos:*\n• Foto cédula de identidad (ambos lados)\n• Receta vigente\n• Certificado de antecedentes vigente\n\nEn el mail deben ir *todos estos datos* por favor.\n¡Me avisas cuando lo hayas enviado! 🙌',
+  cuenta:'🌿 *Datos de pago Club del Sur*\n\n🏦 *Club Del Sur*\nRUT: 65.141.892-5\nBanco Santander\nCuenta corriente: 95457304\nCorreo: contacto.clubdelsur2024@gmail.com\n\nUna vez realizada la transferencia, envíanos el comprobante al correo o por este medio. 🙏',
+  renovacion:'🌿 *Renovación de Receta Médica*\n\nPara agendar hora con el doc necesito los siguientes datos personales 👈🏻\n\n✏️ Nombre completo del paciente:\n✏️ Correo electrónico:\n✏️ Teléfono:\n✏️ Dirección:\n✏️ Comuna:\n✏️ Ciudad:\n✏️ RUT:\n✏️ Fecha de nacimiento:\n\nLa consulta médica tiene un valor de *$35.000 pesos*; tienes que depositar a la siguiente cuenta:\n\n🏦 *Cuenta Corriente Banco ITAU*\nCentro Médico LAR SPA\nRUT: 77.025.828-6\nN° de cuenta: 215468637\ncomunicaciones@lar.cl\n\n📱 Es por videollamada. Tu receta tendrá vigencia por *1 año*.\n\n🎁 El primer pedido después de tu renovación va con regalo de *3.5g* 🌿'
 };
 let plantillas=lsGet('dds_plantillas',null)||{...TPL_DEFAULT};
+// Agregar plantillas nuevas que no existan aún
+Object.entries(TPL_DEFAULT).forEach(([k,v])=>{ if(!plantillas[k]) plantillas[k]=v; });
+lsSet('dds_plantillas',plantillas);
 let tplActiva='confirmacion';
 let waPreviewRow=null;
 
