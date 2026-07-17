@@ -2589,6 +2589,28 @@ function renderDuplicados(){
     ${items}
   </div>`;
 }
+function abrirPlantillasCliente(cid){
+  const c = clientesDB.find(x=>x.id===cid); if(!c) return;
+  const tel = (c.telefono||'').replace(/\D/g,''); if(!tel) return;
+  // Reusar el modal de preview WA con datos del cliente
+  waPreviewRow = {
+    nombre: c.nombre||'',
+    telefono: c.telefono||'',
+    comuna: c.comuna||'',
+    direccion: c.direccion||'',
+    qtys: {}, hasDesp: false, pagado: false, obs: ''
+  };
+  // Setear tabs
+  document.querySelectorAll('.wa-ptab').forEach(b=>{
+    const isFirst = b.dataset.tpl==='confirmacion';
+    b.classList.toggle('on', isFirst);
+    b.style.background = isFirst?'var(--primary)':'';
+    b.style.color = isFirst?'#fff':'';
+    b.style.borderColor = isFirst?'var(--primary)':'';
+  });
+  renderWaPreview('confirmacion');
+  document.getElementById('waPreviewBg').classList.add('on');
+}
 function renderClientes(){
   renderDuplicados();
   const q=(document.getElementById('clienteSearch')||{value:''}).value.toLowerCase();
@@ -2641,7 +2663,8 @@ function renderClientes(){
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <input type="tel" value="${esc(c.telefono||'')}" placeholder="Teléfono" style="width:118px;border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-family:inherit;font-size:12px;outline:none" oninput="updateClienteField('${c.id}','telefono',this.value)">
         <input type="text" value="${esc(c.comuna||'')}" placeholder="Comuna" style="width:100px;border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-family:inherit;font-size:12px;outline:none" oninput="updateClienteField('${c.id}','comuna',this.value)">
-        ${tel?`<a class="btn btn-wa" style="padding:5px 9px;font-size:13px" href="https://wa.me/56${tel}" target="_blank">📱</a>`:'<span style="font-size:11px;color:var(--hint)">Sin tel.</span>'}
+        <input type="text" value="${esc(c.direccion||'')}" placeholder="Dirección" style="width:160px;border:1px solid var(--border);border-radius:var(--radius);padding:5px 8px;font-family:inherit;font-size:12px;outline:none" oninput="updateClienteField('${c.id}','direccion',this.value)">
+        ${tel?`<button class="btn btn-wa" style="padding:5px 9px;font-size:13px" onclick="abrirPlantillasCliente('${c.id}')">📱</button>`:'<span style="font-size:11px;color:var(--hint)">Sin tel.</span>'}
         <button class="btn btn-danger" style="padding:5px 8px" onclick="deleteCliente('${c.id}')">✕</button>
       </div>
     </div>`;
