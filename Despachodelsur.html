@@ -17,26 +17,23 @@ const firebaseConfig = {
   messagingSenderId: "906547471650",
   appId: "1:906547471650:web:6303da7e6106d78d75f17b"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+var db = null;
 const DB_PATH = 'dispensario';
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+  // Indicador de conexión
+  db.ref('.info/connected').on('value', snap=>{
+    const el = document.getElementById('fbStatus');
+    if(el) el.style.background = snap.val() ? '#25d366' : '#e74c3c';
+  });
+} catch(e) {
+  console.warn('Firebase no disponible — la app funciona solo con almacenamiento local:', e);
+}
 
-// Guardar en Firebase + localStorage
-function fbSet(key, value){
-  try{ localStorage.setItem(key, JSON.stringify(value)); }catch{}
-  db.ref(DB_PATH+'/'+key).set(value).catch(e=>console.warn('FB write error:',e));
-}
-// Leer desde localStorage (Firebase carga al inicio)
-function fbGet(key, def){
-  try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch{ return def; }
-}
-// Indicador de conexión
-db.ref('.info/connected').on('value', snap=>{
-  const el = document.getElementById('fbStatus');
-  if(el) el.style.background = snap.val() ? '#25d366' : '#e74c3c';
-});
-// Sincronizar desde Firebase al abrir
+// Sincronizar desde Firebase al abrir (si está disponible)
 function syncFromFirebase(callback){
+  if(!db){ callback(); return; }
   db.ref(DB_PATH).once('value').then(snap=>{
     const data = snap.val();
     if(data){
@@ -201,6 +198,7 @@ td.right{text-align:right;font-weight:600}
       <div class="nav-item" id="nav-periodos"><span>🗂️</span>Períodos</div>
       <div class="nav-section">Datos</div>
       <div class="nav-item" id="nav-socios"><span>🤝</span>Nuevos Socios <span id="sociosBadge" style="display:none;background:#8e44ad;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto"></span></div>
+      <div class="nav-item" id="nav-historial-cliente"><span>👤</span>Historial cliente</div>
       <div class="nav-item" id="nav-clientes"><span>👥</span>Clientes</div>
       <div class="nav-item" id="nav-recetas"><span>🩺</span>Recetas <span id="recetasBadge" style="display:none;background:#e74c3c;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto"></span></div>
       <div class="nav-item" id="nav-stock"><span>📦</span>Stock <span id="stockBadge" style="display:none;background:#e67e22;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto"></span></div>
@@ -468,6 +466,22 @@ td.right{text-align:right;font-weight:600}
         </div>
       </div>
 
+      <!-- HISTORIAL CLIENTE -->
+      <div id="t-historial-cliente" class="view">
+        <div style="max-width:860px">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-header-title">👤 Historial por cliente</span>
+            </div>
+            <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
+              <input type="text" id="hcSearch" placeholder="🔍 Buscar cliente..." style="width:100%;border:1px solid var(--border2);border-radius:var(--radius);padding:9px 14px;font-family:inherit;font-size:14px;outline:none" oninput="renderHistorialCliente()">
+            </div>
+            <div id="hcSugerencias"></div>
+            <div id="hcContent"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- CLIENTES -->
       <div id="t-clientes" class="view">
         <div class="panel" style="max-width:720px">
@@ -707,11 +721,13 @@ function saveAll(){
     dds_periodo_actual:periodoActual,dds_stock:stockDB,dds_socios:sociosDB
   };
   Object.entries(data).forEach(([k,v])=>lsSet(k,v));
-  // Guardar en Firebase con debounce 1.5s
-  clearTimeout(window._fbSaveTimer);
-  window._fbSaveTimer=setTimeout(()=>{
-    db.ref(DB_PATH).update(data).catch(e=>console.warn('FB save:',e));
-  },1500);
+  // Guardar en Firebase con debounce 1.5s (si está disponible)
+  if(db){
+    clearTimeout(window._fbSaveTimer);
+    window._fbSaveTimer=setTimeout(()=>{
+      db.ref(DB_PATH).update(data).catch(e=>console.warn('FB save:',e));
+    },1500);
+  }
 }
 
 
@@ -812,7 +828,7 @@ function showModal(title,msg,onConfirm,confirmLabel='Confirmar',infoHtml=''){
 function closeModal(){document.getElementById('modalBg').classList.remove('on');}
 
 // ── TABS ──────────────────────────────────────────────────────────
-const TAB_TITLES={pedidos:'Pedidos de la semana',preparar:'Preparar pedidos',parsear:'Parsear mensaje WhatsApp',plantillas:'Plantillas de WhatsApp','difusion-lista':'Lista de difusión',periodos:'Períodos',historial:'Historial de semanas',socios:'Nuevos Socios',clientes:'Base de clientes',recetas:'Control de recetas',stock:'Control de stock',stats:'Estadísticas',importar:'Importar desde Excel',config:'Configuración',backup:'Backup de datos'};
+const TAB_TITLES={pedidos:'Pedidos de la semana',preparar:'Preparar pedidos',parsear:'Parsear mensaje WhatsApp',plantillas:'Plantillas de WhatsApp','difusion-lista':'Lista de difusión',periodos:'Períodos',historial:'Historial de semanas','historial-cliente':'Historial por cliente',socios:'Nuevos Socios',clientes:'Base de clientes',recetas:'Control de recetas',stock:'Control de stock',stats:'Estadísticas',importar:'Importar desde Excel',config:'Configuración',backup:'Backup de datos'};
 function showTab(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
@@ -826,6 +842,7 @@ function showTab(name){
   if(name==='periodos')renderPeriodos();
   if(name==='difusion-lista')renderDifusionLista();
   if(name==='preparar')renderPreparar();
+  if(name==='historial-cliente'){const el=document.getElementById('hcSearch');if(el)el.value='';renderHistorialCliente();}
   if(name==='socios')renderSocios();
   if(name==='stock')renderStock();
   if(name==='recetas')renderRecetas();
@@ -1168,6 +1185,10 @@ function exportarResumen(){
   document.getElementById('modalConfirmBtn').style.display='none';
 }
 // ── PREPARAR PEDIDOS ──────────────────────────────────────────────
+let despachoIndex = 0;
+let despachados = new Set();
+let modoDespacho = false;
+
 function renderPreparar(){
   const container = document.getElementById('prepararContent');
   if(!container) return;
@@ -1176,33 +1197,29 @@ function renderPreparar(){
     container.innerHTML='<div class="empty" style="padding:2rem">Sin pedidos esta semana</div>';
     return;
   }
+  if(modoDespacho) renderModoDespacho(container, wk);
+  else renderModoResumen(container, wk);
+}
 
-  // Solo productos que alguien pidió esta semana
+function renderModoResumen(container, wk){
   const prodsActivos = products.filter(p=>wk.rows.some(r=>(r.qtys[p.id]||0)>0));
-
-  const header = `<tr>
-    <th style="padding:10px 14px;background:#1e3a5f;color:#fff;font-size:12px;font-weight:600;text-align:left;border-right:2px solid rgba(255,255,255,.2);min-width:140px;position:sticky;left:0;z-index:2">Cliente</th>
-    ${prodsActivos.map(p=>`<th style="padding:10px 12px;background:#1e3a5f;color:#fff;font-size:11px;font-weight:600;text-align:center;border-right:1px solid rgba(255,255,255,.1);white-space:nowrap">${p.emoji||'🌿'} ${esc(p.name)}</th>`).join('')}
-  </tr>`;
+  const header = '<tr><th style="padding:10px 14px;background:#1e3a5f;color:#fff;font-size:12px;font-weight:600;text-align:left;border-right:2px solid rgba(255,255,255,.2);min-width:140px;position:sticky;left:0;z-index:2">Cliente</th>'
+    +prodsActivos.map(p=>'<th style="padding:10px 12px;background:#1e3a5f;color:#fff;font-size:11px;font-weight:600;text-align:center;border-right:1px solid rgba(255,255,255,.1);white-space:nowrap">'+p.emoji+' '+esc(p.name)+'</th>').join('')+'</tr>';
 
   const filas = wk.rows.map((r,i)=>{
     const bg = i%2===0?'#fff':'#f8fafc';
     const celdas = prodsActivos.map(p=>{
       const v = r.qtys[p.id]||0;
       return v>0
-        ? `<td style="padding:9px 12px;text-align:center;border-right:1px solid #e8ecf0;border-bottom:1px solid #e8ecf0;font-weight:700;font-size:15px;color:#1e3a5f">${v}<span style="font-size:10px;font-weight:400;color:#9ca3af"> g</span></td>`
-        : `<td style="padding:9px 12px;text-align:center;border-right:1px solid #e8ecf0;border-bottom:1px solid #e8ecf0;color:#d1d5db;font-size:12px">—</td>`;
+        ? '<td style="padding:9px 12px;text-align:center;border-right:1px solid #e8ecf0;border-bottom:1px solid #e8ecf0;font-weight:700;font-size:15px;color:#1e3a5f">'+v+'<span style="font-size:10px;font-weight:400;color:#9ca3af"> g</span></td>'
+        : '<td style="padding:9px 12px;text-align:center;border-right:1px solid #e8ecf0;border-bottom:1px solid #e8ecf0;color:#d1d5db;font-size:12px">—</td>';
     }).join('');
-    return `<tr style="background:${bg}">
-      <td style="padding:9px 14px;font-weight:600;font-size:13px;border-right:2px solid #e8ecf0;border-bottom:1px solid #e8ecf0;background:${bg};position:sticky;left:0">${esc(r.nombre)}</td>
-      ${celdas}
-    </tr>`;
+    return '<tr style="background:'+bg+'"><td style="padding:9px 14px;font-weight:600;font-size:13px;border-right:2px solid #e8ecf0;border-bottom:1px solid #e8ecf0;background:'+bg+';position:sticky;left:0">'+esc(r.nombre)+'</td>'+celdas+'</tr>';
   }).join('');
 
-  // Fila de totales por cepa
   const totales = prodsActivos.map(p=>{
     const total = wk.rows.reduce((a,r)=>a+(r.qtys[p.id]||0),0);
-    return `<td style="padding:9px 12px;text-align:center;border-right:1px solid #bfdbfe;font-weight:700;font-size:14px;color:#1e3a5f;background:#eff6ff">${total}g</td>`;
+    return '<td style="padding:9px 12px;text-align:center;border-right:1px solid #bfdbfe;font-weight:700;font-size:14px;color:#1e3a5f;background:#eff6ff">'+total+'g</td>';
   }).join('');
 
   container.innerHTML=`
@@ -1211,6 +1228,7 @@ function renderPreparar(){
         <div style="font-weight:700;font-size:15px">📋 Semana: ${esc(wk.label)}</div>
         <div style="font-size:12px;color:var(--muted);margin-top:2px">${wk.rows.length} clientes · ${prodsActivos.length} cepas activas</div>
       </div>
+      <button onclick="iniciarDespacho()" style="background:#25d366;color:#fff;border:none;border-radius:var(--radius-lg);padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer">🚀 Iniciar despacho</button>
     </div>
     <div style="overflow-x:auto;border-radius:var(--radius-lg);box-shadow:0 1px 6px rgba(0,0,0,.08)">
       <table style="width:100%;border-collapse:collapse;min-width:400px">
@@ -1223,6 +1241,153 @@ function renderPreparar(){
       </table>
     </div>`;
 }
+
+function iniciarDespacho(){
+  despachoIndex=0; despachados.clear(); modoDespacho=true; renderPreparar();
+}
+
+function renderModoDespacho(container, wk){
+  const total = wk.rows.length;
+  const completados = despachados.size;
+  const pct = Math.round(completados/total*100);
+  const current = wk.rows[despachoIndex];
+
+  const barra = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div style="font-weight:700;font-size:15px">📦 Despacho — ${esc(wk.label)}</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:13px;font-weight:600;color:var(--primary)">${completados}/${total} listos</span>
+        <button onclick="modoDespacho=false;renderPreparar()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-size:12px;cursor:pointer">← Ver resumen</button>
+      </div>
+    </div>
+    <div style="background:var(--border);border-radius:99px;height:10px">
+      <div style="background:var(--green);height:10px;border-radius:99px;width:${pct}%;transition:width .4s"></div>
+    </div>
+  </div>`;
+
+  let tarjeta = '';
+  if(completados===total){
+    tarjeta = `<div style="background:#f0fdf4;border:2px solid #25d366;border-radius:var(--radius-lg);padding:32px;text-align:center;margin-bottom:14px">
+      <div style="font-size:48px;margin-bottom:12px">🎉</div>
+      <div style="font-size:20px;font-weight:700;color:#166534;margin-bottom:6px">¡Todos los pedidos despachados!</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">${total} pedidos completados</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button onclick="resetDespacho()" style="background:var(--primary);color:#fff;border:none;border-radius:var(--radius-lg);padding:10px 24px;font-size:14px;cursor:pointer">🔄 Reiniciar</button>
+        <button onclick="modoDespacho=false;renderPreparar()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:10px 24px;font-size:14px;cursor:pointer">← Ver resumen</button>
+      </div>
+    </div>`;
+  } else if(current && !despachados.has(despachoIndex)){
+    const prods = products.filter(p=>(current.qtys[p.id]||0)>0);
+    const items = prods.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)"><span style="font-size:16px;font-weight:600">${p.emoji||'🌿'} ${esc(p.name)}</span><span style="font-size:28px;font-weight:800;color:var(--primary)">${current.qtys[p.id]}<span style="font-size:14px;font-weight:400;color:var(--muted)"> g</span></span></div>`).join('');
+    tarjeta = `<div style="background:var(--surface);border:2px solid var(--primary);border-radius:var(--radius-lg);margin-bottom:14px;overflow:hidden;box-shadow:0 4px 20px rgba(30,58,95,.15)">
+      <div style="background:var(--primary);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Cliente ${despachoIndex+1} de ${total}</div>
+          <div style="font-size:20px;font-weight:700">${esc(current.nombre)}</div>
+          ${current.direccion?'<div style="font-size:12px;opacity:.8;margin-top:2px">📍 '+esc(current.direccion)+(current.comuna?', '+esc(current.comuna):'')+'</div>':''}
+        </div>
+        ${current.hasDesp?'<span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:99px;font-size:12px">🚚 Delivery</span>':''}
+      </div>
+      ${items}
+      ${current.obs?'<div style="padding:10px 20px;background:#fffbeb;font-size:12px;color:#92400e">📝 '+esc(current.obs)+'</div>':''}
+      <div style="padding:16px 20px;display:flex;gap:10px">
+        <button onclick="marcarDespachado()" style="flex:1;background:#25d366;color:#fff;border:none;border-radius:var(--radius-lg);padding:16px;font-size:16px;font-weight:700;cursor:pointer">✅ Listo — siguiente</button>
+        ${despachoIndex>0?'<button onclick="anteriorDespacho()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;font-size:14px;cursor:pointer">← Anterior</button>':''}
+      </div>
+    </div>`;
+  }
+
+  const lista = wk.rows.map((r,i)=>{
+    const ok = despachados.has(i);
+    const esCurrent = i===despachoIndex && !ok;
+    return '<div onclick="irACliente('+i+')" style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer;'+(esCurrent?'background:#eff6ff;border-left:3px solid var(--primary);':'')+(ok?'opacity:.5':'')+'"><span style="font-size:18px">'+(ok?'✅':esCurrent?'👉':'⏳')+'</span><span style="font-weight:'+(esCurrent?'700':'500')+';font-size:13px;'+(ok?'text-decoration:line-through;color:var(--muted);':'')+'">'+esc(r.nombre)+'</span><span style="margin-left:auto;font-size:11px;color:var(--muted)">'+products.filter(p=>(r.qtys[p.id]||0)>0).map(p=>r.qtys[p.id]+'g '+p.name).join(', ')+'</span></div>';
+  }).join('');
+
+  container.innerHTML = barra + tarjeta + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden"><div style="padding:10px 16px;background:var(--surface2);font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase">Lista completa — clic para ir a un cliente</div>'+lista+'</div>';
+}
+
+function marcarDespachado(){
+  const wk = cw();
+  despachados.add(despachoIndex);
+  let next = despachoIndex+1;
+  while(next < wk.rows.length && despachados.has(next)) next++;
+  if(next < wk.rows.length) despachoIndex = next;
+  renderPreparar();
+}
+
+function anteriorDespacho(){
+  if(despachoIndex>0){ despachoIndex--; renderPreparar(); }
+}
+
+function irACliente(i){
+  despachoIndex = i; renderPreparar();
+}
+
+function resetDespacho(){
+  despachados.clear(); despachoIndex = 0; renderPreparar();
+}
+// ── HISTORIAL CLIENTE ─────────────────────────────────────────────
+function renderHistorialCliente(nombreSeleccionado){
+  const searchEl = document.getElementById('hcSearch');
+  const sugerEl = document.getElementById('hcSugerencias');
+  const contentEl = document.getElementById('hcContent');
+  if(!searchEl||!sugerEl||!contentEl) return;
+
+  const q = nombreSeleccionado?nombreNorm(nombreSeleccionado):(searchEl.value||'').toLowerCase().trim();
+
+  if(!q){ sugerEl.innerHTML=''; contentEl.innerHTML='<div class="empty" style="padding:2rem">Escribe el nombre de un cliente para ver su historial</div>'; return; }
+
+  const todasLasFilas = [];
+  weeks.forEach(wk=>{ wk.rows.forEach(r=>{ 
+    const rn = nombreNorm(r.nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const qq = q.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if(rn.includes(qq)) todasLasFilas.push({wk,r}); 
+  }); });
+
+  const nombresUnicos = [...new Set(todasLasFilas.map(x=>x.r.nombre))];
+
+  if(nombresUnicos.length>1 && !nombreSeleccionado){
+    sugerEl.innerHTML = '<div style="padding:10px 18px;border-bottom:1px solid var(--border);background:var(--surface2)"><div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600">Selecciona un cliente:</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      nombresUnicos.map(n=>'<button class="btn" onclick="document.getElementById(\'hcSearch\').value=\''+esc(n)+'\';renderHistorialCliente(\''+esc(n)+'\')" style="font-size:12px">'+esc(n)+'</button>').join('')+'</div></div>';
+    contentEl.innerHTML=''; return;
+  }
+
+  sugerEl.innerHTML='';
+  if(!todasLasFilas.length){ contentEl.innerHTML='<div class="empty" style="padding:2rem">No se encontró ningún cliente con ese nombre</div>'; return; }
+
+  const nombre = nombreSeleccionado||nombresUnicos[0];
+  const normNombre = nombreNorm(nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const filasFiltradas = todasLasFilas.filter(x=>{
+    const rn = nombreNorm(x.r.nombre).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return rn===normNombre || rn===q;
+  });
+
+  const totalGastado = filasFiltradas.reduce((a,x)=>a+rowSinDesp(x.r),0);
+  const semanas = filasFiltradas.length;
+  const prodConteo = {};
+  filasFiltradas.forEach(x=>products.forEach(p=>{ if(x.r.qtys[p.id]>0) prodConteo[p.id]=(prodConteo[p.id]||0)+(x.r.qtys[p.id]||0); }));
+  const favId = Object.entries(prodConteo).sort((a,b)=>b[1]-a[1])[0]?.[0];
+  const fav = products.find(p=>p.id===favId);
+  const c = clientesDB.find(c=>nombreNorm(c.nombre)===nombreNorm(nombre));
+  const tel = (c?.telefono||filasFiltradas[0]?.r.telefono||'').replace(/\D/g,'');
+
+  const kpis = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:16px 18px;border-bottom:1px solid var(--border)">'
+    +'<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:12px 14px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Total gastado</div><div style="font-size:20px;font-weight:700;color:var(--green)">'+fmt(totalGastado)+'</div></div>'
+    +'<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:12px 14px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Semanas activo</div><div style="font-size:20px;font-weight:700">'+semanas+'</div></div>'
+    +'<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:12px 14px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Promedio/semana</div><div style="font-size:20px;font-weight:700">'+fmt(Math.round(totalGastado/semanas))+'</div></div>'
+    +'<div style="background:var(--surface2);border-radius:var(--radius-lg);padding:12px 14px;border:1px solid var(--border)"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Cepa favorita</div><div style="font-size:14px;font-weight:700">'+(fav?fav.emoji+' '+esc(fav.name):'—')+'</div></div>'
+    +'</div>';
+
+  const filas = [...filasFiltradas].reverse().map(({wk,r})=>{
+    const prods = products.filter(p=>(r.qtys[p.id]||0)>0).map(p=>'<span style="background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:2px 8px;font-size:11px;white-space:nowrap">'+p.emoji+' '+r.qtys[p.id]+'g '+esc(p.name)+'</span>').join('');
+    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 14px;font-weight:600;white-space:nowrap">'+esc(wk.label)+'</td><td style="padding:10px 14px"><div style="display:flex;gap:6px;flex-wrap:wrap">'+prods+'</div></td><td style="padding:10px 14px;text-align:right;font-weight:700;color:var(--primary);white-space:nowrap">'+fmt(rowSinDesp(r))+'</td><td style="padding:10px 14px;text-align:center">'+(r.pagado?'✅':'⏳')+'</td></tr>';
+  }).join('');
+
+  contentEl.innerHTML = '<div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-size:17px;font-weight:700">'+esc(nombre)+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+(c?.telefono||'')+' '+(c?.comuna?'· '+c.comuna:'')+'</div></div>'+(tel?'<a class="btn btn-wa" href="https://wa.me/56'+tel+'" target="_blank" style="padding:8px 14px">📱 WhatsApp</a>':'')+'</div>'
+    +kpis
+    +'<div class="tbl-wrap"><table style="width:100%"><thead><tr><th style="padding:9px 14px;background:#1e3a5f;color:#fff;font-size:11px">Semana</th><th style="padding:9px 14px;background:#1e3a5f;color:#fff;font-size:11px">Productos</th><th style="padding:9px 14px;background:#1e3a5f;color:#fff;font-size:11px;text-align:right">Total</th><th style="padding:9px 14px;background:#1e3a5f;color:#fff;font-size:11px;text-align:center">Pago</th></tr></thead><tbody>'+filas+'</tbody></table></div>';
+}
+
 let sociosDB = lsGet('dds_socios', []);
 
 const ESTADO_CFG = {
@@ -3161,6 +3326,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     'Cerrar período'
   ));
   document.getElementById('nav-historial').addEventListener('click',()=>showTab('historial'));
+  document.getElementById('nav-historial-cliente').addEventListener('click',()=>showTab('historial-cliente'));
   document.getElementById('nav-socios').addEventListener('click',()=>showTab('socios'));
   document.getElementById('btnNuevoSocio').addEventListener('click',nuevoSocio);
   document.getElementById('sociosSearch').addEventListener('input',renderSocios);
