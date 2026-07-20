@@ -19,21 +19,33 @@ const firebaseConfig = {
 };
 var db = null;
 const DB_PATH = 'dispensario';
-try {
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.database();
-  // Indicador de conexión
-  db.ref('.info/connected').on('value', snap=>{
-    const el = document.getElementById('fbStatus');
-    if(el) el.style.background = snap.val() ? '#25d366' : '#e74c3c';
-  });
-} catch(e) {
-  console.warn('Firebase no disponible — la app funciona solo con almacenamiento local:', e);
+function initFirebase(){
+  if(db) return true;
+  if(typeof firebase==='undefined') return false;
+  try {
+    if(!firebase.apps || !firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    db.ref('.info/connected').on('value', snap=>{
+      const el = document.getElementById('fbStatus');
+      if(el) el.style.background = snap.val() ? '#25d366' : '#e74c3c';
+    });
+    return true;
+  } catch(e) {
+    console.warn('Firebase no disponible:', e);
+    return false;
+  }
 }
+initFirebase();
+window.addEventListener('load', initFirebase);
 
-// Sincronizar desde Firebase al abrir (si está disponible)
-function syncFromFirebase(callback){
-  if(!db){ callback(); return; }
+// Sincronizar desde Firebase al abrir (con reintentos si los scripts cargan lento)
+function syncFromFirebase(callback, intentos){
+  intentos = intentos||0;
+  if(!db) initFirebase();
+  if(!db){
+    if(intentos < 10){ setTimeout(()=>syncFromFirebase(callback, intentos+1), 300); return; }
+    callback(); return;
+  }
   db.ref(DB_PATH).once('value').then(snap=>{
     const data = snap.val();
     if(data){
@@ -723,6 +735,7 @@ function saveAll(){
   };
   Object.entries(data).forEach(([k,v])=>lsSet(k,v));
   // Guardar en Firebase con debounce 1.5s (si está disponible)
+  if(!db && typeof initFirebase==='function') initFirebase();
   if(db){
     clearTimeout(window._fbSaveTimer);
     window._fbSaveTimer=setTimeout(()=>{
@@ -3446,6 +3459,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
   // Init
   renderWeekSel();renderRows();
+  // Subir datos normalizados a Firebase para sincronizar otros dispositivos
+  saveAll();
 // fin init
 
 // ── PARSEAR ───────────────────────────────────────────────────────
