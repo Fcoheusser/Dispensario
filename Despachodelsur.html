@@ -38,7 +38,7 @@ function syncFromFirebase(callback){
     const data = snap.val();
     if(data){
       Object.entries(data).forEach(([k,v])=>{
-        try{ localStorage.setItem(k, typeof v==='string'?v:JSON.stringify(v)); }catch{}
+        try{ localStorage.setItem(k, JSON.stringify(v)); }catch{}
       });
     }
     callback();
@@ -718,7 +718,8 @@ function saveAll(){
   const data={
     dds_prods:products,dds_weeks:weeks,dds_cur:curId,dds_desp:despPrice,
     dds_clientes:clientesDB,dds_rep:repartidorTel,dds_periodos:periodos,
-    dds_periodo_actual:periodoActual,dds_stock:stockDB,dds_socios:sociosDB
+    dds_periodo_actual:periodoActual,dds_stock:stockDB,dds_socios:sociosDB,
+    dds_recetas:recetasDB,dds_plantillas:plantillas
   };
   Object.entries(data).forEach(([k,v])=>lsSet(k,v));
   // Guardar en Firebase con debounce 1.5s (si está disponible)
@@ -768,6 +769,8 @@ if(!weeks||!weeks.length){
 }
 // Siempre deduplicar y ordenar al iniciar
 weeks=weeks.filter((v,i,a)=>a.findIndex(t=>t.label===v.label)===i);
+// Normalizar: Firebase omite arrays/objetos vacíos — restaurar rows y qtys
+weeks=weeks.filter(Boolean).map(w=>({...w, rows:(w.rows||[]).filter(Boolean).map(r=>({...r, qtys:r.qtys||{}}))}));
 sortWeeks();
 lsSet('dds_weeks',weeks);
 // Cargar clientes del backup si no hay ninguno
@@ -785,6 +788,9 @@ let difSeleccionados=new Set();
 if(!weeks.find(w=>w.id===curId))curId=weeks[weeks.length-1].id;
 
 let periodos=lsGet('dds_periodos',[]);
+// Normalizar: Firebase omite arrays vacíos, restaurar propiedad weeks
+if(Array.isArray(periodos)) periodos=periodos.filter(Boolean).map(p=>({...p, weeks: p.weeks||[]}));
+else periodos=[];
 let periodoActual = lsGet('dds_periodo_actual', '');
 // Si el período actual está vacío pero hay semanas, reorganizar automáticamente
 (function autoReorganizar(){
@@ -821,8 +827,10 @@ function showModal(title,msg,onConfirm,confirmLabel='Confirmar',infoHtml=''){
   document.getElementById('modalMsg').innerHTML=msg;
   const info=document.getElementById('modalInfo');
   if(infoHtml){info.innerHTML=infoHtml;info.style.display='block';}else{info.style.display='none';}
-  document.getElementById('modalConfirmBtn').textContent=confirmLabel;
-  document.getElementById('modalConfirmBtn').onclick=()=>{onConfirm();closeModal();};
+  const btn=document.getElementById('modalConfirmBtn');
+  btn.style.display='';
+  btn.textContent=confirmLabel;
+  btn.onclick=()=>{try{onConfirm();}catch(e){console.error('Error en modal:',e);toast('⚠️ Error: '+e.message,4000);}closeModal();};
   document.getElementById('modalBg').classList.add('on');
 }
 function closeModal(){document.getElementById('modalBg').classList.remove('on');}
@@ -1779,12 +1787,12 @@ function getPeriodoActual(){
   return periodos.find(p=>p.id===periodoActual)||periodos[periodos.length-1];
 }
 function getWeeksDePeriodo(p){
-  return weeks.filter(w=>p.weeks.includes(w.id));
+  return weeks.filter(w=>(p.weeks||[]).includes(w.id));
 }
 
 function cerrarPeriodoYEmpezarNuevo(){
   const actual = getPeriodoActual();
-  if(!actual||!actual.weeks.length){toast('⚠️ No hay semanas en el período actual');return;}
+  if(!actual||!(actual.weeks||[]).length){toast('⚠️ No hay semanas en el período actual');return;}
 
   const fechaHtml = `
     <p style="font-size:13px;color:var(--muted);margin-bottom:8px">¿Desde qué fecha empieza el nuevo período?</p>
@@ -1834,7 +1842,7 @@ function eliminarPeriodo(pid){
   if(p.id===periodoActual){toast('⚠️ No puedes eliminar el período actual');return;}
   showModal(
     'Eliminar '+p.nombre,
-    '⚠️ Se eliminarán <strong>'+p.weeks.length+' semanas</strong> y todos sus pedidos. Esta acción no se puede deshacer.',
+    '⚠️ Se eliminarán <strong>'+(p.weeks||[]).length+' semanas</strong> y todos sus pedidos. Esta acción no se puede deshacer.',
     ()=>{
       weeks=weeks.filter(w=>!p.weeks.includes(w.id));
       periodos=periodos.filter(x=>x.id!==pid);
@@ -1861,7 +1869,7 @@ function reorganizarPeriodos(){
   showModal('Reorganizar semanas por período','',()=>{
     const hastaP1=document.getElementById('reorgP1')?.value.trim()||'14-05-2026';
     const desdeP2=document.getElementById('reorgP2')?.value.trim()||'21-05-2026';
-    function toComp(s){const p=s.split('-');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:s;}
+    function toComp(s){const p=(s||'').split('-');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:s;}
     const limP1=toComp(hastaP1), limP2=toComp(desdeP2);
     const p1=periodos[0], p2=periodos[1];
     p1.weeks=weeks.filter(w=>toComp(w.label)<=limP1).map(w=>w.id);
@@ -1878,7 +1886,7 @@ function eliminarPeriodo(pid){
   if(p.id===periodoActual){toast('⚠️ No puedes eliminar el período actual');return;}
   showModal(
     'Eliminar '+p.nombre,
-    '⚠️ Se eliminarán <strong>'+p.weeks.length+' semanas</strong> y todos sus pedidos. Esta acción no se puede deshacer.',
+    '⚠️ Se eliminarán <strong>'+(p.weeks||[]).length+' semanas</strong> y todos sus pedidos. Esta acción no se puede deshacer.',
     ()=>{
       weeks=weeks.filter(w=>!p.weeks.includes(w.id));
       periodos=periodos.filter(x=>x.id!==pid);
@@ -2906,7 +2914,7 @@ function renderStats(){
   const pFiltro=statsPeriodoFiltroVal?periodos.find(x=>x.id===statsPeriodoFiltroVal):null;
   console.log('statsPeriodoFiltroVal:', statsPeriodoFiltroVal, '| pFiltro:', pFiltro?.nombre, '| weeks en periodo:', pFiltro?.weeks?.length);
   const wksRev=pFiltro
-    ?[...weeks].filter(w=>pFiltro.weeks.includes(w.id)).reverse()
+    ?[...weeks].filter(w=>(pFiltro.weeks||[]).includes(w.id)).reverse()
     :[...weeks].reverse();
 
   if(!wksRev.length){container.innerHTML='<div class="empty">Sin datos para este período</div>';return;}
