@@ -38,7 +38,7 @@ function initFirebase(){
 initFirebase();
 window.addEventListener('load', initFirebase);
 
-// Sincronizar desde Firebase al abrir (con reintentos si los scripts cargan lento)
+// Sincronizar desde Firebase al abrir — FUSIONA con lo local, nunca borra
 function syncFromFirebase(callback, intentos){
   intentos = intentos||0;
   if(!db) initFirebase();
@@ -47,10 +47,37 @@ function syncFromFirebase(callback, intentos){
     callback(); return;
   }
   db.ref(DB_PATH).once('value').then(snap=>{
-    const data = snap.val();
-    if(data){
-      Object.entries(data).forEach(([k,v])=>{
-        try{ localStorage.setItem(k, JSON.stringify(v)); }catch{}
+    const nube = snap.val();
+    if(nube){
+      const leer = k => { try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch{ return null; } };
+      const guardar = (k,v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} };
+
+      Object.entries(nube).forEach(([k,vNube])=>{
+        const vLocal = leer(k);
+        if(vLocal===null || vLocal===undefined){ guardar(k, vNube); return; }
+        // Semanas: unir por fecha, conservando la versión con más pedidos
+        if(k==='dds_weeks' && Array.isArray(vNube) && Array.isArray(vLocal)){
+          const porLabel = {};
+          [...vNube, ...vLocal].filter(Boolean).forEach(w=>{
+            const rows=(w.rows||[]).length;
+            if(!porLabel[w.label] || rows >= (porLabel[w.label].rows||[]).length) porLabel[w.label]=w;
+          });
+          guardar(k, Object.values(porLabel));
+          return;
+        }
+        // Arrays con id (clientes, recetas, stock, socios, periodos): unir por id
+        if(Array.isArray(vNube) && Array.isArray(vLocal)){
+          const porId = {};
+          [...vNube, ...vLocal].filter(Boolean).forEach(x=>{ const key=x.id||x.nombre||JSON.stringify(x); porId[key]=x; });
+          guardar(k, Object.values(porId));
+          return;
+        }
+        // Objetos (plantillas): combinar claves, local gana
+        if(typeof vNube==='object' && typeof vLocal==='object' && !Array.isArray(vNube)){
+          guardar(k, {...vNube, ...vLocal});
+          return;
+        }
+        // Escalares: conservar el local
       });
     }
     callback();
