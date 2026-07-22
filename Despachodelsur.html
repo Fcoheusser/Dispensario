@@ -1273,30 +1273,44 @@ function exportarResumenPDF(){
 function exportarResumenCSV(){
   const wk=cw();
   if(!wk.rows.length){toast('⚠️ No hay pedidos esta semana');return;}
-  const header=['Cliente','Teléfono','Comuna','Dirección',...products.map(p=>p.name),'Delivery','Total','Pagado','Obs'];
-  const rows=wk.rows.map(r=>[
-    r.nombre,r.telefono||'',r.comuna||'',r.direccion||'',
-    ...products.map(p=>r.qtys[p.id]||0),
-    r.hasDesp?despPrice:0,rowTotal(r),r.pagado?'Sí':'No',r.obs||''
-  ]);
-  // totales
-  rows.push(['TOTAL','','','', ...products.map(p=>wk.rows.reduce((a,r)=>a+(r.qtys[p.id]||0),0)),
-    wk.rows.filter(r=>r.hasDesp).length*despPrice,
-    wk.rows.reduce((a,r)=>a+rowTotal(r),0),'','']);
-  const csv=[header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  // Excel real: tabla HTML que Excel abre con columnas perfectas
+  const prodsActivos = products.filter(p=>wk.rows.some(r=>(r.qtys[p.id]||0)>0));
+  const th = 'style="background:#1e3a5f;color:#ffffff;padding:8px;border:1px solid #999;font-weight:bold"';
+  const td = 'style="padding:6px;border:1px solid #ccc"';
+  const tdN = 'style="padding:6px;border:1px solid #ccc;text-align:center"';
+
+  let html = '<table border="1"><tr>'
+    +'<th '+th+'>Cliente</th><th '+th+'>Teléfono</th><th '+th+'>Comuna</th><th '+th+'>Dirección</th>'
+    +prodsActivos.map(p=>'<th '+th+'>'+esc(p.name)+'</th>').join('')
+    +'<th '+th+'>Delivery</th><th '+th+'>Total</th><th '+th+'>Pagado</th><th '+th+'>Obs</th></tr>';
+
+  wk.rows.forEach(r=>{
+    html += '<tr><td '+td+'>'+esc(r.nombre)+'</td><td '+td+'>'+esc(r.telefono||'')+'</td><td '+td+'>'+esc(r.comuna||'')+'</td><td '+td+'>'+esc(r.direccion||'')+'</td>'
+      +prodsActivos.map(p=>'<td '+tdN+'>'+(r.qtys[p.id]||'')+'</td>').join('')
+      +'<td '+tdN+'>'+(r.hasDesp?despPrice:'')+'</td><td '+tdN+'><b>'+rowTotal(r)+'</b></td><td '+tdN+'>'+(r.pagado?'Sí':'No')+'</td><td '+td+'>'+esc(r.obs||'')+'</td></tr>';
+  });
+
+  // fila de totales
+  const tdT = 'style="padding:6px;border:1px solid #999;background:#eff6ff;font-weight:bold;text-align:center"';
+  html += '<tr><td '+tdT+'>TOTAL</td><td '+tdT+'></td><td '+tdT+'></td><td '+tdT+'></td>'
+    +prodsActivos.map(p=>'<td '+tdT+'>'+wk.rows.reduce((a,r)=>a+(r.qtys[p.id]||0),0)+'</td>').join('')
+    +'<td '+tdT+'>'+wk.rows.filter(r=>r.hasDesp).length*despPrice+'</td>'
+    +'<td '+tdT+'>'+wk.rows.reduce((a,r)=>a+rowTotal(r),0)+'</td><td '+tdT+'></td><td '+tdT+'></td></tr></table>';
+
+  const excel = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body>'+html+'</body></html>';
+  const blob=new Blob(['\uFEFF'+excel],{type:'application/vnd.ms-excel;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`resumen-${wk.label}.csv`;
+  a.download=`resumen-${wk.label}.xls`;
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('✅ CSV descargado');
+  toast('✅ Excel descargado');
 }
 
 function exportarResumen(){
   const html=`<div style="display:flex;flex-direction:column;gap:10px;padding:8px 0">
     <button class="btn btn-primary" onclick="exportarResumenPDF();closeModal()" style="padding:12px;font-size:14px">📄 PDF para imprimir</button>
-    <button class="btn" onclick="exportarResumenCSV();closeModal()" style="padding:12px;font-size:14px">📊 Excel/CSV</button>
+    <button class="btn" onclick="exportarResumenCSV();closeModal()" style="padding:12px;font-size:14px">📊 Excel</button>
   </div>`;
   showModal('Exportar resumen — '+cw().label,'',()=>{},'',html);
   document.getElementById('modalConfirmBtn').style.display='none';
