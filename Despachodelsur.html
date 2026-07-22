@@ -28,6 +28,12 @@ function initFirebase(){
     db.ref('.info/connected').on('value', snap=>{
       const el = document.getElementById('fbStatus');
       if(el) el.style.background = snap.val() ? '#25d366' : '#e74c3c';
+      // Si la app arrancó sin nube y la conexión llegó tarde, recargar una vez
+      if(snap.val() && window._sinNube && !sessionStorage.getItem('fb_retry')){
+        sessionStorage.setItem('fb_retry','1');
+        location.reload();
+      }
+      if(snap.val()) sessionStorage.removeItem('fb_retry');
     });
     return true;
   } catch(e) {
@@ -43,7 +49,8 @@ function syncFromFirebase(callback, intentos){
   intentos = intentos||0;
   if(!db) initFirebase();
   if(!db){
-    if(intentos < 10){ setTimeout(()=>syncFromFirebase(callback, intentos+1), 300); return; }
+    if(intentos < 30){ setTimeout(()=>syncFromFirebase(callback, intentos+1), 300); return; }
+    window._sinNube = true;
     callback(); return;
   }
   db.ref(DB_PATH).once('value').then(snap=>{
@@ -756,15 +763,15 @@ function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 function forzarSync(){
   if(!db && typeof initFirebase==='function') initFirebase();
   if(!db){toast('⚠️ Sin conexión a la nube');return;}
-  const data={
+  const data=JSON.parse(JSON.stringify({
     dds_prods:products,dds_weeks:weeks,dds_cur:curId,dds_desp:despPrice,
     dds_clientes:clientesDB,dds_rep:repartidorTel,dds_periodos:periodos,
     dds_periodo_actual:periodoActual,dds_stock:stockDB,dds_socios:sociosDB,
     dds_recetas:recetasDB,dds_plantillas:plantillas
-  };
+  }));
   db.ref(DB_PATH).set(data)
     .then(()=>toast('☁️ ✅ Todo sincronizado en la nube ('+periodos.length+' períodos, '+weeks.length+' semanas)'))
-    .catch(e=>toast('⚠️ Error al sincronizar: '+e.message,4000));
+    .catch(e=>toast('⚠️ Error al sincronizar: '+e.message,6000));
 }
 
 function saveAll(){
@@ -780,7 +787,8 @@ function saveAll(){
   if(db){
     clearTimeout(window._fbSaveTimer);
     window._fbSaveTimer=setTimeout(()=>{
-      db.ref(DB_PATH).update(data).catch(e=>console.warn('FB save:',e));
+      const limpio=JSON.parse(JSON.stringify(data));
+      db.ref(DB_PATH).update(limpio).catch(e=>console.warn('FB save:',e));
     },1500);
   }
 }
