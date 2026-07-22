@@ -762,6 +762,39 @@ function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
 
 function forzarSync(){
   if(!db && typeof initFirebase==='function') initFirebase();
+  const fbOk = typeof firebase!=='undefined';
+  const dbOk = !!db;
+
+  const diag = '<div style="font-size:13px;line-height:2">'
+    +'Scripts Firebase: '+(fbOk?'✅ cargados':'❌ NO cargaron')+'<br>'
+    +'Base de datos: '+(dbOk?'✅ inicializada':'❌ no disponible')+'<br>'
+    +'Semanas en este dispositivo: <strong>'+weeks.length+'</strong><br>'
+    +'Semanas en la nube: <strong id="diagNube">consultando…</strong>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">'
+    +'<button class="btn btn-primary" style="padding:12px" onclick="subirTodoNube()">⬆️ Subir TODO a la nube (desde este dispositivo)</button>'
+    +'<button class="btn" style="padding:12px" onclick="bajarTodoNube()">⬇️ Bajar TODO de la nube (reemplaza lo local)</button>'
+    +'</div>';
+
+  showModal('☁️ Sincronización','',()=>{},'Cerrar',diag);
+  document.getElementById('modalConfirmBtn').style.display='none';
+
+  if(dbOk){
+    db.ref(DB_PATH+'/dds_weeks').once('value').then(snap=>{
+      const w = snap.val();
+      const el = document.getElementById('diagNube');
+      if(el) el.textContent = Array.isArray(w)?w.filter(Boolean).length:(w?Object.keys(w).length:0);
+    }).catch(e=>{
+      const el = document.getElementById('diagNube');
+      if(el) el.textContent = 'error: '+e.message;
+    });
+  } else {
+    const el = document.getElementById('diagNube');
+    if(el) el.textContent = 'sin conexión';
+  }
+}
+
+function subirTodoNube(){
   if(!db){toast('⚠️ Sin conexión a la nube');return;}
   const data=JSON.parse(JSON.stringify({
     dds_prods:products,dds_weeks:weeks,dds_cur:curId,dds_desp:despPrice,
@@ -770,8 +803,22 @@ function forzarSync(){
     dds_recetas:recetasDB,dds_plantillas:plantillas
   }));
   db.ref(DB_PATH).set(data)
-    .then(()=>toast('☁️ ✅ Todo sincronizado en la nube ('+periodos.length+' períodos, '+weeks.length+' semanas)'))
-    .catch(e=>toast('⚠️ Error al sincronizar: '+e.message,6000));
+    .then(()=>{closeModal();toast('☁️ ✅ Subido: '+periodos.length+' períodos, '+weeks.length+' semanas');})
+    .catch(e=>toast('⚠️ Error al subir: '+e.message,6000));
+}
+
+function bajarTodoNube(){
+  if(!db){toast('⚠️ Sin conexión a la nube');return;}
+  db.ref(DB_PATH).once('value').then(snap=>{
+    const nube = snap.val();
+    if(!nube){toast('⚠️ La nube está vacía');return;}
+    Object.entries(nube).forEach(([k,v])=>{
+      try{ localStorage.setItem(k, JSON.stringify(v)); }catch{}
+    });
+    closeModal();
+    toast('☁️ ✅ Datos bajados — recargando…');
+    setTimeout(()=>location.reload(), 800);
+  }).catch(e=>toast('⚠️ Error al bajar: '+e.message,6000));
 }
 
 function saveAll(){
