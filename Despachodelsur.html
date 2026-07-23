@@ -1068,7 +1068,7 @@ function renderRows(){
         <div class="field"><label>Observación</label><input type="text" value="${esc(row.obs)}" placeholder="Ej: 2 pagos..." oninput="setField('${row.id}','obs',this.value)" onclick="event.stopPropagation()"></div>
         <div></div>
         <div class="prods-section"><div class="prods-section-title">Productos pedidos</div><div class="prods-grid">
-          ${products.map(p=>`<div class="prod-cell"><label>${p.emoji||''}<br>${esc(p.name)}</label>
+          ${products.filter(p=>!p.oculto||(row.qtys[p.id]||0)>0).map(p=>`<div class="prod-cell"><label>${p.emoji||''}<br>${esc(p.name)}${p.oculto?' <span style="color:var(--hint);font-size:9px">(oculta)</span>':''}</label>
             <input type="number" value="${row.qtys[p.id]||''}" placeholder="0" min="0" step="any" oninput="setQty('${row.id}','${p.id}',this.value)" onclick="event.stopPropagation()">
             <span class="sub">${fmt(p.price)}/u</span></div>`).join('')}
         </div></div>
@@ -1100,7 +1100,6 @@ function renderKpisAndGrams(){
     `<div class="kpi"><div class="kpi-l">Clientes</div><div class="kpi-v">${wk.rows.length}</div></div>`;
   document.getElementById('gramBar').innerHTML=products.filter(p=>colQ[p.id]>0).map(p=>`<div class="gram-chip"><strong>${colQ[p.id]}</strong> ${esc(p.name)}</div>`).join('');
 }
-
 // ── HISTORIAL ─────────────────────────────────────────────────────
 function eliminarSemanaDuplicadas(){
   const antes = weeks.length;
@@ -2972,9 +2971,10 @@ function renderConfig(){
   document.getElementById('prodList').innerHTML=products.map((p,i)=>
     `<div class="prod-row" draggable="true" id="prodrow-${i}"
       ondragstart="dragStart(${i})" ondragover="dragOver(event,${i})" ondrop="dragDrop(event,${i})" ondragend="dragEnd()"
-      style="cursor:grab;user-select:none">
+      style="cursor:grab;user-select:none;${p.oculto?'opacity:.55':''}">
       <span style="font-size:16px;cursor:grab;padding:0 4px" title="Arrastrar para reordenar">⠿</span>
       <button onclick="products[${i}].stock=!products[${i}].stock;saveAll();renderConfig()" style="font-size:18px;background:none;border:none;cursor:pointer;padding:0 4px" title="${p.stock?'En stock':'Sin stock'}">${p.stock?'✅':'⬜'}</button>
+      <button onclick="products[${i}].oculto=!products[${i}].oculto;saveAll();renderConfig();renderRows()" style="font-size:16px;background:none;border:none;cursor:pointer;padding:0 4px" title="${p.oculto?'Oculta — clic para mostrar en pedidos nuevos':'Visible — clic para ocultar en pedidos nuevos'}">${p.oculto?'🙈':'👁️'}</button>
       <select onchange="products[${i}].cat=this.value;saveAll()" style="font-size:11px;font-weight:600;padding:4px 6px;border:1px solid var(--border2);border-radius:var(--radius);background:${p.cat==='C'?'var(--green-bg)':'var(--amber-bg)'};color:${p.cat==='C'?'var(--green)':'var(--amber)'};font-family:inherit;outline:none;cursor:pointer">
         <option value="C" ${p.cat==='C'?'selected':''}>🌱 Cepa</option>
         <option value="E" ${p.cat==='E'?'selected':''}>🟡 Extracto</option>
