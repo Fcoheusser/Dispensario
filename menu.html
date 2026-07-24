@@ -138,17 +138,8 @@ function cargar(){
 }
 
 function disponibles(){
-  return productos.filter(p=>{
-    if(p.oculto) return false;
-    if(p.stock===false) return false;
-    // si hay registro de stock, exigir gramos o conos
-    if(Object.keys(stock).length){
-      const s=stock[p.id];
-      if(s && (s.gramos>0 || s.conos>0)) return true;
-      if(s) return false;
-    }
-    return true;
-  });
+  // Manda el ✅ de Productos en la app. Las ocultas nunca se muestran.
+  return productos.filter(p=> !p.oculto && p.stock!==false );
 }
 
 function render(){
