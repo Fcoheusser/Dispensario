@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Dispensario del Sur</title>
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -231,11 +234,12 @@ td.right{text-align:right;font-weight:600}
   <aside class="sidebar">
     <div class="sidebar-logo">
       <h1>🌿 Dispensario del Sur</h1>
-      <p>Panel de despachos</p>
+      <p>Panel de despachos · v24-07</p>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">Gestión</div>
       <div class="nav-item on" id="nav-pedidos"><span>📦</span>Pedidos</div>
+      <div class="nav-item" id="nav-pedidosweb"><span>📥</span>Pedidos web <span id="webBadge" style="display:none;background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto"></span></div>
       <div class="nav-item" id="nav-preparar"><span>📋</span>Preparar pedidos</div>
       <div class="nav-item" id="nav-parsear"><span>📲</span>Parsear WhatsApp</div>
       <div class="nav-item" id="nav-plantillas"><span>✏️</span>Plantillas WA</div>
@@ -322,6 +326,22 @@ td.right{text-align:right;font-weight:600}
           </div>
         </div>
         <div class="gram-bar" id="gramBar"></div>
+      </div>
+
+      <!-- PEDIDOS WEB -->
+      <div id="t-pedidosweb" class="view">
+        <div style="max-width:860px">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-header-title">📥 Pedidos desde la web</span>
+              <button class="btn" id="btnRecargarWeb">🔄 Actualizar</button>
+            </div>
+            <div style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)">
+              Pedidos que llegan del menú público. Al agregarlos pasan a la semana actual.
+            </div>
+            <div id="webList"></div>
+          </div>
+        </div>
       </div>
 
       <!-- PREPARAR PEDIDOS -->
@@ -945,7 +965,7 @@ function showModal(title,msg,onConfirm,confirmLabel='Confirmar',infoHtml=''){
 function closeModal(){document.getElementById('modalBg').classList.remove('on');}
 
 // ── TABS ──────────────────────────────────────────────────────────
-const TAB_TITLES={pedidos:'Pedidos de la semana',preparar:'Preparar pedidos',parsear:'Parsear mensaje WhatsApp',plantillas:'Plantillas de WhatsApp','difusion-lista':'Lista de difusión',periodos:'Períodos',historial:'Historial de semanas','historial-cliente':'Historial por cliente',socios:'Nuevos Socios',clientes:'Base de clientes',recetas:'Control de recetas',stock:'Control de stock',stats:'Estadísticas',importar:'Importar desde Excel',config:'Configuración',backup:'Backup de datos'};
+const TAB_TITLES={pedidos:'Pedidos de la semana',pedidosweb:'Pedidos desde la web',preparar:'Preparar pedidos',parsear:'Parsear mensaje WhatsApp',plantillas:'Plantillas de WhatsApp','difusion-lista':'Lista de difusión',periodos:'Períodos',historial:'Historial de semanas','historial-cliente':'Historial por cliente',socios:'Nuevos Socios',clientes:'Base de clientes',recetas:'Control de recetas',stock:'Control de stock',stats:'Estadísticas',importar:'Importar desde Excel',config:'Configuración',backup:'Backup de datos'};
 function showTab(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
@@ -958,6 +978,7 @@ function showTab(name){
   if(name==='historial'){periodoFiltroHistorial=null;renderHistorial();}
   if(name==='periodos')renderPeriodos();
   if(name==='difusion-lista')renderDifusionLista();
+  if(name==='pedidosweb')renderPedidosWeb();
   if(name==='preparar')renderPreparar();
   if(name==='historial-cliente'){const el=document.getElementById('hcSearch');if(el)el.value='';renderHistorialCliente();}
   if(name==='socios')renderSocios();
@@ -1314,6 +1335,100 @@ function exportarResumen(){
   showModal('Exportar resumen — '+cw().label,'',()=>{},'',html);
   document.getElementById('modalConfirmBtn').style.display='none';
 }
+// ── PEDIDOS WEB ───────────────────────────────────────────────────
+let pedidosWeb = [];
+
+function cargarPedidosWeb(cb){
+  if(!db && typeof initFirebase==='function') initFirebase();
+  if(!db){ pedidosWeb=[]; if(cb)cb(); return; }
+  db.ref(DB_PATH+'/dds_pedidos_web').once('value').then(snap=>{
+    const d = snap.val()||{};
+    pedidosWeb = Object.values(d).filter(Boolean).filter(p=>p.estado!=='agregado');
+    pedidosWeb.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+    updateWebBadge();
+    if(cb)cb();
+  }).catch(()=>{ if(cb)cb(); });
+}
+
+function updateWebBadge(){
+  const b=document.getElementById('webBadge'); if(!b) return;
+  if(pedidosWeb.length){ b.textContent=pedidosWeb.length; b.style.display='inline-block'; }
+  else b.style.display='none';
+}
+
+function renderPedidosWeb(){
+  const list=document.getElementById('webList'); if(!list) return;
+  list.innerHTML='<div class="empty" style="padding:1.5rem">Consultando…</div>';
+  cargarPedidosWeb(()=>{
+    if(!pedidosWeb.length){
+      list.innerHTML='<div class="empty" style="padding:2rem">Sin pedidos nuevos 🌿</div>';
+      return;
+    }
+    list.innerHTML=pedidosWeb.map(p=>{
+      const items=products.filter(x=>(p.qtys||{})[x.id]>0)
+        .map(x=>'<span style="background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:12px;white-space:nowrap">'+(x.emoji||'🌿')+' '+p.qtys[x.id]+'g '+esc(x.name)+'</span>').join('');
+      const fecha=p.fecha?new Date(p.fecha).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+      const yaExiste=cw().rows.some(r=>nombreNorm(r.nombre)===nombreNorm(p.nombre||''));
+      return '<div style="padding:14px 18px;border-bottom:1px solid var(--border)">'
+        +'<div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px">'
+          +'<div style="flex:1;min-width:180px">'
+            +'<div style="font-weight:700;font-size:15px">'+esc(p.nombre||'—')
+              +(p.pagoDeclarado?' <span style="font-size:10px;background:#dcfce7;color:#166534;padding:2px 7px;border-radius:99px;font-weight:600">💰 dice que transfirió</span>':'')
+              +(yaExiste?' <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:99px;font-weight:600">ya está en la semana</span>':'')
+            +'</div>'
+            +'<div style="font-size:11px;color:var(--muted);margin-top:2px">📱 '+esc(p.telefono||'—')+' · 📍 '+esc(p.direccion||'—')+(p.comuna?', '+esc(p.comuna):'')+'</div>'
+            +'<div style="font-size:10px;color:var(--hint);margin-top:2px">🕐 '+fecha+'</div>'
+          +'</div>'
+          +'<div style="font-size:18px;font-weight:800;color:var(--green)">'+fmt(p.total||0)+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+items+'</div>'
+        +(p.obs?'<div style="font-size:11px;color:#92400e;background:#fffbeb;padding:6px 10px;border-radius:var(--radius);margin-bottom:10px">📝 '+esc(p.obs)+'</div>':'')
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+          +'<button class="btn btn-primary" style="font-size:12px" onclick="agregarPedidoWeb(\''+p.id+'\')">➕ Agregar a la semana</button>'
+          +'<button class="btn btn-danger" style="font-size:12px" onclick="descartarPedidoWeb(\''+p.id+'\')">🗑 Descartar</button>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+  });
+}
+
+function agregarPedidoWeb(id){
+  const p=pedidosWeb.find(x=>x.id===id); if(!p) return;
+  const wk=cw();
+  const qtys={};
+  products.forEach(x=>qtys[x.id]=(p.qtys||{})[x.id]||0);
+  wk.rows.push({
+    id:uid(),
+    nombre:p.nombre||'',
+    telefono:p.telefono||'',
+    comuna:p.comuna||'',
+    direccion:p.direccion||'',
+    qtys:qtys,
+    hasDesp:p.hasDesp!==false,
+    pagado:false,
+    obs:p.obs||''
+  });
+  saveAll();
+  marcarWebAgregado(id);
+  renderRows();
+  toast('✅ '+p.nombre+' agregado a la semana '+wk.label);
+}
+
+function descartarPedidoWeb(id){
+  const p=pedidosWeb.find(x=>x.id===id); if(!p) return;
+  showModal('Descartar pedido','¿Descartar el pedido de <strong>'+esc(p.nombre)+'</strong>? No se agregará a ninguna semana.',()=>{
+    marcarWebAgregado(id);
+    toast('Pedido descartado');
+  },'Descartar');
+}
+
+function marcarWebAgregado(id){
+  if(db) db.ref(DB_PATH+'/dds_pedidos_web/'+id+'/estado').set('agregado').catch(()=>{});
+  pedidosWeb=pedidosWeb.filter(x=>x.id!==id);
+  updateWebBadge();
+  renderPedidosWeb();
+}
+
 // ── PREPARAR PEDIDOS ──────────────────────────────────────────────
 let despachoIndex = 0;
 let despachados = new Set();
@@ -1616,7 +1731,8 @@ function toggleDocSocio(sid,did,val){
   // si todos los docs están, sugerir cambiar estado
   const todosOk=DOCS_REQUERIDOS.every(d=>s.docs[d.id]);
   if(todosOk&&s.estado==='contactado'){s.estado='docs';}
-  lsSet('dds_socios',sociosDB);updateSociosBadge();renderSocios();
+  lsSet('dds_socios',sociosDB);updateSociosBadge();
+cargarPedidosWeb();renderSocios();
 }
 
 function cambiarEstadoSocio(sid,estado){
@@ -3445,6 +3561,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Nav
   document.getElementById('btnForzarSync').addEventListener('click',forzarSync);
   document.getElementById('nav-pedidos').addEventListener('click',()=>showTab('pedidos'));
+  document.getElementById('nav-pedidosweb').addEventListener('click',()=>showTab('pedidosweb'));
+  document.getElementById('btnRecargarWeb').addEventListener('click',renderPedidosWeb);
   document.getElementById('nav-preparar').addEventListener('click',()=>showTab('preparar'));
   document.getElementById('nav-parsear').addEventListener('click',()=>showTab('parsear'));
   document.getElementById('nav-plantillas').addEventListener('click',()=>showTab('plantillas'));
@@ -3570,8 +3688,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===document.getElementById('modalBg'))closeModal();});
   // Init
   renderWeekSel();renderRows();
-  // Subir datos normalizados a Firebase para sincronizar otros dispositivos
-  saveAll();
 // fin init
 
 // ── PARSEAR ───────────────────────────────────────────────────────
