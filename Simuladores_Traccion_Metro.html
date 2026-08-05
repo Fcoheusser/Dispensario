@@ -50,6 +50,7 @@ main{max-width:1180px;margin:0 auto}
 .zona{fill:none;stroke:var(--t);stroke-width:1}
 .satblade{stroke:#EF9F27;stroke-width:4;stroke-linecap:round;transform-origin:620px 1114px;transform-box:view-box;transition:transform .45s ease, stroke .3s}
 .satblade.ab{stroke:#E24B4A;transform:rotate(-30deg)}
+
 .viabar{fill:var(--surface-1);stroke:var(--border-strong);transition:fill .3s}
 .viabar.on{fill:#EF9F27;stroke:#BA7517}
 .viabartxt{fill:var(--text-secondary);font-size:13px}
@@ -120,6 +121,11 @@ footer{max-width:1180px;margin:26px auto 0;font-size:12px;color:var(--t);border-
 /* con corriente, la rama activa se pinta ámbar */
 .conm.live .blade.on{stroke:#EF9F27}
 .conm.live .barra.on{stroke:#EF9F27}
+
+/* --- modo pantalla completa del plano --- */
+main:fullscreen, main:-webkit-full-screen{background:var(--bg);padding:10px 12px;overflow:auto;display:flex;flex-direction:column}
+main:fullscreen .scrollwrap, main:-webkit-full-screen .scrollwrap{flex:1;height:auto;max-height:none}
+main:fullscreen .ctrl, main:-webkit-full-screen .ctrl{flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -981,10 +987,10 @@ Para agregar un nuevo módulo:
 <p><b>Qué estás viendo:</b> la condición de Zona D valida <b>tres secciones en serie</b> para activar el <b>RR.ZD</b> en el armario de Vicuña Mackenna. Cada sección valida por su rama CE (RCE cerrado o RCEFS) <b>o</b> por su rama de aislamiento (los dos aparatos de sus extremos abiertos).</p>
 <p><b>Las ramas de aislamiento:</b> S5 = SAT 5/6 + IAS S/ER Las Torres · S6 = SAT 5/6 + SAT 6/7 · S7 = SAT 6/7 + IA S/ER Vicente Valdés. Fíjate que <b>la S6 no tiene S/ER propia</b>: es el tramo entre los dos seccionadores, y para aislarla hay que abrir <b>ambos SAT</b>.</p>
 <p><b>Cada SAT tiene dos contactos en la cadena</b> (es el mismo aparato visto por sus dos secciones vecinas): el SAT 5/6 valida en S5 y S6; el SAT 6/7 en S6 y S7. Al moverlo en el grupo 3, verás saltar los dos conmutadores a la vez.</p>
-<p><b>El repetidor RR1.ZD:</b> el RR.ZD entrega directo la Condición RS S5, pero no le alcanzan los contactos para todo — un contacto suyo alimenta la bobina del <b>RR1.ZD</b>, que repite la información y entrega las Condiciones RS S6 y S7.</p>
+<p><b>El repetidor RR1.ZD:</b> el RR.ZD entrega directo la Condición RS S5, pero no le alcanzan los contactos para todo — un contacto suyo alimenta la bobina del <b>RR1.ZD</b>, que repite la información y entrega la Condición RS S7. <b>La S6 no tiene Condición RS</b> porque no tiene S/ER: no hay relé de seguridad ni bucle de 5V que armar ahí.</p>
 <p><b>Ejercicio 1 — Armar la zona:</b> TPL ZD girado + Oprimir TPL: la ola valida S5 → S6 → S7 → RR.ZD, sella el KZD (luz apagada) y arma también el RR1.ZD.</p>
 <p><b>Ejercicio 2 — Aislar la S6 (la gracia de esta zona):</b> da un golpe de puño en S6. Para validarla por aislamiento necesitas abrir <b>los dos SAT</b> (5/6 y 6/7). Pero ojo con el efecto lateral: al abrir el SAT 5/6 la S5 pierde su rama de aislamiento a medias (necesita además el IAS LT abierto), y lo mismo la S7 con el IA VV — las secciones vecinas siguen validando por su rama CE mientras sus cortes estén sanos.</p>
-<p><b>Ejercicio 3 — Condición RS S5:</b> con la zona armada, el contacto "Condición RS S5" del R.ZD energiza la bobina <b>R.RS.S5</b> (en la estación Las Torres): se cierra el bucle de 5V con P1 y el <b>NS1 de la S/ER Las Torres</b> queda listo para habilitar el IAS. El TK RS.S5 informa al PCC. (Las condiciones RS de S6 y S7 se agregarán con sus planos — ahí armamos la energización de las tres vías.)</p>
+<p><b>Ejercicio 3 — Condición RS S5:</b> con la zona armada, el contacto "Condición RS S5" del R.ZD energiza la bobina <b>R.RS.S5</b> (en la estación Las Torres): se cierra el bucle de 5V con P1 y el <b>NS1 de la S/ER Las Torres</b> queda listo para habilitar el IAS. El TK RS.S5 informa al PCC. (La condición RS de S7 se agregará con su plano; la S6 no tiene — ahí armamos la energización de las tres vías.)</p>
 <p><b>Ejercicio 4 — Energizar las tres vías:</b> con la zona armada, cierra el <b>IAS LT</b> (se energiza la vía S5) y el <b>IA VV</b> (vía S7). ¿Y la S6? No tiene alimentador propio: <b>toma los 750 Vcc a través de los SAT cerrados</b> desde sus vecinas — con el SAT 5/6 cerrado se alimenta desde la S5, o con el 6/7 desde la S7. Abre ambos SAT con las vías energizadas y verás la S6 quedar muerta al medio mientras S5 y S7 siguen vivas (y las cuchillas rojas levantadas). Si cae la condición, los interruptores disparan.</p>
 <p><b>Ejercicio 5 — Prueba de lámpara:</b> el botón PL enciende la ampolleta roja sin tocar la condición de zona.</p>
 </div>
@@ -996,7 +1002,7 @@ Para agregar un nuevo módulo:
 <span id="d_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
 </div>
 <div class="scrollwrap" id="d_wrap">
-<svg id="d_plano" width="1300" height="1560" viewBox="0 0 1300 1560" role="img">
+<svg id="d_plano" width="2640" height="1060" viewBox="0 0 2640 1060" role="img">
 <title>Condición de Zona D — Secciones 5, 6 y 7</title>
 <defs><marker id="d_arD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 
@@ -1252,7 +1258,7 @@ Para agregar un nuevo módulo:
 
 <g id="d_coRRZD" class="coil f-rrzb"><text x="1120" y="598" text-anchor="middle">RR.ZD</text><path class="zz" d="M 1100 622 L 1110 604 L 1120 622 L 1130 604 L 1140 622"/></g>
 <text x="1140" y="654" text-anchor="middle">0V</text>
-<path class="leader" style="stroke:#3E77E0" d="M1120 624 V1092"/>
+<text x="1386" y="654" text-anchor="start" style="font-size:9px;fill:#3E77E0">RR.ZD · contacto 2 → RS S5</text>
 
 <g id="d_ctRet" class="sym f-rrzb"><circle cx="1097.5" cy="712" r="2.5"/><circle cx="1142.5" cy="712" r="2.5"/><line class="bo" x1="1100" y1="712" x2="1134" y2="699"/><line class="bc" x1="1100" y1="712" x2="1140" y2="712"/></g>
 <g id="d_gRet"><path class="w" d="M 1145 712 H 1175"/><path class="w" d="M 1095 712 H 300"/><path class="w" d="M 260 712 H 240"/></g>
@@ -1268,30 +1274,28 @@ Para agregar un nuevo módulo:
 <text x="1150" y="806">+48V</text>
 <g id="d_coRR1" class="coil f-rrzb"><text x="1025" y="780" text-anchor="middle">RR1.ZD</text><path class="zz" d="M 1005 802 L 1015 784 L 1025 802 L 1035 784 L 1045 802"/></g>
 <text x="981" y="806" text-anchor="end">0V</text>
-<path class="leader" style="stroke:#3E77E0" d="M1025 804 V1262"/>
+<text x="1446" y="824" text-anchor="start" style="font-size:9px;fill:#3E77E0">RR1.ZD · contacto → RS S7</text>
 
-<g id="d_ctRS6" class="sym f-rrzb"><circle cx="1002.5" cy="847" r="2.5"/><circle cx="1047.5" cy="847" r="2.5"/><line class="bo" x1="1005" y1="847" x2="1039" y2="834"/><line class="bc" x1="1005" y1="847" x2="1045" y2="847"/></g>
-<g id="d_gRS6"><path class="w" d="M 1000 847 H 960"/></g>
-<path d="M 965 847 H 955" stroke="var(--border-strong)" stroke-width="1.6" marker-end="url(#d_arD)" fill="none"/>
-<text x="1055" y="851">+48V</text>
-<text x="945" y="851" text-anchor="end" style="font-size:11px">Condición RS S6</text>
 <!-- Condición RS S7: ver franja ② abajo -->
 
-<line x1="20" y1="1002" x2="1280" y2="1002" stroke="var(--border)" stroke-width="1"/>
-<text x="20" y="1026" style="font-weight:600;fill:var(--text-primary);font-size:13px">② Condición RS por sección · relé de seguridad R.RS y bucle de 5V al NS1 (S6 pendiente de plano)</text>
+<line x1="1305" y1="40" x2="1305" y2="600" stroke="var(--border)" stroke-width="1"/>
+<g id="d_franja2" transform="translate(1330,-980)">
+<g transform="translate(1300,0) scale(-1,1)">
+
+<line x1="20" y1="1002" x2="1280" y2="1002" stroke="var(--border)" stroke-width="1" opacity="0"/>
+<text transform="scale(-1,1)" x="-1175" y="1026" style="font-weight:600;fill:var(--text-primary);font-size:13px">② Condición RS por sección · relé de seguridad R.RS y bucle de 5V al NS1 (la S6 no tiene S/ER: no existe RS S6)</text>
 
 <rect class="zona" x="20" y="1042" width="340" height="150" rx="10"/>
-<text x="30" y="1062" style="font-weight:500;fill:var(--text-primary);font-size:12px">S/ER Las Torres</text>
+<text transform="scale(-1,1)" x="-345" y="1062" style="font-weight:500;fill:var(--text-primary);font-size:12px">S/ER Las Torres</text>
 <rect class="zona" x="380" y="1042" width="900" height="150" rx="10"/>
-<text x="390" y="1062" style="font-weight:500;fill:var(--text-primary);font-size:12px">Estación Las Torres · Condición RS S5</text>
+<text transform="scale(-1,1)" x="-390" y="1062" text-anchor="end" style="font-weight:500;fill:var(--text-primary);font-size:12px">Estación Las Torres · Condición RS S5</text>
 
-<text x="780" y="1096" text-anchor="end">0V</text>
-<g id="d_gRSS5"><path class="w" d="M 786 1092 H 820"/><path class="w" d="M 862 1092 H 1095"/><path class="w" d="M 1145 1092 H 1175"/></g>
-<g id="d_coRSS5" class="coil f-rss"><text x="842" y="1068" text-anchor="middle">R.RS.S5</text><path class="zz" d="M 822 1092 L 832 1074 L 842 1092 L 852 1074 L 862 1092"/></g>
-<g id="d_ctRS5" class="sym f-rrzb"><text x="1120" y="1076" text-anchor="middle">Condición RS S5</text><circle cx="1097.5" cy="1092" r="2.5"/><circle cx="1142.5" cy="1092" r="2.5"/><line class="bo" x1="1100" y1="1092" x2="1134" y2="1079"/><line class="bc" x1="1100" y1="1092" x2="1140" y2="1092"/></g>
-<text x="1179" y="1096">+48V</text>
+<text transform="scale(-1,1)" x="-780" y="1096" text-anchor="start">0V</text>
+<g id="d_gRSS5"><path class="w" d="M 786 1092 H 820"/><path class="w" d="M 862 1092 H 1175"/></g>
+<g id="d_coRSS5" class="coil f-rss"><text transform="scale(-1,1)" x="-842" y="1068" text-anchor="middle">R.RS.S5</text><path class="zz" d="M 822 1092 L 832 1074 L 842 1092 L 852 1074 L 862 1092"/></g>
+<text transform="scale(-1,1)" x="-1179" y="1096">+48V</text>
 <path class="leader" style="stroke:#D264C4" d="M 842 1094 V 1164"/>
-<text x="910" y="1122" text-anchor="middle" style="font-size:11px">P1 · resistencia ajustable</text>
+<text transform="scale(-1,1)" x="-910" y="1122" text-anchor="middle" style="font-size:11px">P1 · resistencia ajustable</text>
 <g id="d_gBucle5">
 <path class="w" d="M 870 1140 H 890"/><path class="w" d="M 930 1140 H 950"/>
 <path class="w" d="M 290 1140 H 815"/><path class="w" d="M 240 1168 H 815"/><path class="w" d="M 870 1168 H 890"/>
@@ -1300,30 +1304,30 @@ Para agregar un nuevo módulo:
 <path d="M 900 1128 L 920 1128 L 910 1134" fill="var(--border-strong)"/>
 <g id="d_ctB5a" class="sym f-rss"><circle cx="817.5" cy="1140" r="2.5"/><circle cx="867.5" cy="1140" r="2.5"/><line class="bo" x1="820" y1="1140" x2="859" y2="1128"/><line class="bc" x1="820" y1="1140" x2="865" y2="1140"/></g>
 <g id="d_ctB5b" class="sym f-rss"><circle cx="817.5" cy="1168" r="2.5"/><circle cx="867.5" cy="1168" r="2.5"/><line class="bo" x1="820" y1="1168" x2="859" y2="1156"/><line class="bc" x1="820" y1="1168" x2="865" y2="1168"/></g>
-<text x="954" y="1144">+48V</text>
-<text x="894" y="1172">0V</text>
-<text x="560" y="1130" text-anchor="middle" style="font-size:11px">Bucle Condición RS S5 (5V)</text>
-<text x="410" y="1184" style="font-size:11px">contactos R.RS.S5</text>
-<g id="d_coNS1lt" class="coil f-ns1"><text x="250" y="1102" text-anchor="middle">NS1 · 5V</text><path class="zz" d="M 230 1126 L 240 1108 L 250 1126 L 260 1108 L 270 1126"/></g>
+<text transform="scale(-1,1)" x="-984" y="1144">+48V</text>
+<text transform="scale(-1,1)" x="-894" y="1172">0V</text>
+<text transform="scale(-1,1)" x="-560" y="1130" text-anchor="middle" style="font-size:11px">Bucle Condición RS S5 (5V)</text>
+<text transform="scale(-1,1)" x="-870" y="1184" style="font-size:11px">contactos R.RS.S5</text>
+<g id="d_coNS1lt" class="coil f-ns1"><text transform="scale(-1,1)" x="-250" y="1102" text-anchor="middle">NS1 · 5V</text><path class="zz" d="M 230 1126 L 240 1108 L 250 1126 L 260 1108 L 270 1126"/></g>
 <path class="w" d="M 290 1140 H 270 V 1126"/><path class="w" d="M 240 1168 H 230 V 1126"/>
-<text x="88" y="1102" text-anchor="middle" style="font-size:11px">IAS S/ER LT</text>
+<text transform="scale(-1,1)" x="-88" y="1102" text-anchor="middle" style="font-size:11px">IAS S/ER LT</text>
 <g id="d_iasSym5" class="sym f-sat"><circle cx="60.5" cy="1126" r="2.5"/><circle cx="115.5" cy="1126" r="2.5"/><line class="bo" x1="63" y1="1126" x2="107" y2="1113"/><line class="bc" x1="63" y1="1126" x2="113" y2="1126"/></g>
-<text x="88" y="1157" text-anchor="middle" style="font-size:11px">→ 750 Vcc S5</text>
+<text transform="scale(-1,1)" x="-88" y="1157" text-anchor="middle" style="font-size:11px">→ 750 Vcc S5</text>
 <circle id="d_tk5" class="tkdot" cx="400" cy="1168" r="6"/>
-<text x="414" y="1172" style="font-size:11px">VMAT: TK RS.S5 al PCC</text>
+<text transform="scale(-1,1)" x="-414" y="1183" style="font-size:11px">VMAT: TK RS.S5 al PCC</text>
 
 <rect class="zona" x="20" y="1212" width="340" height="150" rx="10"/>
-<text x="30" y="1232" style="font-weight:500;fill:var(--text-primary);font-size:12px">S/ER Vicente Valdés</text>
+<text transform="scale(-1,1)" x="-345" y="1232" style="font-weight:500;fill:var(--text-primary);font-size:12px">S/ER Vicente Valdés</text>
 <rect class="zona" x="380" y="1212" width="900" height="150" rx="10"/>
-<text x="390" y="1232" style="font-weight:500;fill:var(--text-primary);font-size:12px">Estación Vicente Valdés · Condición RS S7</text>
+<text transform="scale(-1,1)" x="-390" y="1232" text-anchor="end" style="font-weight:500;fill:var(--text-primary);font-size:12px">Estación Vicente Valdés · Condición RS S7</text>
 
-<text x="780" y="1266" text-anchor="end">0V</text>
-<g id="d_gRSS7"><path class="w" d="M 786 1262 H 820"/><path class="w" d="M 862 1262 H 1000"/><path class="w" d="M 1050 1262 H 1080"/></g>
-<g id="d_coRSS7" class="coil f-rss"><text x="842" y="1238" text-anchor="middle">R.RS.S7</text><path class="zz" d="M 822 1262 L 832 1244 L 842 1262 L 852 1244 L 862 1262"/></g>
-<g id="d_ctRS7" class="sym f-rrzb"><text x="1025" y="1246" text-anchor="middle">Condición RS S7</text><circle cx="1002.5" cy="1262" r="2.5"/><circle cx="1047.5" cy="1262" r="2.5"/><line class="bo" x1="1005" y1="1262" x2="1039" y2="1249"/><line class="bc" x1="1005" y1="1262" x2="1045" y2="1262"/></g>
-<text x="1084" y="1266">+48V</text>
+<text transform="scale(-1,1)" x="-780" y="1266" text-anchor="start">0V</text>
+<g id="d_gRSS7"><path class="w" d="M 786 1262 H 820"/><path class="w" d="M 862 1262 H 1175"/></g>
+<g id="d_coRSS7" class="coil f-rss"><text transform="scale(-1,1)" x="-842" y="1238" text-anchor="middle">R.RS.S7</text><path class="zz" d="M 822 1262 L 832 1244 L 842 1262 L 852 1244 L 862 1262"/></g>
+
+<text transform="scale(-1,1)" x="-1179" y="1266">+48V</text>
 <path class="leader" style="stroke:#D264C4" d="M 842 1264 V 1334"/>
-<text x="910" y="1292" text-anchor="middle" style="font-size:11px">P1 · resistencia ajustable</text>
+<text transform="scale(-1,1)" x="-910" y="1292" text-anchor="middle" style="font-size:11px">P1 · resistencia ajustable</text>
 <g id="d_gBucle7">
 <path class="w" d="M 870 1310 H 890"/><path class="w" d="M 930 1310 H 950"/>
 <path class="w" d="M 290 1310 H 815"/><path class="w" d="M 240 1338 H 815"/><path class="w" d="M 870 1338 H 890"/>
@@ -1332,45 +1336,48 @@ Para agregar un nuevo módulo:
 <path d="M 900 1298 L 920 1298 L 910 1304" fill="var(--border-strong)"/>
 <g id="d_ctB7a" class="sym f-rss"><circle cx="817.5" cy="1310" r="2.5"/><circle cx="867.5" cy="1310" r="2.5"/><line class="bo" x1="820" y1="1310" x2="859" y2="1298"/><line class="bc" x1="820" y1="1310" x2="865" y2="1310"/></g>
 <g id="d_ctB7b" class="sym f-rss"><circle cx="817.5" cy="1338" r="2.5"/><circle cx="867.5" cy="1338" r="2.5"/><line class="bo" x1="820" y1="1338" x2="859" y2="1326"/><line class="bc" x1="820" y1="1338" x2="865" y2="1338"/></g>
-<text x="954" y="1314">+48V</text>
-<text x="894" y="1342">0V</text>
-<text x="560" y="1300" text-anchor="middle" style="font-size:11px">Bucle Condición RS S7 (5V)</text>
-<text x="410" y="1354" style="font-size:11px">contactos R.RS.S7</text>
-<g id="d_coNS1vv" class="coil f-ns1"><text x="250" y="1272" text-anchor="middle">NS1 · 5V</text><path class="zz" d="M 230 1296 L 240 1278 L 250 1296 L 260 1278 L 270 1296"/></g>
+<text transform="scale(-1,1)" x="-984" y="1314">+48V</text>
+<text transform="scale(-1,1)" x="-894" y="1342">0V</text>
+<text transform="scale(-1,1)" x="-560" y="1300" text-anchor="middle" style="font-size:11px">Bucle Condición RS S7 (5V)</text>
+<text transform="scale(-1,1)" x="-870" y="1354" style="font-size:11px">contactos R.RS.S7</text>
+<g id="d_coNS1vv" class="coil f-ns1"><text transform="scale(-1,1)" x="-250" y="1272" text-anchor="middle">NS1 · 5V</text><path class="zz" d="M 230 1296 L 240 1278 L 250 1296 L 260 1278 L 270 1296"/></g>
 <path class="w" d="M 290 1310 H 270 V 1296"/><path class="w" d="M 240 1338 H 230 V 1296"/>
-<text x="88" y="1272" text-anchor="middle" style="font-size:11px">IA S/ER VV</text>
+<text transform="scale(-1,1)" x="-88" y="1272" text-anchor="middle" style="font-size:11px">IA S/ER VV</text>
 <g id="d_iaSym7" class="sym f-sat"><circle cx="60.5" cy="1296" r="2.5"/><circle cx="115.5" cy="1296" r="2.5"/><line class="bo" x1="63" y1="1296" x2="107" y2="1283"/><line class="bc" x1="63" y1="1296" x2="113" y2="1296"/></g>
-<text x="88" y="1327" text-anchor="middle" style="font-size:11px">→ 750 Vcc S7</text>
+<text transform="scale(-1,1)" x="-88" y="1327" text-anchor="middle" style="font-size:11px">→ 750 Vcc S7</text>
 <circle id="d_tk7" class="tkdot" cx="400" cy="1338" r="6"/>
-<text x="414" y="1342" style="font-size:11px">VMAT: TK RS.S7 al PCC</text>
+<text transform="scale(-1,1)" x="-414" y="1353" style="font-size:11px">VMAT: TK RS.S7 al PCC</text>
 
-<line x1="20" y1="1404" x2="1280" y2="1404" stroke="var(--border)" stroke-width="1"/>
-<text x="20" y="1428" style="font-weight:600;fill:var(--text-primary);font-size:13px">③ Vías de tracción · 750 Vcc · la S6 se alimenta a través de los SAT</text>
-<rect id="d_via5" class="viabar" x="20" y="1444" width="380" height="30" rx="4"/>
-<text id="d_via5t" class="viabartxt" x="210" y="1459" text-anchor="middle" dominant-baseline="central">Vía S5 · 750 Vcc</text>
-<text x="435" y="1434" text-anchor="middle" style="font-size:10px;fill:#2BA6A6">SAT 5/6</text>
-<circle cx="408" cy="1459" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
-<circle cx="462" cy="1459" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
-<line id="d_blade56" class="satblade" style="transform-origin:412px 1459px;transform-box:view-box" x1="412" y1="1459" x2="458" y2="1459"/>
-<rect id="d_via6" class="viabar" x="470" y="1444" width="340" height="30" rx="4"/>
-<text id="d_via6t" class="viabartxt" x="640" y="1459" text-anchor="middle" dominant-baseline="central">Vía S6 · 750 Vcc (sin S/ER propia)</text>
-<text x="845" y="1434" text-anchor="middle" style="font-size:10px;fill:#2BA6A6">SAT 6/7</text>
-<circle cx="818" cy="1459" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
-<circle cx="872" cy="1459" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
-<line id="d_blade67" class="satblade" style="transform-origin:822px 1459px;transform-box:view-box" x1="822" y1="1459" x2="868" y2="1459"/>
-<rect id="d_via7" class="viabar" x="880" y="1444" width="400" height="30" rx="4"/>
-<text id="d_via7t" class="viabartxt" x="1080" y="1459" text-anchor="middle" dominant-baseline="central">Vía S7 · 750 Vcc</text>
 
-<g class="sym"><circle cx="30" cy="1518" r="2.5"/><circle cx="58" cy="1518" r="2.5"/><line x1="33" y1="1518" x2="53" y2="1507"/></g>
-<text x="66" y="1522" style="font-size:11px">abierto</text>
-<g class="sym"><circle cx="140" cy="1518" r="2.5"/><circle cx="168" cy="1518" r="2.5"/><line x1="143" y1="1518" x2="165" y2="1518"/></g>
-<text x="176" y="1522" style="font-size:11px">cerrado</text>
-<line x1="240" y1="1518" x2="280" y2="1518" stroke="#EF9F27" stroke-width="2" stroke-dasharray="6 4"/>
-<text x="288" y="1522" style="font-size:11px">energizado</text>
-<rect x="410" y="1511" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="1521" style="font-size:11px">RCE</text>
-<rect x="480" y="1511" width="11" height="11" rx="2" fill="none" stroke="#2BA6A6" stroke-width="1.5"/><text x="497" y="1521" style="font-size:11px">SAT / IAS-IA</text>
-<rect x="600" y="1511" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="617" y="1521" style="font-size:11px">RR.ZD / RR1.ZD</text>
-</svg>
+
+
+
+
+</g>
+</g>
+<g id="d_ctRS5b" class="sym f-rrzb"><text x="1120" y="743" text-anchor="middle">Condición RS S5</text><circle cx="1097.5" cy="757" r="2.5"/><circle cx="1142.5" cy="757" r="2.5"/><line class="bo" x1="1100" y1="757" x2="1134" y2="744"/><line class="bc" x1="1100" y1="757" x2="1140" y2="757"/></g>
+<g id="d_ctRS7" class="sym f-rrzb"><text x="1120" y="833" text-anchor="middle">Condición RS S7</text><circle cx="1097.5" cy="847" r="2.5"/><circle cx="1142.5" cy="847" r="2.5"/><line class="bo" x1="1100" y1="847" x2="1134" y2="834"/><line class="bc" x1="1100" y1="847" x2="1140" y2="847"/></g><path id="d_mkRRZD" class="w" style="stroke-dasharray:5 4" d="M1120 624 V812"/>
+<g id="d_wRRZDrs5"><path class="w" style="stroke-dasharray:5 4" d="M1142.5 757 H1380 V112 H1455"/></g>
+<g id="d_wRR1ZDrs7"><path class="w" style="stroke-dasharray:5 4" d="M1025 804 V847 H1097.5"/><path class="w" style="stroke-dasharray:5 4" d="M1142.5 847 H1440 V282 H1455"/></g>
+<g id="d_viasBottom">
+<line x1="40" y1="944" x2="2600" y2="944" stroke="var(--border)" stroke-width="1"/>
+<text x="40" y="962" style="font-weight:600;fill:var(--text-primary);font-size:13px">③ Vías de tracción · 750 Vcc · la S6 se alimenta a través de los SAT</text>
+<rect id="d_via5" class="viabar" x="40" y="984" width="787" height="30" rx="4"/>
+<text id="d_via5t" class="viabartxt" x="434" y="999" text-anchor="middle" dominant-baseline="central">Vía S5 · 750 Vcc</text>
+<text x="887" y="978" text-anchor="middle" style="font-size:10px;fill:#2BA6A6">SAT 5/6</text>
+<circle cx="860" cy="999" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+<circle cx="914" cy="999" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+<line id="d_blade56" class="satblade" style="transform-origin:864px 999px;transform-box:view-box" x1="864" y1="999" x2="910" y2="999"/>
+<rect id="d_via6" class="viabar" x="947" y="984" width="704" height="30" rx="4"/>
+<text id="d_via6t" class="viabartxt" x="1299" y="999" text-anchor="middle" dominant-baseline="central">Vía S6 · 750 Vcc (sin S/ER propia)</text>
+<text x="1711" y="978" text-anchor="middle" style="font-size:10px;fill:#2BA6A6">SAT 6/7</text>
+<circle cx="1684" cy="999" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+<circle cx="1738" cy="999" r="3.5" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+<line id="d_blade67" class="satblade" style="transform-origin:1688px 999px;transform-box:view-box" x1="1688" y1="999" x2="1734" y2="999"/>
+<rect id="d_via7" class="viabar" x="1771" y="984" width="829" height="30" rx="4"/>
+<text id="d_via7t" class="viabartxt" x="2186" y="999" text-anchor="middle" dominant-baseline="central">Vía S7 · 750 Vcc</text>
+</g>
+<g id="d_legendD" transform="translate(1480,632)" style="fill:var(--text-secondary)"><g class="sym"><circle cx="0" cy="0" r="2.5"/><circle cx="28" cy="0" r="2.5"/><line x1="3" y1="0" x2="23" y2="-11"/></g><text x="38" y="4" style="font-size:11px;fill:var(--text-secondary)">abierto</text><g class="sym" transform="translate(108,0)"><circle cx="0" cy="0" r="2.5"/><circle cx="28" cy="0" r="2.5"/><line x1="3" y1="0" x2="25" y2="0"/></g><text x="154" y="4" style="font-size:11px;fill:var(--text-secondary)">cerrado</text><line x1="218" y1="0" x2="258" y2="0" stroke="#EF9F27" stroke-width="2" stroke-dasharray="6 4"/><text x="266" y="4" style="font-size:11px;fill:var(--text-secondary)">energizado</text><rect x="344" y="-6" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="362" y="4" style="font-size:11px;fill:var(--text-secondary)">RCE</text><rect x="404" y="-6" width="11" height="11" rx="2" fill="none" stroke="#2BA6A6" stroke-width="1.5"/><text x="422" y="4" style="font-size:11px;fill:var(--text-secondary)">SAT / IAS-IA</text><rect x="520" y="-6" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="538" y="4" style="font-size:11px;fill:var(--text-secondary)">RR.ZD / RR1.ZD</text></g></svg>
 </div>
 
 <div class="panel">
@@ -2231,8 +2238,8 @@ Para agregar un nuevo módulo:
 <p><b>Ejercicio 1b — Botar toda la línea:</b> con todo en servicio, click en la perilla del DG (girarla a "Abierto"): caen las 7 zonas y las 11 secciones de una, tal como dice el manual.</p>
 <p><b>La S6 no tiene S/ER:</b> entre Vicuña Mackenna y Vicente Valdés no hay subestación (ni rectificador ni IA/IAS propios), por eso <b>no existe una "Condición RS S6"</b>. La S6 se alimenta únicamente a través de los SAT 5/6 y 6/7 desde las secciones vecinas — si ambos SAT quedan abiertos, muere sí o sí.</p>
 <p><b>Ejercicio 2 — Los SAT unen las secciones:</b> con la Zona B armada, cierra solo el IAS de LOR: como el <b>SAT 2/3 está cerrado</b>, la S2 <b>y también la S3</b> toman tensión (el SAT las une eléctricamente). Abre el SAT 2/3 y la S3 muere al instante — queda viva solo la sección del interruptor cerrado. Lo mismo pasa con los 4 SAT de la línea; la S6, que no tiene S/ER propia, vive únicamente de esa unión.</p>
-<p><b>Ejercicio 3 — Golpe con aislamiento:</b> golpea el CE de la S2, abre el SAT 2/3 y rearma la B: la S3 vuelve y la S2 queda aislada.</p>
-<p><b>Ejercicio 4 — Los ramales:</b> Cocheras bota la Zona C; Talleres (IATS + ruptor) bota la G, fiel a los enclavamientos R Ai.</p>
+<p><b>Ejercicio 3 — Golpe con aislamiento:</b> golpea el CE de la S2. Para rearmar la B no basta con abrir el SAT 2/3: hay que <b>abrir también el IAS de la S/ER LO</b>, que es el que alimenta la S2. Con las dos cosas la zona valida, la S3 vuelve y la S2 queda aislada. Misma regla en S3 (SAT 2/3 + IA de RQU), S5 (SAT 5/6 + IAS de LTO), S7 (SAT 6/7 + IA de VVA) y S10 (SAT 10/11 + IAS de HSR). La S6 se aísla con los dos SAT y la S11 con el SAT 10/11 más la PT. Las secciones <b>S1, S4, S8 y S9 no se pueden aislar</b>: si su CE está golpeado, su zona no valida.</p>
+<p><p><b>Reglas de validación de la condición de zona</b> (las autorizaciones vienen del PCC hilo por hilo). Cada relé de condición de zona vive en el armario de tracción de una estación:</p><ul style="margin:4px 0 8px 16px;padding:0;font-size:13px;line-height:1.55"><li><b>Zona A · armario TOBALABA</b> — condiciones CE de la S1 (CE o CEFS), más la condición de apertura de la zona A sobre ruptores CE.</li><li><b>Zona B · armario ROTONDA GRECIA</b> — CE de la S2 (CE o CEFS) <i>o</i> SAT 2/3 abierto e IAS S/ER LO abierto; <b>y</b> CE de la S3 (CE o CEFS) <i>o</i> SAT 2/3 abierto e IA S/ER RQ abierto.</li><li><b>Zona C · armario LAS TORRES</b> — CE de la S4 (CE o CEFS).</li><li><b>Zona D · armario VICUÑA MACKENNA</b> — CE de la S5 <i>o</i> SAT 5/6 abierto e IAS S/ER LT abierto; <b>y</b> CE de la S6 <i>o</i> SAT 5/6 abierto y SAT 6/7 abierto; <b>y</b> CE de la S7 <i>o</i> SAT 6/7 abierto e IA S/ER VV abierto.</li><li><b>Zona E · armario TRINIDAD</b> — CE de la S8 (CE o CEFS).</li><li><b>Zona F · armario SOTERO DEL RÍO</b> — CE de la S9 (CE o CEFS).</li><li><b>Zona G · armario SOTERO DEL RÍO</b> — CE de la S10 <i>o</i> SAT 10/11 abierto e IAS S/ER HS abierto; <b>y</b> CE de la S11 <i>o</i> SAT 10/11 abierto y PT en S11.</li></ul><p><b>Ejercicio 4 — Los ramales:</b> Cocheras bota la Zona C; Talleres (IATS + ruptor) bota la G, fiel a los enclavamientos R Ai.</p>
 </div>
 </details>
 <main>
@@ -2751,374 +2758,7 @@ Para agregar un nuevo módulo:
 </section>
 
 <!-- ================= MÓDULO: CONDICIÓN DISYUNTOR GENERAL (DG) ================= -->
-<section id="mod-l4dg" class="mod">
-<header>
-<button class="btn volver" onclick="irMenu()">&#8592; Volver al menú</button>
-<h1>Condición <span>Disyuntor General (DG)</span> · Línea 4</h1>
-<p class="sub">Comando DG desde la platina C.A.T. · Basado en el plano Metro S.A. 1202-DSM-04-066-30573 (pág. 4)</p>
-</header>
-<details class="guia">
-<summary>📖 Guía rápida (clic para abrir)</summary>
-<div class="cont">
-<p><b>Qué estás viendo:</b> el circuito de mando (48 Vcc) del <b>Disyuntor General</b>, el comando maestro que autoriza toda la energización de la línea. Vive en la platina <b>C.A.T.</b> (Corte de Alimentación de Tracción) del pupitre del PCC.</p>
-<p><b>El TPL (Girar-Oprimir-Luminoso):</b> primero <b>giras</b> la perilla del DG a "Cerrado" (posición C) — se enciende la <b>luz roja</b>. Luego <b>oprimes</b>: cierra el relé <b>R.DG</b>, que energiza el <b>RR.DG</b> (repetidor). El RR.DG cierra el <b>bucle de automantenimiento</b> — el mando queda sellado y la luz roja se apaga.</p>
-<p><b>Las salidas del RR.DG:</b> reparte a las zonas por pares (<b>ZA-ZB, ZC-ZD, ZE-ZF, ZG</b>), a la reserva, y el contacto que sube la <b>Condición RM 20 kV al PCD</b>. Con eso habilitadas, el PCC ya puede armar cada zona.</p>
-<p><b>Abrir el DG:</b> girar la perilla a "Abierto" (A) desactiva el R.DG, cae el RR.DG y desaparecen todas las salidas — con ellas caen las condiciones de zona y las RS de las estaciones.</p>
-<p><b>PL (Prueba Lámparas):</b> el pulsador prueba que la luz roja no esté quemada.</p>
-</div>
-</details>
-<main>
-<div class="ctrl" style="margin-bottom:6px">
-<button class="btn" id="dg_btnFit">Ajustar a pantalla</button>
-<label>Zoom <input type="range" id="dg_zoom" min="40" max="140" value="100"></label>
-<span id="dg_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
-</div>
-<div class="scrollwrap" id="dg_wrap">
-<svg id="dg_plano" width="1180" height="620" viewBox="0 0 1180 620" role="img"><title>Condición Disyuntor General L4</title>
-<line class="zona" x1="360" y1="40" x2="360" y2="580"/>
-<line class="zona" x1="740" y1="40" x2="740" y2="580"/>
-<text x="190" y="34" text-anchor="middle" style="font-size:12px;font-weight:600;fill:var(--text-primary)">PUPITRE</text>
-<text x="550" y="34" text-anchor="middle" style="font-size:12px;font-weight:600;fill:var(--text-primary)">ARMARIO TRACCIÓN · PCC</text>
-<text x="150" y="70" text-anchor="middle" style="font-size:11px;fill:var(--text-primary)">TPL DG-L4</text>
-<text x="40" y="118" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_ctGiro" class="sym"><text x="110" y="86" text-anchor="middle" style="font-size:9px">girado</text><circle cx="92" cy="114" r="2.5"/><circle cx="140" cy="114" r="2.5"/><line class="bo" x1="94.5" y1="114" x2="132" y2="102"/><line class="bc" x1="94.5" y1="114" x2="137.5" y2="114"/></g>
-<g id="dg_ctPuls" class="sym"><text x="185" y="86" text-anchor="middle" style="font-size:9px">oprimido</text><circle cx="167" cy="114" r="2.5"/><circle cx="215" cy="114" r="2.5"/><line class="bo" x1="169.5" y1="114" x2="207" y2="102"/><line class="bc" x1="169.5" y1="114" x2="212.5" y2="114"/></g>
-<g id="dg_gTPL"><path class="w" d="M44 114 H92"/><path class="w" d="M140 114 H167"/><path class="w" d="M215 114 H286"/></g>
-<circle cx="286" cy="114" r="3" fill="var(--border-strong)"/>
-<path class="w" id="dg_wUp" d="M286 114 V96 H404"/>
-<text x="40" y="250" text-anchor="end" style="font-size:10px">+48V</text>
-<circle id="dg_lampRoja" cx="80" cy="246" r="15" fill="var(--surface-1)" stroke="#A32D2D" stroke-width="1.4"/>
-<line x1="70" y1="236" x2="90" y2="256" stroke="#A32D2D" stroke-width="1.2"/><line x1="90" y1="236" x2="70" y2="256" stroke="#A32D2D" stroke-width="1.2"/>
-<text x="80" y="212" text-anchor="middle" style="font-size:9px;fill:#E24B4A">Rojo</text>
-<path class="w" d="M44 246 H65"/>
-<path d="M80 261 V284" stroke="var(--border-strong)" stroke-width="1.4" fill="none"/>
-<polygon points="72,284 88,284 80,298" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line x1="72" y1="298" x2="88" y2="298" stroke="var(--border-strong)" stroke-width="1.4"/>
-<g id="dg_btnPL" style="cursor:pointer"><text x="150" y="292" text-anchor="middle" style="font-size:10px;fill:var(--text-primary)">PL</text><circle cx="120" cy="298" r="2.5" stroke="var(--border-strong)"/><circle cx="168" cy="298" r="2.5" stroke="var(--border-strong)"/><line x1="122.5" y1="298" x2="165.5" y2="298" stroke="var(--border-strong)" stroke-width="2"/><rect x="118" y="290" width="52" height="16" fill="transparent"/></g>
-<path d="M80 298 H120" stroke="var(--border-strong)" stroke-width="1.5" fill="none"/><text x="182" y="302" style="font-size:10px">0V</text><path d="M168 298 H182" stroke="var(--border-strong)" stroke-width="1.5" fill="none"/>
-<path class="w" id="dg_wLamp" d="M95 246 H404"/>
-<g id="dg_coRDG" class="coil"><path class="zz" d="M404 96 L414 80 L424 96 L434 80 L444 96 L454 80 L464 96"/><text x="434" y="112" text-anchor="middle">R.DG</text></g>
-<text x="474" y="100" style="font-size:10px">+48V</text>
-<path class="w" d="M464 96 H474"/>
-<g id="dg_coRRDG" class="coil"><path class="zz" d="M560 170 L570 154 L580 170 L590 154 L600 170 L610 154 L620 170"/><text x="590" y="186" text-anchor="middle">RR.DG</text></g>
-<text x="640" y="174" style="font-size:10px">+48V</text><path class="w" d="M620 170 H640"/>
-<text x="470" y="174" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_ctRDG" class="sym"><circle cx="500" cy="170" r="2.5"/><circle cx="548" cy="170" r="2.5"/><line class="bo" x1="502.5" y1="170" x2="540" y2="158"/><line class="bc" x1="502.5" y1="170" x2="545.5" y2="170"/></g>
-<g id="dg_gRRfeed"><path class="w" d="M474 170 H500"/><path class="w" d="M548 170 H560"/></g>
-<path class="leader" style="stroke:#3E77E0" d="M434 96 V150 H500"/>
-<text x="560" y="238" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Bucle de automantenimiento</text>
-<g id="dg_ctSello" class="sym"><circle cx="500" cy="252" r="2.5"/><circle cx="548" cy="252" r="2.5"/><line class="bo" x1="502.5" y1="252" x2="540" y2="240"/><line class="bc" x1="502.5" y1="252" x2="545.5" y2="252"/></g>
-<g id="dg_gSello"><path class="w" d="M286 114 V330 H500 V254"/><path class="w" d="M548 252 V96"/></g>
-<path class="leader" style="stroke:#1D9E75" d="M590 170 V252 H548"/>
-<g id="dg_ctSal0" class="sym"><circle cx="640" cy="320" r="2.5"/><circle cx="688" cy="320" r="2.5"/><line class="bo" x1="642.5" y1="320" x2="680" y2="308"/><line class="bc" x1="642.5" y1="320" x2="685.5" y2="320"/></g>
-<text x="636" y="324" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_gSal0"><path class="w" d="M604 320 H640"/><path class="w" d="M688 320 H726"/></g>
-<text x="732" y="324" style="font-size:10px;fill:var(--text-primary)">Hacia TPL ZA y ZB</text>
-<path class="leader" style="stroke:#1D9E75" d="M590 252 " />
-<g id="dg_ctSal1" class="sym"><circle cx="640" cy="360" r="2.5"/><circle cx="688" cy="360" r="2.5"/><line class="bo" x1="642.5" y1="360" x2="680" y2="348"/><line class="bc" x1="642.5" y1="360" x2="685.5" y2="360"/></g>
-<text x="636" y="364" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_gSal1"><path class="w" d="M604 360 H640"/><path class="w" d="M688 360 H726"/></g>
-<text x="732" y="364" style="font-size:10px;fill:var(--text-primary)">Hacia TPL ZC y ZD</text>
-<path class="leader" style="stroke:#1D9E75" d="M590 252 " />
-<g id="dg_ctSal2" class="sym"><circle cx="640" cy="400" r="2.5"/><circle cx="688" cy="400" r="2.5"/><line class="bo" x1="642.5" y1="400" x2="680" y2="388"/><line class="bc" x1="642.5" y1="400" x2="685.5" y2="400"/></g>
-<text x="636" y="404" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_gSal2"><path class="w" d="M604 400 H640"/><path class="w" d="M688 400 H726"/></g>
-<text x="732" y="404" style="font-size:10px;fill:var(--text-primary)">Hacia TPL ZE y ZF</text>
-<path class="leader" style="stroke:#1D9E75" d="M590 252 " />
-<g id="dg_ctSal3" class="sym"><circle cx="640" cy="440" r="2.5"/><circle cx="688" cy="440" r="2.5"/><line class="bo" x1="642.5" y1="440" x2="680" y2="428"/><line class="bc" x1="642.5" y1="440" x2="685.5" y2="440"/></g>
-<text x="636" y="444" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_gSal3"><path class="w" d="M604 440 H640"/><path class="w" d="M688 440 H726"/></g>
-<text x="732" y="444" style="font-size:10px;fill:var(--text-primary)">Hacia TPL ZG</text>
-<path class="leader" style="stroke:#1D9E75" d="M590 252 " />
-<g id="dg_ctSal4" class="sym"><circle cx="640" cy="480" r="2.5"/><circle cx="688" cy="480" r="2.5"/><line class="bo" x1="642.5" y1="480" x2="680" y2="468"/><line class="bc" x1="642.5" y1="480" x2="685.5" y2="480"/></g>
-<text x="636" y="484" text-anchor="end" style="font-size:10px">0V</text>
-<g id="dg_gSal4"><path class="w" d="M604 480 H640"/><path class="w" d="M688 480 H726"/></g>
-<text x="732" y="484" style="font-size:10px;fill:var(--text-primary)">Reserva</text>
-<path class="leader" style="stroke:#1D9E75" d="M590 252 " />
-<path class="w" id="dg_gSalBus" d="M604 320 V520"/>
-<path class="leader" style="stroke:#1D9E75" d="M590 170 V300 H604"/>
-<g id="dg_ctRM" class="sym"><circle cx="640" cy="520" r="2.5"/><circle cx="688" cy="520" r="2.5"/><line class="bo" x1="642.5" y1="520" x2="680" y2="508"/><line class="bc" x1="642.5" y1="520" x2="685.5" y2="520"/></g>
-<g id="dg_gRM"><path class="w" d="M604 520 H640"/><path class="w" d="M688 520 H900"/></g>
-<path class="leader" style="stroke:#1D9E75" d="M590 170 V520 H604"/>
-<rect x="770" y="60" width="390" height="90" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1.3"/>
-<text x="1140" y="80" text-anchor="end" style="font-size:14px;font-weight:700;fill:var(--text-primary)">C.A.T. L4</text>
-<rect x="782" y="74" width="26" height="26" rx="3" fill="none" stroke="var(--border-strong)"/><rect x="788" y="80" width="14" height="14" fill="none" stroke="var(--border-strong)"/>
-<text x="795" y="112" text-anchor="middle" style="font-size:6.5px;fill:var(--text-secondary)">PRUEBA</text><text x="795" y="120" text-anchor="middle" style="font-size:6.5px;fill:var(--text-secondary)">LÁMPARAS</text>
-<text x="838" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">DG</text><text x="851" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="851" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="838" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndDG" x1="838" y1="85" x2="838" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="878" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZA</text><text x="891" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="891" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="878" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZA" x1="878" y1="85" x2="878" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="918" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZB</text><text x="931" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="931" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="918" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZB" x1="918" y1="85" x2="918" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="958" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZC</text><text x="971" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="971" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="958" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZC" x1="958" y1="85" x2="958" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="998" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZD</text><text x="1011" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="1011" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="998" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZD" x1="998" y1="85" x2="998" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="1038" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZE</text><text x="1051" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="1051" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="1038" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZE" x1="1038" y1="85" x2="1038" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="1078" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZF</text><text x="1091" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="1091" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="1078" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZF" x1="1078" y1="85" x2="1078" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="1118" y="72" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">ZG</text><text x="1131" y="82" style="font-size:6px;fill:var(--text-secondary)">C</text><text x="1131" y="102" style="font-size:6px;fill:var(--text-secondary)">A</text><circle cx="1118" cy="92" r="9" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/><line id="dg_catIndZG" x1="1118" y1="85" x2="1118" y2="99" stroke="var(--text-primary)" stroke-width="2"/>
-<text x="965" y="146" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">TPL ENTRELEC</text>
-<rect x="900" y="490" width="260" height="70" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1.3"/>
-<text x="1150" y="508" text-anchor="end" style="font-size:13px;font-weight:700;fill:var(--text-primary)">PCD</text>
-<text x="912" y="518" style="font-size:10px;fill:var(--text-primary)">Contacto para</text>
-<text x="912" y="532" style="font-size:10px;fill:var(--text-primary)">condición RM 20 kV</text>
-</svg>
-</div>
-<div class="panel">
-<fieldset class="grp">
-<legend>Comando DG (platina C.A.T.)</legend>
-<label><input type="checkbox" id="dg_cbGiro"> Girar TPL DG en "Cerrado"</label>
-<button class="btn" id="dg_btnPuls">Oprimir TPL DG (pulso)</button>
-<button class="btn" id="dg_btnPL2">Prueba de lámparas (PL)</button>
-</fieldset>
-</div>
-<div id="dg_status">Gira el TPL DG en "Cerrado" y oprímelo para cerrar el R.DG.</div>
-</main>
-</section>
 
-<section id="mod-rm" class="mod">
-<header>
-<button class="btn volver" onclick="irMenu()">&#8592; Volver al menú</button>
-<h1>Condición <span>RM · PCD</span> · Cadena · VVA · Línea 4</h1>
-<p class="sub">Basado en el plano esquema_cadena 1202-HDD-04-0473-30573 (Ind. B) · Armario Tracción PCD · CDC Vicente Valdés</p>
-</header>
-<details class="guia">
-<summary>📖 Guía rápida (clic para abrir)</summary>
-<div class="cont">
-<p><b>De dónde viene:</b> el <b>DG</b> cerrado energiza <b>directamente</b> el cable de la Condición RM que entra al bloque <b>RM L4 · MX642</b> — ese cable alimenta los relés RM.</p>
-<p><b>Los dos relés en cascada:</b> primero energiza <b>R RM1-1 L4</b> (K1), que se <b>automantiene</b> (contacto C3-C2 con su diodo D06) y a la vez habilita a <b>R RM1-2 L4</b> (K2). Entre los dos mueven las <b>columnas de contactos</b> (bornes Z08, B08, B10, D10, B12, D12 / D18, B18, D20, B20, D22, B22).</p>
-<p><b>Las salidas:</b> por <b>P44 → 2H3</b>, las 12 líneas van a los telemandos de cada S/ER: <b>T502-TOB, T504-BIL, T501-LOR, T503-RQU, T509-LTO, T508-VVA, T512-TRI, T505-HSR, T506-TPA</b>. Cada una habilita su <b>ITM (T)</b> para que el PCD lo energice.</p>
-<p><b>El TK-RM1 DG (VXMAT → RED RMS):</b> ojo, este <b>no</b> alimenta la cadena. Es una <b>señal de control/estado</b>: le dice al <b>SCADA</b> del PCC si la Condición RM quedó <b>armada o no armada</b>. Es telecontrol de estado, no el disparador.</p>
-<p><b>Secuencia:</b> ① cierra el DG → ② su cable energiza los relés RM (K1 se automantiene y habilita K2) → ③ los contactos habilitan los ITM (T) → ④ el PCD energiza a 20 kV. En paralelo, el <b>TK-RM1</b> reporta al SCADA que la RM quedó armada.</p>
-</div>
-</details>
-<main>
-<div class="ctrl" style="margin-bottom:6px">
-<button class="btn" id="rm_btnFit">Ajustar a pantalla</button>
-<label>Zoom <input type="range" id="rm_zoom" min="40" max="140" value="100"></label>
-<span id="rm_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
-</div>
-<div class="scrollwrap" id="rm_wrap">
-<svg id="rm_plano" width="1360" height="720" viewBox="0 0 1360 720" role="img"><title>Condición RM PCD — cadena VVA L4</title>
-<rect x="16" y="16" width="1328" height="688" fill="none" stroke="var(--border-strong)" stroke-width="1.4"/>
-<text x="40" y="42" text-anchor="start" style="font-size:9px;font-weight:600;fill:var(--text-primary)">PCC</text>
-<text x="40" y="54" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">NIVEL 21</text>
-<text x="150" y="42" text-anchor="start" style="font-size:9px;font-weight:600;fill:var(--text-primary)">TÚNEL</text>
-<text x="250" y="42" text-anchor="start" style="font-size:9px;font-weight:600;fill:var(--text-primary)">LOCAL TÉCNICO</text>
-<text x="250" y="54" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">VICENTE VALDÉS</text>
-<text x="430" y="42" text-anchor="start" style="font-size:9px;font-weight:600;fill:var(--text-primary)">TÚNEL</text>
-<line x1="140" y1="16" x2="140" y2="704" stroke="var(--border)" stroke-width="1"/>
-<line x1="240" y1="16" x2="240" y2="704" stroke="var(--border)" stroke-width="1"/>
-<line x1="420" y1="16" x2="420" y2="704" stroke="var(--border)" stroke-width="1"/>
-<line x1="510" y1="16" x2="510" y2="704" stroke="var(--border)" stroke-width="1"/>
-<text x="900" y="42" text-anchor="middle" style="font-size:12px;font-weight:700;fill:var(--text-primary)">ARMARIO TRACCIÓN PCD · CDC VVA</text>
-<text x="40" y="70" text-anchor="start" style="font-size:8px;font-weight:normal;fill:var(--text-primary)">ARMARIO TT</text>
-<text x="250" y="70" text-anchor="start" style="font-size:8px;font-weight:normal;fill:var(--text-primary)">ARMARIO TT</text>
-<path id="rm_ent25" class="w" d="M60 150 H600"/>
-<text x="80" y="146" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">2H1</text>
-<text x="64" y="159" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">25</text>
-<ellipse cx="185" cy="160" rx="14" ry="7" fill="none" stroke="var(--border-strong)"/>
-<ellipse cx="465" cy="160" rx="14" ry="7" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_ent26" class="w" d="M60 170 H600"/>
-<text x="80" y="166" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">2H1</text>
-<text x="64" y="179" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">26</text>
-<ellipse cx="185" cy="160" rx="14" ry="7" fill="none" stroke="var(--border-strong)"/>
-<ellipse cx="465" cy="160" rx="14" ry="7" fill="none" stroke="var(--border-strong)"/>
-<text x="185" y="150" text-anchor="middle" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">7C</text>
-<text x="465" y="150" text-anchor="middle" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">7C</text>
-<text x="300" y="146" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">2J1</text>
-<text x="360" y="146" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">2J13</text>
-<text x="548" y="146" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">2H1</text>
-<text x="600" y="146" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">P44</text>
-<text x="636" y="153" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">Z02</text>
-<text x="636" y="173" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">D02</text>
-<rect x="640" y="110" width="430" height="560" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
-<rect x="660" y="100" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="696" y="112" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">P1</text>
-<rect x="760" y="100" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="796" y="112" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">RM L4</text>
-<rect x="870" y="100" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="906" y="112" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">MX642</text>
-<g id="rm_coK1" class="coil"><path class="zz" d="M680 175 L689 160 L698 175 L707 160 L716 175"/><text x="698" y="155" text-anchor="middle" style="font-size:9px;font-weight:600">R RM1-1 L4</text></g>
-<text x="674" y="178" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">Z02</text>
-<text x="722" y="178" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K1</text>
-<path id="rm_wZ02" class="w" d="M604 150 H680"/>
-<path id="rm_wK1p" class="w" d="M716 175 H760"/>
-<text x="766" y="178" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">+48V</text>
-<text x="674" y="200" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">D02</text>
-<g id="rm_ctSelloK1" class="sym"><circle cx="710" cy="250" r="2.5"/><circle cx="758" cy="250" r="2.5"/><line class="bo" x1="712.5" y1="250" x2="750" y2="238"/><line class="bc" x1="712.5" y1="250" x2="755.5" y2="250"/></g>
-<text x="706" y="245" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">D06</text>
-<text x="762" y="245" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">C2</text>
-<text x="710" y="232" text-anchor="middle" style="font-size:7px;font-weight:normal;fill:var(--text-secondary)">automant.</text>
-<polygon points="696,262 696,278 688,270" fill="none" stroke="var(--border-strong)" stroke-width="1"/><line x1="688" y1="262" x2="688" y2="278" stroke="var(--border-strong)"/>
-<g id="rm_coK2" class="coil"><path class="zz" d="M680 430 L689 415 L698 430 L707 415 L716 430"/><text x="698" y="410" text-anchor="middle" style="font-size:9px;font-weight:600">R RM1-2 L4</text></g>
-<text x="674" y="433" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">Z14</text>
-<text x="722" y="433" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K2</text>
-<text x="674" y="410" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">Z04</text>
-<text x="674" y="452" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">D14</text>
-<path id="rm_wCasc" class="w" d="M734 250 V410 H680"/>
-<g id="rm_ck1_0" class="sym"><circle cx="750" cy="210" r="2.5"/><circle cx="798" cy="210" r="2.5"/><line class="bo" x1="752.5" y1="210" x2="790" y2="198"/><line class="bc" x1="752.5" y1="210" x2="795.5" y2="210"/></g>
-<text x="746" y="205" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="205" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK10" class="w" d="M798 210 H1070"/>
-<text x="1066" y="206" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Z08</text>
-<g id="rm_ck1_1" class="sym"><circle cx="750" cy="238" r="2.5"/><circle cx="798" cy="238" r="2.5"/><line class="bo" x1="752.5" y1="238" x2="790" y2="226"/><line class="bc" x1="752.5" y1="238" x2="795.5" y2="238"/></g>
-<text x="746" y="233" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="233" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK11" class="w" d="M798 238 H1070"/>
-<text x="1066" y="234" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B08</text>
-<g id="rm_ck1_2" class="sym"><circle cx="750" cy="266" r="2.5"/><circle cx="798" cy="266" r="2.5"/><line class="bo" x1="752.5" y1="266" x2="790" y2="254"/><line class="bc" x1="752.5" y1="266" x2="795.5" y2="266"/></g>
-<text x="746" y="261" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="261" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK12" class="w" d="M798 266 H1070"/>
-<text x="1066" y="262" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B10</text>
-<g id="rm_ck1_3" class="sym"><circle cx="750" cy="294" r="2.5"/><circle cx="798" cy="294" r="2.5"/><line class="bo" x1="752.5" y1="294" x2="790" y2="282"/><line class="bc" x1="752.5" y1="294" x2="795.5" y2="294"/></g>
-<text x="746" y="289" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="289" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK13" class="w" d="M798 294 H1070"/>
-<text x="1066" y="290" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D10</text>
-<g id="rm_ck1_4" class="sym"><circle cx="750" cy="322" r="2.5"/><circle cx="798" cy="322" r="2.5"/><line class="bo" x1="752.5" y1="322" x2="790" y2="310"/><line class="bc" x1="752.5" y1="322" x2="795.5" y2="322"/></g>
-<text x="746" y="317" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="317" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK14" class="w" d="M798 322 H1070"/>
-<text x="1066" y="318" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B12</text>
-<g id="rm_ck1_5" class="sym"><circle cx="750" cy="350" r="2.5"/><circle cx="798" cy="350" r="2.5"/><line class="bo" x1="752.5" y1="350" x2="790" y2="338"/><line class="bc" x1="752.5" y1="350" x2="795.5" y2="350"/></g>
-<text x="746" y="345" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="345" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK15" class="w" d="M798 350 H1070"/>
-<text x="1066" y="346" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D12</text>
-<path class="leader" style="stroke:#3E77E0" d="M698 175 V200 H750"/>
-<g id="rm_ck2_0" class="sym"><circle cx="750" cy="470" r="2.5"/><circle cx="798" cy="470" r="2.5"/><line class="bo" x1="752.5" y1="470" x2="790" y2="458"/><line class="bc" x1="752.5" y1="470" x2="795.5" y2="470"/></g>
-<text x="746" y="465" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="465" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK20" class="w" d="M798 470 H1070"/>
-<text x="1066" y="466" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D18</text>
-<g id="rm_ck2_1" class="sym"><circle cx="750" cy="498" r="2.5"/><circle cx="798" cy="498" r="2.5"/><line class="bo" x1="752.5" y1="498" x2="790" y2="486"/><line class="bc" x1="752.5" y1="498" x2="795.5" y2="498"/></g>
-<text x="746" y="493" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="493" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK21" class="w" d="M798 498 H1070"/>
-<text x="1066" y="494" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B18</text>
-<g id="rm_ck2_2" class="sym"><circle cx="750" cy="526" r="2.5"/><circle cx="798" cy="526" r="2.5"/><line class="bo" x1="752.5" y1="526" x2="790" y2="514"/><line class="bc" x1="752.5" y1="526" x2="795.5" y2="526"/></g>
-<text x="746" y="521" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="521" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK22" class="w" d="M798 526 H1070"/>
-<text x="1066" y="522" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D20</text>
-<g id="rm_ck2_3" class="sym"><circle cx="750" cy="554" r="2.5"/><circle cx="798" cy="554" r="2.5"/><line class="bo" x1="752.5" y1="554" x2="790" y2="542"/><line class="bc" x1="752.5" y1="554" x2="795.5" y2="554"/></g>
-<text x="746" y="549" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="549" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK23" class="w" d="M798 554 H1070"/>
-<text x="1066" y="550" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B20</text>
-<g id="rm_ck2_4" class="sym"><circle cx="750" cy="582" r="2.5"/><circle cx="798" cy="582" r="2.5"/><line class="bo" x1="752.5" y1="582" x2="790" y2="570"/><line class="bc" x1="752.5" y1="582" x2="795.5" y2="582"/></g>
-<text x="746" y="577" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="577" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK24" class="w" d="M798 582 H1070"/>
-<text x="1066" y="578" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D22</text>
-<g id="rm_ck2_5" class="sym"><circle cx="750" cy="610" r="2.5"/><circle cx="798" cy="610" r="2.5"/><line class="bo" x1="752.5" y1="610" x2="790" y2="598"/><line class="bc" x1="752.5" y1="610" x2="795.5" y2="610"/></g>
-<text x="746" y="605" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<text x="802" y="605" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)"></text>
-<path id="rm_sK25" class="w" d="M798 610 H1070"/>
-<text x="1066" y="606" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B22</text>
-<path class="leader" style="stroke:#1D9E75" d="M698 430 V456 H750"/>
-<text x="1110" y="150" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">P44</text>
-<text x="1210" y="150" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">2H3</text>
-<path id="rm_busIn0" class="w" d="M1070 200 H1132"/>
-<path id="rm_busIn1" class="w" d="M1070 234 H1132"/>
-<path id="rm_busIn2" class="w" d="M1070 268 H1132"/>
-<path id="rm_busIn3" class="w" d="M1070 302 H1132"/>
-<path id="rm_busIn4" class="w" d="M1070 336 H1132"/>
-<path id="rm_busIn5" class="w" d="M1070 370 H1132"/>
-<path id="rm_busIn6" class="w" d="M1070 404 H1132"/>
-<path id="rm_busIn7" class="w" d="M1070 438 H1132"/>
-<path id="rm_busIn8" class="w" d="M1070 472 H1132"/>
-<path id="rm_busIn9" class="w" d="M1070 506 H1132"/>
-<path id="rm_busIn10" class="w" d="M1070 540 H1132"/>
-<path id="rm_busIn11" class="w" d="M1070 574 H1132"/>
-<path id="rm_tl0" class="w" d="M1110 200 H1210"/>
-<text x="1106" y="197" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">1</text>
-<circle cx="1210" cy="200" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl1" class="w" d="M1110 234 H1210"/>
-<text x="1106" y="231" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">2</text>
-<circle cx="1210" cy="234" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl2" class="w" d="M1110 268 H1210"/>
-<text x="1106" y="265" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">3</text>
-<circle cx="1210" cy="268" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl3" class="w" d="M1110 302 H1210"/>
-<text x="1106" y="299" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">4</text>
-<circle cx="1210" cy="302" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl4" class="w" d="M1110 336 H1210"/>
-<text x="1106" y="333" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">5</text>
-<circle cx="1210" cy="336" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl5" class="w" d="M1110 370 H1210"/>
-<text x="1106" y="367" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">6</text>
-<circle cx="1210" cy="370" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl6" class="w" d="M1110 404 H1210"/>
-<text x="1106" y="401" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">7</text>
-<circle cx="1210" cy="404" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl7" class="w" d="M1110 438 H1210"/>
-<text x="1106" y="435" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">8</text>
-<circle cx="1210" cy="438" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl8" class="w" d="M1110 472 H1210"/>
-<text x="1106" y="469" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">9</text>
-<circle cx="1210" cy="472" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl9" class="w" d="M1110 506 H1210"/>
-<text x="1106" y="503" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">10</text>
-<circle cx="1210" cy="506" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl10" class="w" d="M1110 540 H1210"/>
-<text x="1106" y="537" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">11</text>
-<circle cx="1210" cy="540" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path id="rm_tl11" class="w" d="M1110 574 H1210"/>
-<text x="1106" y="571" text-anchor="end" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">12</text>
-<circle cx="1210" cy="574" r="2.5" fill="none" stroke="var(--border-strong)"/>
-<path d="M1220 200 h8 V234 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
-<path d="M1228 217 h6" stroke="var(--border-strong)" stroke-width="1.2"/>
-<polygon id="rm_tri0" points="1250,208 1270,208 1260,224" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
-<text x="1280" y="220" text-anchor="start" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">T502-TOB / T504-BIL</text>
-<path d="M1220 268 h8 V302 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
-<path d="M1228 285 h6" stroke="var(--border-strong)" stroke-width="1.2"/>
-<polygon id="rm_tri2" points="1250,276 1270,276 1260,292" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
-<text x="1280" y="288" text-anchor="start" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">T501-LOR / T503-RQU</text>
-<path d="M1220 336 h8 V370 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
-<path d="M1228 353 h6" stroke="var(--border-strong)" stroke-width="1.2"/>
-<polygon id="rm_tri4" points="1250,344 1270,344 1260,360" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
-<text x="1280" y="356" text-anchor="start" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">T509-LTO / T508-VVA</text>
-<path d="M1220 404 h8 V438 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
-<path d="M1228 421 h6" stroke="var(--border-strong)" stroke-width="1.2"/>
-<polygon id="rm_tri6" points="1250,412 1270,412 1260,428" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
-<text x="1280" y="424" text-anchor="start" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">T512-TRI / T505-HSR</text>
-<path d="M1220 472 h10" stroke="var(--border-strong)" fill="none" stroke-width="1.2"/>
-<polygon id="rm_tri8" points="1250,463 1270,463 1260,479" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
-<text x="1280" y="475" text-anchor="start" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">T506-TPA</text>
-<rect x="250" y="470" width="210" height="180" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
-<text x="258" y="486" text-anchor="start" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">ARMARIO RTU</text>
-<rect x="266" y="504" width="80" height="120" fill="none" stroke="var(--border-strong)"/>
-<text x="306" y="520" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">VXMAT</text>
-<text x="306" y="532" text-anchor="middle" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Entradas</text>
-<text x="354" y="520" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Tarjeta 1</text>
-<text x="354" y="530" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Módulo 1</text>
-<text x="354" y="558" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">MUX-MRM</text>
-<text x="268" y="582" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-primary)">TK-RM1 DG</text>
-<text x="268" y="592" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-primary)">L4 E1</text>
-<text x="354" y="600" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">MUX-1</text>
-<text x="276" y="618" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Com P5</text>
-<text x="246" y="558" text-anchor="end" style="font-size:7px;font-weight:600;fill:#3E77E0">RED</text>
-<text x="246" y="568" text-anchor="end" style="font-size:7px;font-weight:600;fill:#3E77E0">RMS → SCADA</text>
-<path class="w" d="M250 562 h-26"/><polygon points="224,558 224,566 217,562" fill="var(--border-strong)"/>
-<text x="490" y="466" text-anchor="middle" style="font-size:7px;font-weight:600;fill:var(--text-primary)">P43</text>
-<path id="rm_wDGin" class="w" d="M60 250 H640"/>
-<text x="64" y="244" text-anchor="start" style="font-size:7px;font-weight:600;fill:#2BA6A6">Condición RM 20 kV (del DG cerrado) →</text>
-<path id="rm_wTKout" class="w" d="M700 300 V620 H460" style="stroke-dasharray:4 3"/>
-<text x="474" y="616" text-anchor="start" style="font-size:6.5px;fill:#3E77E0">TK-RM1 DG: estado "RM armada" → VXMAT → SCADA</text>
-<rect x="1180" y="520" width="300" height="80" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.3"/>
-<text x="1470" y="540" text-anchor="end" style="font-size:13px;font-weight:700;fill:var(--text-primary)">PCD</text>
-<text x="1192" y="560" text-anchor="start" style="font-size:9px;font-weight:normal;fill:var(--text-primary)">Con la cadena RM completa, habilita</text>
-<text x="1192" y="574" text-anchor="start" style="font-size:9px;font-weight:normal;fill:#2BA6A6">los ITM (T) → energiza a 20 kV → 750 Vcc</text>
-<circle id="rm_ledPCD" cx="1440" cy="575" r="8" class="lampc"/>
-</svg>
-</div>
-<div class="panel">
-<fieldset class="grp">
-<legend>Secuencia (como el plano)</legend>
-<label><input type="checkbox" id="rm_cbDG"> DG cerrado (energiza la Condición RM)</label>
-<button class="btn" id="rm_btnReset">Reiniciar</button>
-</fieldset>
-</div>
-<div id="rm_status">Cierra el DG para que entre el telemando TK-RM1 DG al bloque RM.</div>
-</main>
-</section>
 
 <!-- ================= MÓDULO: INICIO ENERGIZACIÓN (DG→RM→PCD) ================= -->
 <section id="mod-ini" class="mod">
@@ -3131,13 +2771,16 @@ Para agregar un nuevo módulo:
 <summary>📖 Guía rápida (clic para abrir)</summary>
 <div class="cont">
 <p><b>El arranque de toda la energización, en un solo hilo:</b></p>
-<p><b>① Pupitre:</b> el operador gira y oprime el <b>TPL-DG</b> (platina C.A.T., módulo MX607-L4). Cierra el <b>R.DG (K1)</b>.</p>
+<p><b>① Pupitre:</b> el operador <b>gira</b> el TPL-DG y <b>oprime el pulsador</b>. Con esos dos contactos cerrados se alimenta la bobina del <b>R DG (K1)</b> en la tarjeta 1P1 · DG · MX642.</p>
 <p><b>② Armario Tracción PCC TT1:</b> el R.DG energiza los repetidores <b>RR DG1 (K2)</b> y <b>RR DG2 (K3)</b> — y en el bloque 1P2 el <b>RR DG3</b>. Sus contactos salen hacia los <b>TPL de las 7 zonas</b> (ZA…ZG) y hacia las <b>salidas RM</b>.</p>
 <p><b>③ Las salidas RM son tres:</b><br>
-• <b>2H1 · 7C PPA · bornes 25/26</b> → PCD CDC Vicente Valdés = <b>cadena RM1</b><br>
-• <b>2H3 · 7C VVA · bornes 27/28</b> → PCD CDC Vicente Valdés = <b>cadena RM2</b><br>
+• <b>R DG · C2·C1 y D1·D2</b> → alimentan directo <b>R RM1-1 L4</b> y en paralelo <b>R RM1-2 L4</b> (tarjeta RM L4 · MX642)<br>
+• <b>RR DG2 · A1·A2 y B1·B2</b> → alimentan directo <b>R RM2-1 L4</b> y en paralelo <b>R RM2-2 L4</b> (tarjeta RM2 L4 · MX642)<br>
 • <b>2H13 · RM LC · bornes 1/2</b> → PCD Lord Cochrane</p>
-<p><b>④ Cada línea arma su cadena en el PCD:</b> la 25/26 energiza <b>R RM1-1 y R RM1-2</b> (bloque RM L4) y la 27/28 energiza <b>R RM2-1 y R RM2-2</b> (bloque RM2 L4), ambas con su automantenimiento. Sus contactos habilitan los telemandos <b>T</b> de cada S/ER.</p>
+<p><b>Ojo con lo que hacen (y lo que NO hacen) estos relés:</b> al formarse la Condición DG, los contactos de <b>R RM1-1, R RM1-2, R RM2-1 y R RM2-2 L4</b> se cierran, pero <b>no energizan las S/ER</b>. Lo único que hacen es dejar la <b>Condición RM presente</b>, es decir, habilitada. <b>Quien energiza es el PCD:</b> el PCD realiza el DG y es el que energiza las <b>SRI</b> y los <b>ITM</b> de cada S/ER.</p>
+<p><b>Telemando al VXMAT:</b> cuando se apaga la luz del botón TPL-DG (el RR DG3 abrió su C3·C2), esa misma condición manda el <b>TK</b> al armario <b>VXMAT</b> avisando que la <b>Condición DG está hecha</b>, y de ahí sube al SCADA.</p>
+<p><b>④ Cada línea arma su tarjeta en el PCD:</b> el <b>R DG</b> energiza <b>R RM1-1 L4</b> y, en paralelo, <b>R RM1-2 L4</b> (tarjeta P1 · RM L4 · MX642). El <b>RR DG2</b> hace lo mismo con <b>R RM2-1 y R RM2-2 L4</b> (tarjeta P3 · RM2 L4 · MX642). Sus contactos A1·A2, B1·B2 y D1·D2 salen por el P44/P45 al 2H3/2H9 y habilitan los telemandos <b>T</b> de cada S/ER.</p>
+<p><b>⑤ El aviso de que la Condición RM se formó:</b> cada tarjeta tiene además un contacto por relé — <b>C3·C2 (D06-Z04)</b> del primero y <b>C2·C3 (Z12-D16)</b> del segundo — conectados <b>en serie</b>. Cuando los dos relés de la tarjeta están energizados, esa serie se cierra y manda el telemando por el <b>2P43</b> al <b>armario RTU · VXMAT</b>: <b>TK.RM1 DG L4</b> por la entrada <b>E1</b> y <b>TK.RM2 DG L4</b> por la <b>E3</b>, y de ahí al SCADA por la RED RMS. No son automantención: son el control de estado.</p>
 <p><b>⑤ La redundancia:</b> por eso <b>cada S/ER tiene DOS ITM</b> — uno de cada cadena: TOB con <b>T502</b> (RM1) y <b>T602</b> (RM2), BIL con T504/T604, y así todas. <b>Si falla una cadena, la otra energiza igual.</b></p>
 <p><i>Por confirmar:</i> el telemando de HSR en la cadena RM2 (leo T605 siguiendo el patrón T505→T605, pero el escaneo no es claro).</p>
 </div>
@@ -3156,73 +2799,95 @@ Para agregar un nuevo módulo:
 <text x="1900" y="40" text-anchor="middle" style="font-size:11px;font-weight:700;fill:var(--text-primary)">ARMARIO TRACCIÓN PCD · CDC VICENTE VALDÉS</text>
 <line x1="372" y1="14" x2="372" y2="1046" stroke="var(--border)" stroke-width="1"/>
 <line x1="1520" y1="14" x2="1520" y2="1046" stroke="var(--border)" stroke-width="1"/>
-<ellipse cx="150" cy="230" rx="130" ry="180" fill="none" stroke="var(--border)" stroke-width="1.1"/>
-<text x="130" y="86" text-anchor="middle" style="font-size:11px;font-weight:700;fill:var(--text-primary)">TPL-DG</text>
-<text x="158" y="150" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-secondary)">C</text>
-<text x="158" y="206" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-secondary)">A</text>
-<circle id="in_lampDG" cx="130" cy="175" r="19" class="lampc"/>
-<line id="in_indDG" x1="130" y1="161" x2="130" y2="189" stroke="var(--text-primary)" stroke-width="3" stroke-linecap="round"/>
-<text x="70" y="120" text-anchor="end" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">012</text>
-<text x="70" y="130" text-anchor="end" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">020</text>
-<text x="190" y="120" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">021</text>
-<text x="190" y="130" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">2A1</text>
-<circle id="in_lampRoja" cx="130" cy="270" r="13" fill="var(--surface-1)" stroke="#A32D2D" stroke-width="1.3"/>
-<line x1="121" y1="261" x2="139" y2="279" stroke="#A32D2D"/><line x1="139" y1="261" x2="121" y2="279" stroke="#A32D2D"/>
-<text x="108" y="258" text-anchor="end" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">X2</text>
-<text x="152" y="258" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">X1</text>
-<polygon points="123,290 137,290 130,302" fill="none" stroke="var(--border-strong)" stroke-width="1"/><line x1="123" y1="302" x2="137" y2="302" stroke="var(--border-strong)"/>
-<g id="in_btnPL" style="cursor:pointer"><rect x="108" y="316" width="44" height="16" rx="3" fill="transparent" stroke="var(--border-strong)"/><text x="130" y="328" text-anchor="middle" style="font-size:8px">PL</text></g>
-<text x="70" y="354" text-anchor="end" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">T22</text>
-<text x="70" y="364" text-anchor="end" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">26</text>
-<text x="190" y="354" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">022</text>
-<text x="190" y="364" text-anchor="start" style="font-size:6px;font-weight:normal;fill:var(--text-secondary)">023</text>
-<rect x="292" y="110" width="86" height="230" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="5 3"/>
-<rect x="294" y="99" width="56" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="322" y="111" text-anchor="middle" style="font-size:7px;font-weight:600;fill:var(--text-primary)">MX607-L4</text>
-<text x="364" y="106" text-anchor="middle" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">PP1-J1</text>
-<text x="304" y="130" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">J2</text>
-<text x="316" y="155" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">04</text>
-<line x1="320" y1="152" x2="350" y2="152" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="155" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">P4</text>
-<path id="in_wPar_0" class="w" d="M378 152 H440"/>
-<text x="316" y="182" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">05</text>
-<line x1="320" y1="179" x2="350" y2="179" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="182" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">A3</text>
-<path id="in_wPar_1" class="w" d="M378 179 H440"/>
-<text x="316" y="209" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">15</text>
-<line x1="320" y1="206" x2="350" y2="206" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="209" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">A4</text>
-<path id="in_wPar_2" class="w" d="M378 206 H440"/>
-<text x="316" y="236" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">16</text>
-<line x1="320" y1="233" x2="350" y2="233" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="236" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">R4</text>
-<path id="in_wPar_3" class="w" d="M378 233 H440"/>
-<text x="484" y="236" text-anchor="start" style="font-size:6px;font-weight:600;fill:#2BA6A6">+48VP</text>
-<text x="316" y="263" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">03</text>
-<line x1="320" y1="260" x2="350" y2="260" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="263" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">A2</text>
-<path id="in_wPar_4" class="w" d="M378 260 H440"/>
-<text x="484" y="263" text-anchor="start" style="font-size:6px;font-weight:600;fill:#2BA6A6">-48VP</text>
-<text x="316" y="290" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">06</text>
-<line x1="320" y1="287" x2="350" y2="287" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="290" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">R2</text>
-<path id="in_wPar_5" class="w" d="M378 287 H440"/>
-<text x="316" y="317" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">01</text>
-<line x1="320" y1="314" x2="350" y2="314" stroke="var(--border)" stroke-width="1"/>
-<text x="354" y="317" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">A1</text>
-<path id="in_wPar_6" class="w" d="M378 314 H440"/>
-<text x="310" y="338" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">02</text>
-<text x="432" y="104" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">2P41</text>
-<line x1="440" y1="98" x2="440" y2="328" stroke="var(--border)" stroke-width="1.2"/>
-<path id="in_wTPL" class="w" d="M149 175 H292"/>
-<path id="in_wPupDG" class="w" d="M440 152 H480 V330 H400"/>
-<rect x="400" y="80" width="700" height="600" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
-<rect x="416" y="70" width="70" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="451" y="82" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">1P1</text>
-<rect x="510" y="70" width="70" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="545" y="82" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">DG</text>
-<rect x="600" y="70" width="70" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="635" y="82" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">MX642</text>
+<rect x="24" y="100" width="300" height="340" rx="10" fill="none" stroke="var(--border)" stroke-width="1"/>
+<text x="174" y="424" text-anchor="middle" style="font-size:7px;fill:var(--text-secondary)">mando TPL-DG (pupitre PCC)</text>
+
+<text x="28" y="143" text-anchor="start" style="font-size:7px;font-weight:600;fill:#2BA6A6">-48VP</text>
+<path id="in_wSrcN" class="w" d="M62 140 H88"/>
+<g id="in_ctTPL" class="sym"><text x="120" y="122" text-anchor="middle" style="font-size:7.5px">TPL-DG (giro)</text><circle cx="90" cy="140" r="2.5"/><circle cx="150" cy="140" r="2.5"/><line class="bo" x1="92" y1="140" x2="145" y2="127"/><line class="bc" x1="92" y1="140" x2="148" y2="140"/></g>
+<path id="in_wM1" class="w" d="M152 140 H188"/>
+<g id="in_ctPuls" class="sym"><text x="220" y="122" text-anchor="middle" style="font-size:7.5px">Pulsador TPL</text><circle cx="190" cy="140" r="2.5"/><circle cx="250" cy="140" r="2.5"/><line class="bo" x1="192" y1="140" x2="245" y2="127"/><line class="bc" x1="192" y1="140" x2="248" y2="140"/></g>
+<path id="in_wM2" class="w" d="M252 140 H340"/>
+
+<path id="in_wSel2" class="w" d="M170 140 V210 H340" style="stroke:#E0A030;stroke-width:2"/>
+<circle cx="170" cy="140" r="3" fill="#E0A030"/>
+<text x="196" y="230" text-anchor="middle" style="font-size:7px;font-weight:600;fill:#E0A030">sello KTPL-DG  (RR DG3 · A1·A2)</text>
+
+<circle id="in_lampDG" cx="120" cy="310" r="19" class="lampc"/>
+<line id="in_indDG" x1="120" y1="296" x2="120" y2="324" stroke="var(--text-primary)" stroke-width="3" stroke-linecap="round"/>
+<text x="120" y="348" text-anchor="middle" style="font-size:7.5px;fill:var(--text-secondary)">Luz botón TPL-DG</text>
+<text x="28" y="313" text-anchor="start" style="font-size:7px;font-weight:600;fill:#2BA6A6">+48VP</text>
+<path id="in_wLamp1" class="w" d="M62 310 H101"/>
+<path id="in_wLamp2" class="w" d="M139 310 H340" style="stroke:#E0A030;stroke-width:2"/>
+<path id="in_wTK" class="w" d="M310 310 V792 H200" style="stroke:#E0A030;stroke-width:1.6;stroke-dasharray:4 3"/>
+<circle cx="310" cy="310" r="3" fill="#E0A030"/>
+<text x="318" y="640" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#E0A030">TK: se apagó la luz TPL = Condición DG hecha → VXMAT</text>
+<text x="252" y="303" text-anchor="middle" style="font-size:7px;font-weight:600;fill:#E0A030">RR DG3 · C3·C2 (NC)</text>
+
+<circle id="in_lampRoja" cx="268" cy="368" r="10" fill="var(--surface-1)" stroke="#A32D2D" stroke-width="1.3"/>
+<g id="in_btnPL" style="cursor:pointer"><rect x="246" y="386" width="44" height="16" rx="3" fill="transparent" stroke="var(--border-strong)"/><text x="268" y="398" text-anchor="middle" style="font-size:8px">PL</text></g>
+
+<rect x="24" y="460" width="252" height="228" rx="10" fill="none" stroke="var(--border)" stroke-width="1"/>
+<text x="150" y="480" text-anchor="middle" style="font-size:8px;font-weight:700;fill:var(--text-primary)">PLATINA C.A.T.</text>
+<text x="150" y="492" text-anchor="middle" style="font-size:6px;fill:var(--text-secondary)">Corte de Alimentación de Tracción · TPL ENTRELEC (girar · oprimir · luminoso)</text>
+<text x="68" y="507" text-anchor="middle" style="font-size:7.5px;font-weight:700;fill:#E0A030">TPL DG</text>
+<circle id="in_catLampDG" cx="68" cy="530" r="14" fill="var(--surface-1)" stroke="#E0A030" stroke-width="1.6"/>
+<line id="in_catIndDG" x1="68" y1="521" x2="68" y2="539" stroke="var(--text-primary)" stroke-width="2.6" stroke-linecap="round"/>
+<text x="85" y="522" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="85" y="544" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="128" y="507" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZA</text>
+<circle cx="128" cy="530" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="128" y1="521" x2="128" y2="539" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="145" y="522" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="145" y="544" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="188" y="507" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZB</text>
+<circle cx="188" cy="530" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="188" y1="521" x2="188" y2="539" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="205" y="522" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="205" y="544" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="248" y="507" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZC</text>
+<circle cx="248" cy="530" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="248" y1="521" x2="248" y2="539" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="265" y="522" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="265" y="544" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="68" y="597" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZD</text>
+<circle cx="68" cy="620" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="68" y1="611" x2="68" y2="629" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="85" y="612" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="85" y="634" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="128" y="597" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZE</text>
+<circle cx="128" cy="620" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="128" y1="611" x2="128" y2="629" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="145" y="612" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="145" y="634" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="188" y="597" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZF</text>
+<circle cx="188" cy="620" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="188" y1="611" x2="188" y2="629" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="205" y="612" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="205" y="634" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="248" y="597" text-anchor="middle" style="font-size:7.5px;font-weight:600;fill:var(--text-primary)">TPL ZG</text>
+<circle cx="248" cy="620" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="248" y1="611" x2="248" y2="629" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round"/>
+<text x="265" y="612" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">C</text>
+<text x="265" y="634" text-anchor="start" style="font-size:6px;fill:var(--text-secondary)">A</text>
+<text x="150" y="662" text-anchor="middle" style="font-size:6px;fill:var(--text-secondary)">El TPL DG es el del circuito de arriba.</text>
+<text x="150" y="674" text-anchor="middle" style="font-size:6px;fill:var(--text-secondary)">Las 7 zonas se habilitan con los contactos del R DG (ZA·ZB) y del RR DG1 (ZC·ZD · ZE·ZF · ZG).</text>
+<text x="330" y="106" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">2P41</text>
+<line x1="340" y1="114" x2="340" y2="330" stroke="var(--border)" stroke-width="1.2"/>
+<text x="346" y="136" text-anchor="start" style="font-size:6.5px;fill:var(--text-secondary)">A3</text>
+<text x="346" y="206" text-anchor="start" style="font-size:6.5px;fill:var(--text-secondary)">P4</text>
+<text x="346" y="306" text-anchor="start" style="font-size:6.5px;fill:var(--text-secondary)">A4</text>
+<circle cx="340" cy="180" r="3.2" fill="#E0A030"/>
+<circle cx="340" cy="210" r="3.2" fill="#E0A030"/>
+<circle cx="340" cy="310" r="3.2" fill="#E0A030"/>
+<path id="in_wPupDG" class="w" d="M340 140 H516 V124"/>
+<rect x="500" y="80" width="600" height="600" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
+<rect x="516" y="70" width="70" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
+<text x="551" y="82" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">1P1</text>
+<rect x="610" y="70" width="70" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
+<text x="645" y="82" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">DG</text>
+<rect x="700" y="70" width="70" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
+<text x="735" y="82" text-anchor="middle" style="font-size:8.5px;font-weight:600;fill:var(--text-primary)">MX642</text>
 <text x="780" y="68" text-anchor="middle" style="font-size:7px;font-weight:normal;fill:#2BA6A6">R4 = +48VP  ·  A2 = -48VP (barras desde el 2P41)</text>
 <text x="1140" y="50" text-anchor="start" style="font-size:7px;font-weight:600;fill:var(--text-primary)">Color de la corriente según el relé que la manda:</text>
 <line x1="1140" y1="64" x2="1166" y2="64" stroke="#3E77E0" stroke-width="3"/>
@@ -3233,12 +2898,10 @@ Para agregar un nuevo módulo:
 <text x="1394" y="67" text-anchor="start" style="font-size:7px;font-weight:600;fill:#7A70E0">RR DG2</text>
 <line x1="1476" y1="64" x2="1502" y2="64" stroke="#E0A030" stroke-width="3"/>
 <text x="1506" y="67" text-anchor="start" style="font-size:7px;font-weight:600;fill:#E0A030">RR DG3</text>
-<line x1="386" y1="120" x2="386" y2="740" stroke="#2BA6A6" stroke-width="1.6"/>
-<text x="382" y="116" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VP</text>
-<path id="in_wBus48P" class="w" d="M440 233 H386 V120" style="stroke:#2BA6A6;stroke-width:2"/>
-<line id="in_busN" x1="348" y1="212" x2="348" y2="860" stroke="#2BA6A6" stroke-width="2.2"/>
+<line x1="486" y1="120" x2="486" y2="740" stroke="#2BA6A6" stroke-width="1.6"/>
+<text x="482" y="116" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VP</text>
+<line id="in_busN" x1="448" y1="212" x2="448" y2="860" stroke="#2BA6A6" stroke-width="2.2"/>
 <text x="344" y="208" text-anchor="end" style="font-size:7px;font-weight:700;fill:#2BA6A6">-48VP</text>
-<path id="in_wBus48N" class="w" d="M440 260 H348 V212" style="stroke:#2BA6A6;stroke-width:2.2"/>
 <circle cx="348" cy="212" r="3" fill="#2BA6A6"/>
 <circle cx="348" cy="242" r="3" fill="#2BA6A6"/>
 <circle cx="348" cy="276" r="3" fill="#2BA6A6"/>
@@ -3246,29 +2909,26 @@ Para agregar un nuevo módulo:
 <circle cx="348" cy="340" r="3" fill="#2BA6A6"/>
 <circle cx="348" cy="374" r="3" fill="#2BA6A6"/>
 <circle cx="348" cy="516" r="3" fill="#2BA6A6"/>
-<text x="414" y="127" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z02</text>
-<path id="in_wZ02coil" class="w" d="M416 124 H580"/>
+<text x="514" y="127" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z02</text>
+<path id="in_wZ02coil" class="w" d="M516 124 H580"/>
 <g id="in_coRDG" class="coil"><path class="zz" d="M580 124 L589 109 L598 124 L607 109 L616 124"/><text x="598" y="105" text-anchor="middle" style="font-size:9px;font-weight:600">R DG</text></g>
 <text x="620" y="127" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K1</text>
 <path id="in_wD02" class="w" d="M616 124 H1082"/>
 <text x="1082" y="127" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D02</text>
 <text x="1082" y="137" text-anchor="end" style="font-size:6px;font-weight:normal;fill:#2BA6A6">+48V</text>
-<path id="in_wRet1" class="w" d="M416 124 H352"/>
-<path id="in_wRet2" class="w" d="M400 124 V175 H169"/>
-<path id="in_wRet3" class="w" d="M111 175 H40 V340"/>
 <text x="36" y="354" text-anchor="end" style="font-size:7px;font-weight:normal;fill:#2BA6A6">0V</text>
-<text x="414" y="169" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D14</text>
-<path id="in_wD14in" class="w" d="M364 166 H416" style="stroke:#2BA6A6;stroke-width:1.6"/>
-<text x="360" y="169" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VP</text>
-<path id="in_wRR1a" class="w" d="M416 166 H730"/>
+<text x="514" y="169" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D14</text>
+<path id="in_wD14in" class="w" d="M464 166 H516" style="stroke:#2BA6A6;stroke-width:1.6"/>
+<text x="460" y="169" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VP</text>
+<path id="in_wRR1a" class="w" d="M516 166 H730"/>
 <g id="in_coRR1" class="coil"><path class="zz" d="M730 166 L739 151 L748 166 L757 151 L766 166"/><text x="748" y="147" text-anchor="middle" style="font-size:9px;font-weight:600">RR DG1</text></g>
 <text x="770" y="169" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K2</text>
 <path id="in_wRR1b" class="w" d="M766 166 H1082"/>
 <text x="1082" y="169" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z14</text>
-<line x1="386" y1="166" x2="416" y2="166" stroke="#2BA6A6" stroke-width="1.4"/>
-<text x="414" y="215" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B08</text>
-<path id="in_s_ctA0" class="w" d="M348 212 H373.4 L397.4 212 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctA0" class="w" d="M416 212 H580"/>
+<line x1="486" y1="166" x2="516" y2="166" stroke="#2BA6A6" stroke-width="1.4"/>
+<text x="514" y="215" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B08</text>
+<path id="in_s_ctA0" class="w" d="M448 212 H473.4 L497.4 212 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctA0" class="w" d="M516 212 H580"/>
 <polygon id="in_ar_ctA0a" points="493,208 502,212 493,216" fill="var(--border)"/>
 <g id="in_ctA0" class="sym"><circle cx="580" cy="212" r="2.5"/><circle cx="624" cy="212" r="2.5"/><line class="bo" x1="582.5" y1="212" x2="617" y2="201"/><line class="bc" x1="582.5" y1="212" x2="621.5" y2="212"/></g>
 <text x="576" y="207" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">A1</text>
@@ -3276,9 +2936,9 @@ Para agregar un nuevo módulo:
 <path id="in_fR_ctA0" class="w" d="M624 212 H1082"/>
 <polygon id="in_ar_ctA0b" points="848,208 857,212 848,216" fill="var(--border)"/>
 <text x="1082" y="215" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z08</text>
-<text x="414" y="245" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B18</text>
-<path id="in_s_ctA1" class="w" d="M348 242 H373.4 L397.4 242 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctA1" class="w" d="M416 242 H730"/>
+<text x="514" y="245" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B18</text>
+<path id="in_s_ctA1" class="w" d="M448 242 H473.4 L497.4 242 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctA1" class="w" d="M516 242 H730"/>
 <polygon id="in_ar_ctA1a" points="568,238 577,242 568,246" fill="var(--border)"/>
 <g id="in_ctA1" class="sym"><circle cx="730" cy="242" r="2.5"/><circle cx="774" cy="242" r="2.5"/><line class="bo" x1="732.5" y1="242" x2="767" y2="231"/><line class="bc" x1="732.5" y1="242" x2="771.5" y2="242"/></g>
 <text x="726" y="237" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">A1</text>
@@ -3291,9 +2951,9 @@ Para agregar un nuevo módulo:
 <text x="1138" y="239" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZE (Zona E)</text>
 <polygon points="1124,245 1124,253 1132,249" fill="var(--border-strong)"/>
 <text x="1138" y="252" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZF (Zona F)</text>
-<text x="414" y="279" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D10</text>
-<path id="in_s_ctA2" class="w" d="M348 276 H373.4 L397.4 276 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctA2" class="w" d="M416 276 H580"/>
+<text x="514" y="279" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D10</text>
+<path id="in_s_ctA2" class="w" d="M448 276 H473.4 L497.4 276 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctA2" class="w" d="M516 276 H580"/>
 <polygon id="in_ar_ctA2a" points="493,272 502,276 493,280" fill="var(--border)"/>
 <g id="in_ctA2" class="sym"><circle cx="580" cy="276" r="2.5"/><circle cx="624" cy="276" r="2.5"/><line class="bo" x1="582.5" y1="276" x2="617" y2="265"/><line class="bc" x1="582.5" y1="276" x2="621.5" y2="276"/></g>
 <text x="576" y="271" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B1</text>
@@ -3306,9 +2966,9 @@ Para agregar un nuevo módulo:
 <text x="1138" y="273" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZA (Zona A)</text>
 <polygon points="1124,279 1124,287 1132,283" fill="var(--border-strong)"/>
 <text x="1138" y="286" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZB (Zona B)</text>
-<text x="414" y="313" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B20</text>
-<path id="in_s_ctA3" class="w" d="M348 310 H373.4 L397.4 310 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctA3" class="w" d="M416 310 H730"/>
+<text x="514" y="313" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B20</text>
+<path id="in_s_ctA3" class="w" d="M448 310 H473.4 L497.4 310 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctA3" class="w" d="M516 310 H730"/>
 <polygon id="in_ar_ctA3a" points="568,306 577,310 568,314" fill="var(--border)"/>
 <g id="in_ctA3" class="sym"><circle cx="730" cy="310" r="2.5"/><circle cx="774" cy="310" r="2.5"/><line class="bo" x1="732.5" y1="310" x2="767" y2="299"/><line class="bc" x1="732.5" y1="310" x2="771.5" y2="310"/></g>
 <text x="726" y="305" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B1</text>
@@ -3319,9 +2979,9 @@ Para agregar un nuevo módulo:
 <path id="in_wctA3" class="w" d="M1100 310 H1124"/>
 <polygon points="1124,300 1124,308 1132,304" fill="var(--border-strong)"/>
 <text x="1138" y="307" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZG (Zona G)</text>
-<text x="414" y="343" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B22</text>
-<path id="in_s_ctA4" class="w" d="M348 340 H373.4 L397.4 340 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctA4" class="w" d="M416 340 H730"/>
+<text x="514" y="343" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B22</text>
+<path id="in_s_ctA4" class="w" d="M448 340 H473.4 L497.4 340 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctA4" class="w" d="M516 340 H730"/>
 <polygon id="in_ar_ctA4a" points="568,336 577,340 568,344" fill="var(--border)"/>
 <g id="in_ctA4" class="sym"><circle cx="730" cy="340" r="2.5"/><circle cx="774" cy="340" r="2.5"/><line class="bo" x1="732.5" y1="340" x2="767" y2="329"/><line class="bc" x1="732.5" y1="340" x2="771.5" y2="340"/></g>
 <text x="726" y="335" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D1</text>
@@ -3334,9 +2994,9 @@ Para agregar un nuevo módulo:
 <text x="1138" y="337" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZC (Zona C)</text>
 <polygon points="1124,343 1124,351 1132,347" fill="var(--border-strong)"/>
 <text x="1138" y="350" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">→ TPL ZD (Zona D)</text>
-<text x="414" y="377" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z16</text>
-<path id="in_s_ctA5" class="w" d="M348 374 H373.4 L397.4 374 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctA5" class="w" d="M416 374 H730"/>
+<text x="514" y="377" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z16</text>
+<path id="in_s_ctA5" class="w" d="M448 374 H473.4 L497.4 374 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctA5" class="w" d="M516 374 H730"/>
 <polygon id="in_ar_ctA5a" points="568,370 577,374 568,378" fill="var(--border)"/>
 <g id="in_ctA5" class="sym"><circle cx="730" cy="374" r="2.5"/><circle cx="774" cy="374" r="2.5"/><line class="bo" x1="732.5" y1="374" x2="767" y2="363"/><line class="bc" x1="732.5" y1="374" x2="771.5" y2="374"/></g>
 <text x="726" y="369" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">C1</text>
@@ -3344,19 +3004,19 @@ Para agregar un nuevo módulo:
 <path id="in_fR_ctA5" class="w" d="M774 374 H1082"/>
 <polygon id="in_ar_ctA5b" points="923,370 932,374 923,378" fill="var(--border)"/>
 <text x="1082" y="377" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z12</text>
-<text x="414" y="417" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D24</text>
-<path id="in_wD24in" class="w" d="M364 414 H416" style="stroke:#2BA6A6;stroke-width:1.6"/>
-<text x="360" y="417" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VP</text>
-<path id="in_wRR2a" class="w" d="M416 414 H840"/>
+<text x="514" y="417" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D24</text>
+<path id="in_wD24in" class="w" d="M464 414 H516" style="stroke:#2BA6A6;stroke-width:1.6"/>
+<text x="460" y="417" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VP</text>
+<path id="in_wRR2a" class="w" d="M516 414 H840"/>
 <g id="in_coRR2" class="coil"><path class="zz" d="M840 414 L849 399 L858 414 L867 399 L876 414"/><text x="858" y="395" text-anchor="middle" style="font-size:9px;font-weight:600">RR DG2</text></g>
 <text x="880" y="417" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K3</text>
 <path id="in_wRR2b" class="w" d="M876 414 H1082"/>
 <text x="1082" y="417" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z24</text>
-<line x1="386" y1="414" x2="416" y2="414" stroke="#2BA6A6" stroke-width="1.4"/>
-<text x="414" y="459" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D28</text>
-<text x="360" y="459" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">-48VE</text>
-<path id="in_s_ctB0" class="w" d="M364 456 H416" style="stroke:#2BA6A6;stroke-width:1.6"/>
-<path id="in_fL_ctB0" class="w" d="M416 456 H840"/>
+<line x1="486" y1="414" x2="516" y2="414" stroke="#2BA6A6" stroke-width="1.4"/>
+<text x="514" y="459" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D28</text>
+<text x="460" y="459" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">-48VE</text>
+<path id="in_s_ctB0" class="w" d="M464 456 H516" style="stroke:#2BA6A6;stroke-width:1.6"/>
+<path id="in_fL_ctB0" class="w" d="M516 456 H840"/>
 <polygon id="in_ar_ctB0a" points="623,452 632,456 623,460" fill="var(--border)"/>
 <g id="in_ctB0" class="sym"><circle cx="840" cy="456" r="2.5"/><circle cx="884" cy="456" r="2.5"/><line class="bo" x1="842.5" y1="456" x2="877" y2="445"/><line class="bc" x1="842.5" y1="456" x2="881.5" y2="456"/></g>
 <text x="836" y="451" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">A1</text>
@@ -3364,10 +3024,10 @@ Para agregar un nuevo módulo:
 <path id="in_fR_ctB0" class="w" d="M884 456 H1082"/>
 <polygon id="in_ar_ctB0b" points="978,452 987,456 978,460" fill="var(--border)"/>
 <text x="1082" y="459" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D30</text>
-<text x="414" y="489" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B28</text>
-<text x="360" y="489" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VE</text>
-<path id="in_s_ctB1" class="w" d="M364 486 H416" style="stroke:#2BA6A6;stroke-width:1.6"/>
-<path id="in_fL_ctB1" class="w" d="M416 486 H840"/>
+<text x="514" y="489" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B28</text>
+<text x="460" y="489" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VE</text>
+<path id="in_s_ctB1" class="w" d="M464 486 H516" style="stroke:#2BA6A6;stroke-width:1.6"/>
+<path id="in_fL_ctB1" class="w" d="M516 486 H840"/>
 <polygon id="in_ar_ctB1a" points="623,482 632,486 623,490" fill="var(--border)"/>
 <g id="in_ctB1" class="sym"><circle cx="840" cy="486" r="2.5"/><circle cx="884" cy="486" r="2.5"/><line class="bo" x1="842.5" y1="486" x2="877" y2="475"/><line class="bc" x1="842.5" y1="486" x2="881.5" y2="486"/></g>
 <text x="836" y="481" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B1</text>
@@ -3375,9 +3035,9 @@ Para agregar un nuevo módulo:
 <path id="in_fR_ctB1" class="w" d="M884 486 H1082"/>
 <polygon id="in_ar_ctB1b" points="978,482 987,486 978,490" fill="var(--border)"/>
 <text x="1082" y="489" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B30</text>
-<text x="414" y="519" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z28</text>
-<path id="in_s_ctB2" class="w" d="M348 516 H373.4 L397.4 516 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctB2" class="w" d="M416 516 H840"/>
+<text x="514" y="519" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z28</text>
+<path id="in_s_ctB2" class="w" d="M448 516 H473.4 L497.4 516 H516" style="stroke:var(--border);stroke-width:1" fill="none"/>
+<path id="in_fL_ctB2" class="w" d="M516 516 H840"/>
 <polygon id="in_ar_ctB2a" points="623,512 632,516 623,520" fill="var(--border)"/>
 <g id="in_ctB2" class="sym"><circle cx="840" cy="516" r="2.5"/><circle cx="884" cy="516" r="2.5"/><line class="bo" x1="842.5" y1="516" x2="877" y2="505"/><line class="bc" x1="842.5" y1="516" x2="881.5" y2="516"/></g>
 <text x="836" y="511" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D1</text>
@@ -3385,10 +3045,10 @@ Para agregar un nuevo módulo:
 <path id="in_fR_ctB2" class="w" d="M884 516 H1082"/>
 <polygon id="in_ar_ctB2b" points="978,512 987,516 978,520" fill="var(--border)"/>
 <text x="1082" y="519" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z30</text>
-<text x="414" y="549" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z04</text>
-<text x="360" y="549" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">-48VE</text>
-<path id="in_s_ctB3" class="w" d="M364 546 H416" style="stroke:#2BA6A6;stroke-width:1.6"/>
-<path id="in_fL_ctB3" class="w" d="M416 546 H580"/>
+<text x="514" y="549" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z04</text>
+<text x="460" y="549" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">-48VE</text>
+<path id="in_s_ctB3" class="w" d="M464 546 H516" style="stroke:#2BA6A6;stroke-width:1.6"/>
+<path id="in_fL_ctB3" class="w" d="M516 546 H580"/>
 <polygon id="in_ar_ctB3a" points="493,542 502,546 493,550" fill="var(--border)"/>
 <g id="in_ctB3" class="sym"><circle cx="580" cy="546" r="2.5"/><circle cx="624" cy="546" r="2.5"/><line class="bo" x1="582.5" y1="546" x2="617" y2="535"/><line class="bc" x1="582.5" y1="546" x2="621.5" y2="546"/></g>
 <text x="576" y="541" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">C2</text>
@@ -3396,10 +3056,10 @@ Para agregar un nuevo módulo:
 <path id="in_fR_ctB3" class="w" d="M624 546 H1082"/>
 <polygon id="in_ar_ctB3b" points="848,542 857,546 848,550" fill="var(--border)"/>
 <text x="1082" y="549" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B04</text>
-<text x="414" y="579" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D12</text>
-<text x="360" y="579" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VE</text>
-<path id="in_s_ctB4" class="w" d="M364 576 H416" style="stroke:#2BA6A6;stroke-width:1.6"/>
-<path id="in_fL_ctB4" class="w" d="M416 576 H580"/>
+<text x="514" y="579" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D12</text>
+<text x="460" y="579" text-anchor="end" style="font-size:6.5px;font-weight:600;fill:#2BA6A6">+48VE</text>
+<path id="in_s_ctB4" class="w" d="M464 576 H516" style="stroke:#2BA6A6;stroke-width:1.6"/>
+<path id="in_fL_ctB4" class="w" d="M516 576 H580"/>
 <polygon id="in_ar_ctB4a" points="493,572 502,576 493,580" fill="var(--border)"/>
 <g id="in_ctB4" class="sym"><circle cx="580" cy="576" r="2.5"/><circle cx="624" cy="576" r="2.5"/><line class="bo" x1="582.5" y1="576" x2="617" y2="565"/><line class="bc" x1="582.5" y1="576" x2="621.5" y2="576"/></g>
 <text x="576" y="571" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D1</text>
@@ -3413,50 +3073,40 @@ Para agregar un nuevo módulo:
 <text x="690" y="392" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:#1D9E75">RR DG1: A1A2 · B1B2 · D1D2 · C1C2</text>
 <line x1="862" y1="426" x2="862" y2="516" stroke="#7A70E0" stroke-width="1" stroke-dasharray="3 3"/>
 <text x="866" y="534" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:#7A70E0">RR DG2: A1A2 · B1B2 · D1D2</text>
-<rect x="400" y="710" width="700" height="146" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
-<rect x="416" y="700" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
-<text x="452" y="712" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">1P2</text>
+<rect x="500" y="710" width="600" height="146" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
+<rect x="516" y="700" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
+<text x="552" y="712" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">1P2</text>
 <rect x="510" y="700" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="546" y="712" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">RRDG3</text>
 <rect x="610" y="700" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="646" y="712" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">MX642</text>
-<text x="414" y="745" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D24</text>
-<text x="414" y="755" text-anchor="end" style="font-size:6px;font-weight:normal;fill:#2BA6A6">+48VP</text>
-<path id="in_wRR3a" class="w" d="M416 742 H730"/>
+<text x="514" y="745" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D24</text>
+<text x="514" y="755" text-anchor="end" style="font-size:6px;font-weight:normal;fill:#2BA6A6">+48VP</text>
+<path id="in_wRR3a" class="w" d="M516 742 H730"/>
 <g id="in_coRR3" class="coil"><path class="zz" d="M730 742 L739 727 L748 742 L757 727 L766 742"/><text x="748" y="723" text-anchor="middle" style="font-size:9px;font-weight:600">RR DG3</text></g>
 <text x="770" y="745" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K3</text>
 <path id="in_wRR3b" class="w" d="M766 742 H1082"/>
 <text x="1082" y="745" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z24</text>
-<line x1="386" y1="742" x2="416" y2="742" stroke="#2BA6A6" stroke-width="1.4"/>
-<text x="414" y="781" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D28</text>
-<path id="in_s_ctQ0" class="w" d="M354 800 H376.1 L400.1 778 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctQ0" class="w" d="M416 778 H730"/>
-<polygon id="in_ar_ctQ0a" points="568,774 577,778 568,782" fill="var(--border)"/>
+<line x1="486" y1="742" x2="516" y2="742" stroke="#2BA6A6" stroke-width="1.4"/>
+<path id="in_fL_ctQ0" class="w" d="M730 778 H400 V210 H340" style="stroke:#E0A030;stroke-width:2"/>
 <g id="in_ctQ0" class="sym"><circle cx="730" cy="778" r="2.5"/><circle cx="774" cy="778" r="2.5"/><line class="bo" x1="732.5" y1="778" x2="767" y2="767"/><line class="bc" x1="732.5" y1="778" x2="771.5" y2="778"/></g>
 <text x="726" y="773" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">A1</text>
 <text x="778" y="773" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">A2</text>
-<path id="in_fR_ctQ0" class="w" d="M774 778 H1082"/>
-<polygon id="in_ar_ctQ0b" points="923,774 932,778 923,782" fill="var(--border)"/>
-<text x="1082" y="781" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D30</text>
-<text x="414" y="815" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B24</text>
-<path id="in_s_ctQ1" class="w" d="M354 834 H376.1 L400.1 812 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctQ1" class="w" d="M416 812 H730"/>
-<polygon id="in_ar_ctQ1a" points="568,808 577,812 568,816" fill="var(--border)"/>
-<g id="in_ctQ1" class="sym"><circle cx="730" cy="812" r="2.5"/><circle cx="774" cy="812" r="2.5"/><line class="bo" x1="732.5" y1="812" x2="767" y2="801"/><line class="bc" x1="732.5" y1="812" x2="771.5" y2="812"/></g>
+<path id="in_fR_ctQ0" class="w" d="M774 778 V793 H420 V140" style="stroke:#E0A030;stroke-width:2"/>
+<circle cx="420" cy="140" r="3" fill="#E0A030"/>
+<path id="in_fL_ctQ1" class="w" d="M730 812 H380 V310 H340" style="stroke:#E0A030;stroke-width:2"/>
+<g id="in_ctQ1" class="sym"><circle cx="730" cy="812" r="2.5"/><circle cx="774" cy="812" r="2.5"/><line class="bc" x1="732.5" y1="812" x2="767" y2="801"/><line class="bo" x1="732.5" y1="812" x2="771.5" y2="812"/></g>
 <text x="726" y="807" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">C3</text>
 <text x="778" y="807" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">C2</text>
-<path id="in_fR_ctQ1" class="w" d="M774 812 H1082"/>
-<polygon id="in_ar_ctQ1b" points="923,808 932,812 923,816" fill="var(--border)"/>
-<text x="1082" y="815" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B28</text>
-<text x="414" y="849" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z22</text>
-<text x="414" y="859" text-anchor="end" style="font-size:6px;font-weight:normal;fill:#2BA6A6">-48VP</text>
-<path id="in_s_ctQ2" class="w" d="M354 868 H376.1 L400.1 846 H416" style="stroke:var(--border);stroke-width:1" fill="none"/>
-<path id="in_fL_ctQ2" class="w" d="M416 846 H730"/>
+<path id="in_fR_ctQ1" class="w" d="M774 812 V830 H448 V846" style="stroke:#2BA6A6;stroke-width:2"/>
+<text x="514" y="849" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">Z22</text>
+<text x="514" y="859" text-anchor="end" style="font-size:6px;font-weight:normal;fill:#2BA6A6">-48VP</text>
+<path id="in_fL_ctQ2" class="w" d="M730 846 V856 H795 V812 H1082" style="stroke:#E0A030;stroke-width:2"/>
 <polygon id="in_ar_ctQ2a" points="568,842 577,846 568,850" fill="var(--border)"/>
 <g id="in_ctQ2" class="sym"><circle cx="730" cy="846" r="2.5"/><circle cx="774" cy="846" r="2.5"/><line class="bo" x1="732.5" y1="846" x2="767" y2="835"/><line class="bc" x1="732.5" y1="846" x2="771.5" y2="846"/></g>
 <text x="726" y="841" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B1</text>
 <text x="778" y="841" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">B2</text>
-<path id="in_fR_ctQ2" class="w" d="M774 846 H1082"/>
+<path id="in_fR_ctQ2" class="w" d="M774 846 H1082" style="stroke:#E0A030;stroke-width:2"/>
 <polygon id="in_ar_ctQ2b" points="923,842 932,846 923,850" fill="var(--border)"/>
 <text x="1082" y="849" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">B30</text>
 <line x1="752" y1="754" x2="752" y2="846" stroke="#E0A030" stroke-width="1" stroke-dasharray="3 3"/>
@@ -3477,43 +3127,29 @@ Para agregar un nuevo módulo:
 <circle cx="1082" cy="742" r="3.2" fill="#7A70E0"/>
 <polygon id="in_arC3" points="1139,624 1144,633 1149,624" fill="var(--border)"/>
 <text x="1154" y="632" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#7A70E0">Z30 → Z24 · energiza RR DG3</text>
-<path id="in_wEng1" class="w" d="M1082 778 H466 V152" style="stroke:#E0A030;stroke-width:2"/>
-<path id="in_wEng2" class="w" d="M466 152 H440" style="stroke:#E0A030;stroke-width:2"/>
-<circle cx="1082" cy="778" r="3.2" fill="#E0A030"/>
-<circle cx="440" cy="152" r="3.2" fill="#E0A030"/>
-<path id="in_wEng3" class="w" d="M1090 778 H476 V179" style="stroke:#E0A030;stroke-width:2"/>
-<path id="in_wEng4" class="w" d="M476 179 H440" style="stroke:#E0A030;stroke-width:2"/>
-<circle cx="440" cy="179" r="3.2" fill="#E0A030"/>
-<text x="482" y="752" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#E0A030">A1·A2 → P4·A3 (2P41): engancha el TPL</text>
-<path id="in_wApag1" class="w" d="M1082 812 H486 V206" style="stroke:#E0A030;stroke-width:2"/>
-<path id="in_wApag2" class="w" d="M486 206 H440" style="stroke:#E0A030;stroke-width:2"/>
-<circle cx="1082" cy="812" r="3.2" fill="#E0A030"/>
-<circle cx="440" cy="206" r="3.2" fill="#E0A030"/>
-<text x="492" y="792" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#E0A030">C3·C2 → A4 (2P41) · -48VP: apaga la luz del TPL</text>
+<circle cx="448" cy="846" r="3.2" fill="#2BA6A6"/>
+<text x="792" y="775" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#E0A030">A1·A2 → P4·A3 (2P41): engancha el TPL</text>
+<text x="792" y="815" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#E0A030">C3·C2: C3→A4 · C2→−48VP: apaga la luz</text>
 <text x="1190" y="410" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">2P44</text>
 <line x1="1190" y1="416" x2="1190" y2="862" stroke="var(--border)" stroke-width="1"/>
-<text x="1310" y="442" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">2H1 · 7C PPA</text>
-<text x="1354" y="485" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">de RR DG2 (D30 · B30)</text>
-<path id="in_wRM1_0" class="w" d="M1082 456 H1340" style="stroke:#7A70E0"/>
+<path id="in_wRM2_0" class="w" d="M1082 456 H1440 V760 H1600" style="stroke:#7A70E0"/>
+<path id="in_wRM2_0b" class="w" d="M1440 600 H1600" style="stroke:#7A70E0"/>
+<circle cx="1440" cy="600" r="3" fill="#7A70E0"/>
 <text x="1184" y="452" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">K1</text>
-<text x="1336" y="452" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">25</text>
-<path id="in_wRM1_1" class="w" d="M1082 486 H1340" style="stroke:#7A70E0"/>
+<path id="in_wRM2_1" class="w" d="M1082 486 H1520 V736 H1690 V760 H1636" style="stroke:#7A70E0"/>
+<path id="in_wRM2_1b" class="w" d="M1520 576 H1690 V600 H1636" style="stroke:#7A70E0"/>
+<circle cx="1520" cy="576" r="3" fill="#7A70E0"/>
 <text x="1184" y="482" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">K2</text>
-<text x="1336" y="482" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">26</text>
-<path d="M1340 456 h8 V486 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
-<text x="1354" y="474" text-anchor="start" style="font-size:7.5px;font-weight:600;fill:#2BA6A6">→ PCD CDC VVA</text>
-<text x="1310" y="502" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">2H3 · 7C VVA</text>
-<text x="1354" y="545" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">de RR DG2 (Z30) y R DG (B04)</text>
-<path id="in_wRM2_0" class="w" d="M1082 516 H1340" style="stroke:#7A70E0"/>
-<text x="1184" y="512" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">K3</text>
-<text x="1336" y="512" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">27</text>
-<path id="in_wRM2_1" class="w" d="M1082 546 H1340" style="stroke:#3E77E0"/>
-<text x="1184" y="542" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">K4</text>
-<text x="1336" y="542" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">28</text>
-<path d="M1340 516 h8 V546 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
-<text x="1354" y="534" text-anchor="start" style="font-size:7.5px;font-weight:600;fill:#EF9F27">→ PCD CDC VVA</text>
+<path id="in_wRM1_0" class="w" d="M1082 546 H1500 V150 H1600" style="stroke:#3E77E0"/>
+<path id="in_wRM1_0b" class="w" d="M1500 310 H1600" style="stroke:#3E77E0"/>
+<circle cx="1500" cy="310" r="3" fill="#3E77E0"/>
+<text x="1184" y="542" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">K3</text>
+<path id="in_wRM1_1" class="w" d="M1082 576 H1540 V126 H1690 V150 H1636" style="stroke:#3E77E0"/>
+<path id="in_wRM1_1b" class="w" d="M1540 286 H1690 V310 H1636" style="stroke:#3E77E0"/>
+<circle cx="1540" cy="286" r="3" fill="#3E77E0"/>
+<text x="1184" y="572" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">K4</text>
 <text x="1310" y="798" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#E0A030">2H13 · RM LC</text>
-<text x="1354" y="843" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">de RR DG3: C3·C2 → B28 · B1·B2 → B30</text>
+<text x="1354" y="843" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">de RR DG3 · B1·B2: B1→L1 · B2→L2</text>
 <path id="in_wRMLC_0" class="w" d="M1082 812 H1340" style="stroke:#E0A030"/>
 <text x="1184" y="808" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">L1</text>
 <text x="1336" y="808" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">1</text>
@@ -3522,109 +3158,166 @@ Para agregar un nuevo módulo:
 <text x="1336" y="842" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">2</text>
 <path d="M1340 812 h8 V846 h-8" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="1354" y="832" text-anchor="start" style="font-size:7.5px;font-weight:600;fill:#E0A030">→ PCD Lord Cochrane</text>
-<rect x="60" y="700" width="280" height="160" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
+<rect x="60" y="700" width="280" height="200" fill="none" stroke="var(--border-strong)" stroke-width="1.2"/>
 <text x="70" y="718" text-anchor="start" style="font-size:9px;font-weight:600;fill:var(--text-primary)">ARMARIO VXMAT</text>
-<rect x="80" y="738" width="240" height="104" fill="none" stroke="var(--border)"/>
+<rect x="80" y="738" width="240" height="144" fill="none" stroke="var(--border)"/>
 <text x="90" y="756" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:var(--text-primary)">Tarjeta 1 · Módulo 1</text>
 <text x="90" y="792" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:#3E77E0">TK TPL DG A · E14</text>
 <text x="210" y="756" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">MUX P2</text>
 <text x="274" y="756" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">14</text>
-<text x="210" y="830" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">Com P2</text>
-<text x="274" y="830" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">21</text>
-<text x="90" y="856" text-anchor="start" style="font-size:8px;font-weight:600;fill:var(--text-primary)">VXMAT</text>
-<text x="360" y="692" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">2P43</text>
+<text x="210" y="870" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">Com P2</text>
+<text x="274" y="870" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">21</text>
+<text x="90" y="812" text-anchor="start" style="font-size:7.5px;fill:#3E77E0">TK.RM1 DG L4 · E1</text>
+<text x="90" y="832" text-anchor="start" style="font-size:7.5px;fill:#7A70E0">TK.RM2 DG L4 · E3</text>
+<text x="90" y="896" text-anchor="start" style="font-size:8px;font-weight:600;fill:var(--text-primary)">VXMAT</text>
+<text x="460" y="692" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">2P43</text>
 <text x="392" y="692" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">D2</text>
 <text x="424" y="692" text-anchor="start" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">E2</text>
-<path id="in_wTK" class="w" d="M340 792 H602 V136" style="stroke-dasharray:4 3"/>
-<text x="70" y="876" text-anchor="start" style="font-size:7.5px;font-weight:normal;fill:#3E77E0">TK del DG → SCADA (estado)</text>
-<rect x="1560" y="110" width="420" height="330" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
+<text x="70" y="916" text-anchor="start" style="font-size:7.5px;fill:#3E77E0">TK → SCADA (RED RMS)</text>
+<rect x="1560" y="110" width="420" height="360" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
 <rect x="1574" y="100" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="1610" y="112" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">P1</text>
 <rect x="1660" y="100" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="1696" y="112" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">RM L4</text>
 <rect x="1760" y="100" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="1796" y="112" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">MX642</text>
-<text x="1550" y="144" text-anchor="end" style="font-size:8px;font-weight:600;fill:#2BA6A6">2H1 · 25/26 →</text>
-<g id="in_coRM1A" class="coil"><path class="zz" d="M1600 166 L1609 151 L1618 166 L1627 151 L1636 166"/><text x="1618" y="147" text-anchor="middle" style="font-size:9px;font-weight:600">R RM1-1 L4</text></g>
+<text x="1496" y="132" text-anchor="end" style="font-size:7.5px;font-weight:600;fill:#3E77E0">del R DG · C2·C1 y D1·D2</text>
+<line id="in_mkRM1A" x1="1632" y1="150" x2="1632" y2="275" stroke="#3E77E0" stroke-width="1" stroke-dasharray="3 3"/>
+<line id="in_mkRM1B" x1="1632" y1="310" x2="1632" y2="450" stroke="#3E77E0" stroke-width="1" stroke-dasharray="3 3"/>
+<line id="in_mkRM2A" x1="1632" y1="600" x2="1632" y2="725" stroke="#7A70E0" stroke-width="1" stroke-dasharray="3 3"/>
+<line id="in_mkRM2B" x1="1632" y1="760" x2="1632" y2="900" stroke="#7A70E0" stroke-width="1" stroke-dasharray="3 3"/>
+<g id="in_coRM1A" class="coil"><path class="zz" d="M1600 150 L1609 135 L1618 150 L1627 135 L1636 150"/><text x="1618" y="131" text-anchor="middle" style="font-size:9px;font-weight:600">R RM1-1 L4</text></g>
 <text x="1640" y="169" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K1</text>
 <text x="1594" y="169" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Z02</text>
-<g id="in_ctSelloRM1" class="sym"><circle cx="1630" cy="220" r="2.5"/><circle cx="1674" cy="220" r="2.5"/><line class="bo" x1="1632.5" y1="220" x2="1667" y2="209"/><line class="bc" x1="1632.5" y1="220" x2="1671.5" y2="220"/></g>
-<text x="1652" y="206" text-anchor="middle" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D06·C2 automant.</text>
-<g id="in_coRM1B" class="coil"><path class="zz" d="M1600 290 L1609 275 L1618 290 L1627 275 L1636 290"/><text x="1618" y="271" text-anchor="middle" style="font-size:9px;font-weight:600">R RM1-2 L4</text></g>
+<text x="1602" y="261" text-anchor="start" style="font-size:6px;fill:#3E77E0">R RM1-1 · C3·C2 (D06-Z04)</text>
+<text x="1602" y="436" text-anchor="start" style="font-size:6px;fill:#3E77E0">R RM1-2 · C2·C3 (Z12-D16)</text>
+<text x="1602" y="711" text-anchor="start" style="font-size:6px;fill:#7A70E0">R RM2-1 · C2·C3 (Z04-D06)</text>
+<text x="1602" y="886" text-anchor="start" style="font-size:6px;fill:#7A70E0">R RM2-2 · C3·C2 (D16-Z12)</text>
+<g id="in_ctSelloRM1" class="sym"><circle cx="1610" cy="275" r="2.5"/><circle cx="1654" cy="275" r="2.5"/><line class="bo" x1="1612.5" y1="275" x2="1647" y2="264"/><line class="bc" x1="1612.5" y1="275" x2="1651.5" y2="275"/></g>
+<g id="in_ctTKbRM1" class="sym"><circle cx="1610" cy="450" r="2.5"/><circle cx="1654" cy="450" r="2.5"/><line class="bo" x1="1612.5" y1="450" x2="1647" y2="439"/><line class="bc" x1="1612.5" y1="450" x2="1651.5" y2="450"/></g>
+<path id="in_wJmpRM1" class="w" d="M1610 275 H1580 V450 H1610" style="stroke:#3E77E0;stroke-width:1.8"/>
+<path class="w" d="M1654 275 H1694" style="stroke:#3E77E0;stroke-width:1.8"/>
+<text x="1700" y="278" text-anchor="start" style="font-size:5.5px;fill:#3E77E0">2P43 F1</text>
+<path id="in_wTKrmRM1" class="w" d="M1654 450 H1694 V510 H1340 V950 H360 V812 H320" style="stroke:#3E77E0;stroke-width:1.6;stroke-dasharray:4 3"/>
+<text x="700" y="944" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#3E77E0">TK.RM1 DG L4 → 2P43 (A1·F1) → VXMAT E1 · Condición RM1 formada</text>
+<g id="in_coRM1B" class="coil"><path class="zz" d="M1600 310 L1609 295 L1618 310 L1627 295 L1636 310"/><text x="1618" y="291" text-anchor="middle" style="font-size:9px;font-weight:600">R RM1-2 L4</text></g>
 <text x="1640" y="293" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K2</text>
-<path id="in_wCascRM1" class="w" d="M1652 220 V275 H1600"/>
-<g id="in_ckRM1_0" class="sym"><circle cx="1710" cy="154" r="2.5"/><circle cx="1754" cy="154" r="2.5"/><line class="bo" x1="1712.5" y1="154" x2="1747" y2="143"/><line class="bc" x1="1712.5" y1="154" x2="1751.5" y2="154"/></g>
-<path id="in_sRM10" class="w" d="M1754 154 H1980"/>
-<g id="in_ckRM1_1" class="sym"><circle cx="1710" cy="174" r="2.5"/><circle cx="1754" cy="174" r="2.5"/><line class="bo" x1="1712.5" y1="174" x2="1747" y2="163"/><line class="bc" x1="1712.5" y1="174" x2="1751.5" y2="174"/></g>
-<path id="in_sRM11" class="w" d="M1754 174 H1980"/>
-<g id="in_ckRM1_2" class="sym"><circle cx="1710" cy="194" r="2.5"/><circle cx="1754" cy="194" r="2.5"/><line class="bo" x1="1712.5" y1="194" x2="1747" y2="183"/><line class="bc" x1="1712.5" y1="194" x2="1751.5" y2="194"/></g>
-<path id="in_sRM12" class="w" d="M1754 194 H1980"/>
-<g id="in_ckRM1_3" class="sym"><circle cx="1710" cy="214" r="2.5"/><circle cx="1754" cy="214" r="2.5"/><line class="bo" x1="1712.5" y1="214" x2="1747" y2="203"/><line class="bc" x1="1712.5" y1="214" x2="1751.5" y2="214"/></g>
-<path id="in_sRM13" class="w" d="M1754 214 H1980"/>
-<g id="in_ckRM1_4" class="sym"><circle cx="1710" cy="234" r="2.5"/><circle cx="1754" cy="234" r="2.5"/><line class="bo" x1="1712.5" y1="234" x2="1747" y2="223"/><line class="bc" x1="1712.5" y1="234" x2="1751.5" y2="234"/></g>
-<path id="in_sRM14" class="w" d="M1754 234 H1980"/>
-<g id="in_ckRM1_5" class="sym"><circle cx="1710" cy="254" r="2.5"/><circle cx="1754" cy="254" r="2.5"/><line class="bo" x1="1712.5" y1="254" x2="1747" y2="243"/><line class="bc" x1="1712.5" y1="254" x2="1751.5" y2="254"/></g>
-<path id="in_sRM15" class="w" d="M1754 254 H1980"/>
+<g id="in_ckRM1_0" class="sym"><circle cx="1610" cy="170" r="2.5"/><circle cx="1654" cy="170" r="2.5"/><line class="bo" x1="1612.5" y1="170" x2="1647" y2="159"/><line class="bc" x1="1612.5" y1="170" x2="1651.5" y2="170"/></g>
+<text x="1602" y="156" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">A1·A2</text>
+<text x="1672" y="173" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">TOB · BIL</text>
+<g id="in_ckRM1_1" class="sym"><circle cx="1610" cy="205" r="2.5"/><circle cx="1654" cy="205" r="2.5"/><line class="bo" x1="1612.5" y1="205" x2="1647" y2="194"/><line class="bc" x1="1612.5" y1="205" x2="1651.5" y2="205"/></g>
+<text x="1602" y="191" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">B1·B2</text>
+<text x="1672" y="208" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">LOR · RQU</text>
+<g id="in_ckRM1_2" class="sym"><circle cx="1610" cy="240" r="2.5"/><circle cx="1654" cy="240" r="2.5"/><line class="bo" x1="1612.5" y1="240" x2="1647" y2="229"/><line class="bc" x1="1612.5" y1="240" x2="1651.5" y2="240"/></g>
+<text x="1602" y="226" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">D1·D2</text>
+<text x="1672" y="243" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">LTO · VVA</text>
+<text x="1700" y="157" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A2 → 1</text>
+<text x="1700" y="177" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A1 → 2</text>
+<text x="1700" y="192" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B2 → 3</text>
+<text x="1700" y="212" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B1 → 4</text>
+<text x="1700" y="227" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D2 → 5</text>
+<text x="1700" y="247" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D1 → 6</text>
+<path id="in_sRM10" class="w" d="M1654 170 V160 H1980"/>
+<path id="in_sRM11" class="w" d="M1610 170 V180 H1980"/>
+<path id="in_sRM12" class="w" d="M1654 205 V195 H1980"/>
+<path id="in_sRM13" class="w" d="M1610 205 V215 H1980"/>
+<path id="in_sRM14" class="w" d="M1654 240 V230 H1980"/>
+<path id="in_sRM15" class="w" d="M1610 240 V250 H1980"/>
 <path class="leader" style="stroke:#3E77E0" d="M1618 166 V154 H1710"/>
-<g id="in_clRM1_0" class="sym"><circle cx="1710" cy="290" r="2.5"/><circle cx="1754" cy="290" r="2.5"/><line class="bo" x1="1712.5" y1="290" x2="1747" y2="279"/><line class="bc" x1="1712.5" y1="290" x2="1751.5" y2="290"/></g>
-<path id="in_tRM10" class="w" d="M1754 290 H1980"/>
-<g id="in_clRM1_1" class="sym"><circle cx="1710" cy="310" r="2.5"/><circle cx="1754" cy="310" r="2.5"/><line class="bo" x1="1712.5" y1="310" x2="1747" y2="299"/><line class="bc" x1="1712.5" y1="310" x2="1751.5" y2="310"/></g>
-<path id="in_tRM11" class="w" d="M1754 310 H1980"/>
-<g id="in_clRM1_2" class="sym"><circle cx="1710" cy="330" r="2.5"/><circle cx="1754" cy="330" r="2.5"/><line class="bo" x1="1712.5" y1="330" x2="1747" y2="319"/><line class="bc" x1="1712.5" y1="330" x2="1751.5" y2="330"/></g>
-<path id="in_tRM12" class="w" d="M1754 330 H1980"/>
-<g id="in_clRM1_3" class="sym"><circle cx="1710" cy="350" r="2.5"/><circle cx="1754" cy="350" r="2.5"/><line class="bo" x1="1712.5" y1="350" x2="1747" y2="339"/><line class="bc" x1="1712.5" y1="350" x2="1751.5" y2="350"/></g>
-<path id="in_tRM13" class="w" d="M1754 350 H1980"/>
-<g id="in_clRM1_4" class="sym"><circle cx="1710" cy="370" r="2.5"/><circle cx="1754" cy="370" r="2.5"/><line class="bo" x1="1712.5" y1="370" x2="1747" y2="359"/><line class="bc" x1="1712.5" y1="370" x2="1751.5" y2="370"/></g>
-<path id="in_tRM14" class="w" d="M1754 370 H1980"/>
-<g id="in_clRM1_5" class="sym"><circle cx="1710" cy="390" r="2.5"/><circle cx="1754" cy="390" r="2.5"/><line class="bo" x1="1712.5" y1="390" x2="1747" y2="379"/><line class="bc" x1="1712.5" y1="390" x2="1751.5" y2="390"/></g>
-<path id="in_tRM15" class="w" d="M1754 390 H1980"/>
+<g id="in_clRM1_0" class="sym"><circle cx="1610" cy="345" r="2.5"/><circle cx="1654" cy="345" r="2.5"/><line class="bo" x1="1612.5" y1="345" x2="1647" y2="334"/><line class="bc" x1="1612.5" y1="345" x2="1651.5" y2="345"/></g>
+<text x="1602" y="331" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">A1·A2</text>
+<text x="1672" y="348" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">TRI · HSR</text>
+<g id="in_clRM1_1" class="sym"><circle cx="1610" cy="380" r="2.5"/><circle cx="1654" cy="380" r="2.5"/><line class="bo" x1="1612.5" y1="380" x2="1647" y2="369"/><line class="bc" x1="1612.5" y1="380" x2="1651.5" y2="380"/></g>
+<text x="1602" y="366" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">B1·B2</text>
+<text x="1672" y="383" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">TPA · reserva</text>
+<g id="in_clRM1_2" class="sym"><circle cx="1610" cy="415" r="2.5"/><circle cx="1654" cy="415" r="2.5"/><line class="bo" x1="1612.5" y1="415" x2="1647" y2="404"/><line class="bc" x1="1612.5" y1="415" x2="1651.5" y2="415"/></g>
+<text x="1602" y="401" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">D1·D2</text>
+<text x="1672" y="418" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">reserva</text>
+<text x="1700" y="332" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A2 → 7</text>
+<text x="1700" y="352" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A1 → 8</text>
+<text x="1700" y="367" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B2 → 9</text>
+<text x="1700" y="387" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B1 → 10</text>
+<text x="1700" y="402" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D2 → 11</text>
+<text x="1700" y="422" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D1 → 12</text>
+<path id="in_tRM10" class="w" d="M1654 345 V335 H1980"/>
+<path id="in_tRM11" class="w" d="M1610 345 V355 H1980"/>
+<path id="in_tRM12" class="w" d="M1654 380 V370 H1980"/>
+<path id="in_tRM13" class="w" d="M1610 380 V390 H1876" style="stroke-dasharray:5 4"/>
+<path id="in_tRM14" class="w" d="M1654 415 V405 H1876" style="stroke-dasharray:5 4"/>
+<text x="1884" y="408" text-anchor="start" style="font-size:6px;font-style:italic;fill:var(--text-secondary)">reserva</text>
+<path id="in_tRM15" class="w" d="M1610 415 V425 H1876" style="stroke-dasharray:5 4"/>
+<text x="1884" y="428" text-anchor="start" style="font-size:6px;font-style:italic;fill:var(--text-secondary)">reserva</text>
+<text x="1884" y="393" text-anchor="start" style="font-size:6px;font-style:italic;fill:var(--text-secondary)">reserva</text>
 <path class="leader" style="stroke:#1D9E75" d="M1618 290 V290 H1710"/>
 <text x="1974" y="432" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">P44/P45 → 2H3/2H9 → telemandos</text>
-<rect x="1560" y="560" width="420" height="330" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
+<rect x="1560" y="560" width="420" height="360" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="7 4"/>
 <rect x="1574" y="550" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="1610" y="562" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">P2</text>
 <rect x="1660" y="550" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="1696" y="562" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">RM2 L4</text>
 <rect x="1760" y="550" width="72" height="16" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)"/>
 <text x="1796" y="562" text-anchor="middle" style="font-size:8px;font-weight:600;fill:var(--text-primary)">MX642</text>
-<text x="1550" y="594" text-anchor="end" style="font-size:8px;font-weight:600;fill:#EF9F27">2H3 · 27/28 →</text>
-<g id="in_coRM2A" class="coil"><path class="zz" d="M1600 616 L1609 601 L1618 616 L1627 601 L1636 616"/><text x="1618" y="597" text-anchor="middle" style="font-size:9px;font-weight:600">R RM2-1 L4</text></g>
+<text x="1436" y="600" text-anchor="end" style="font-size:7.5px;font-weight:600;fill:#7A70E0">del RR DG2 · A1·A2 y B1·B2</text>
+<g id="in_coRM2A" class="coil"><path class="zz" d="M1600 600 L1609 585 L1618 600 L1627 585 L1636 600"/><text x="1618" y="581" text-anchor="middle" style="font-size:9px;font-weight:600">R RM2-1 L4</text></g>
 <text x="1640" y="619" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K1</text>
 <text x="1594" y="619" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-primary)">Z02</text>
-<g id="in_ctSelloRM2" class="sym"><circle cx="1630" cy="670" r="2.5"/><circle cx="1674" cy="670" r="2.5"/><line class="bo" x1="1632.5" y1="670" x2="1667" y2="659"/><line class="bc" x1="1632.5" y1="670" x2="1671.5" y2="670"/></g>
-<text x="1652" y="656" text-anchor="middle" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">D06·C2 automant.</text>
-<g id="in_coRM2B" class="coil"><path class="zz" d="M1600 740 L1609 725 L1618 740 L1627 725 L1636 740"/><text x="1618" y="721" text-anchor="middle" style="font-size:9px;font-weight:600">R RM2-2 L4</text></g>
+<g id="in_ctSelloRM2" class="sym"><circle cx="1610" cy="725" r="2.5"/><circle cx="1654" cy="725" r="2.5"/><line class="bo" x1="1612.5" y1="725" x2="1647" y2="714"/><line class="bc" x1="1612.5" y1="725" x2="1651.5" y2="725"/></g>
+<g id="in_ctTKbRM2" class="sym"><circle cx="1610" cy="900" r="2.5"/><circle cx="1654" cy="900" r="2.5"/><line class="bo" x1="1612.5" y1="900" x2="1647" y2="889"/><line class="bc" x1="1612.5" y1="900" x2="1651.5" y2="900"/></g>
+<path id="in_wJmpRM2" class="w" d="M1610 725 H1580 V900 H1610" style="stroke:#7A70E0;stroke-width:1.8"/>
+<path class="w" d="M1654 725 H1694" style="stroke:#7A70E0;stroke-width:1.8"/>
+<text x="1700" y="728" text-anchor="start" style="font-size:5.5px;fill:#7A70E0">2P43 F1</text>
+<path id="in_wTKrmRM2" class="w" d="M1654 900 H1710 V978 H380 V832 H320" style="stroke:#7A70E0;stroke-width:1.6;stroke-dasharray:4 3"/>
+<text x="700" y="972" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:#7A70E0">TK.RM2 DG L4 → 2P43 (A3·F1) → VXMAT E3 · Condición RM2 formada</text>
+<g id="in_coRM2B" class="coil"><path class="zz" d="M1600 760 L1609 745 L1618 760 L1627 745 L1636 760"/><text x="1618" y="741" text-anchor="middle" style="font-size:9px;font-weight:600">R RM2-2 L4</text></g>
 <text x="1640" y="743" text-anchor="start" style="font-size:7px;font-weight:normal;fill:var(--text-primary)">K2</text>
-<path id="in_wCascRM2" class="w" d="M1652 670 V725 H1600"/>
-<g id="in_ckRM2_0" class="sym"><circle cx="1710" cy="604" r="2.5"/><circle cx="1754" cy="604" r="2.5"/><line class="bo" x1="1712.5" y1="604" x2="1747" y2="593"/><line class="bc" x1="1712.5" y1="604" x2="1751.5" y2="604"/></g>
-<path id="in_sRM20" class="w" d="M1754 604 H1980"/>
-<g id="in_ckRM2_1" class="sym"><circle cx="1710" cy="624" r="2.5"/><circle cx="1754" cy="624" r="2.5"/><line class="bo" x1="1712.5" y1="624" x2="1747" y2="613"/><line class="bc" x1="1712.5" y1="624" x2="1751.5" y2="624"/></g>
-<path id="in_sRM21" class="w" d="M1754 624 H1980"/>
-<g id="in_ckRM2_2" class="sym"><circle cx="1710" cy="644" r="2.5"/><circle cx="1754" cy="644" r="2.5"/><line class="bo" x1="1712.5" y1="644" x2="1747" y2="633"/><line class="bc" x1="1712.5" y1="644" x2="1751.5" y2="644"/></g>
-<path id="in_sRM22" class="w" d="M1754 644 H1980"/>
-<g id="in_ckRM2_3" class="sym"><circle cx="1710" cy="664" r="2.5"/><circle cx="1754" cy="664" r="2.5"/><line class="bo" x1="1712.5" y1="664" x2="1747" y2="653"/><line class="bc" x1="1712.5" y1="664" x2="1751.5" y2="664"/></g>
-<path id="in_sRM23" class="w" d="M1754 664 H1980"/>
-<g id="in_ckRM2_4" class="sym"><circle cx="1710" cy="684" r="2.5"/><circle cx="1754" cy="684" r="2.5"/><line class="bo" x1="1712.5" y1="684" x2="1747" y2="673"/><line class="bc" x1="1712.5" y1="684" x2="1751.5" y2="684"/></g>
-<path id="in_sRM24" class="w" d="M1754 684 H1980"/>
-<g id="in_ckRM2_5" class="sym"><circle cx="1710" cy="704" r="2.5"/><circle cx="1754" cy="704" r="2.5"/><line class="bo" x1="1712.5" y1="704" x2="1747" y2="693"/><line class="bc" x1="1712.5" y1="704" x2="1751.5" y2="704"/></g>
-<path id="in_sRM25" class="w" d="M1754 704 H1980"/>
+<g id="in_ckRM2_0" class="sym"><circle cx="1610" cy="620" r="2.5"/><circle cx="1654" cy="620" r="2.5"/><line class="bo" x1="1612.5" y1="620" x2="1647" y2="609"/><line class="bc" x1="1612.5" y1="620" x2="1651.5" y2="620"/></g>
+<text x="1602" y="606" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">A1·A2</text>
+<text x="1672" y="623" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">TOB · BIL</text>
+<g id="in_ckRM2_1" class="sym"><circle cx="1610" cy="655" r="2.5"/><circle cx="1654" cy="655" r="2.5"/><line class="bo" x1="1612.5" y1="655" x2="1647" y2="644"/><line class="bc" x1="1612.5" y1="655" x2="1651.5" y2="655"/></g>
+<text x="1602" y="641" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">B1·B2</text>
+<text x="1672" y="658" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">LOR · RQU</text>
+<g id="in_ckRM2_2" class="sym"><circle cx="1610" cy="690" r="2.5"/><circle cx="1654" cy="690" r="2.5"/><line class="bo" x1="1612.5" y1="690" x2="1647" y2="679"/><line class="bc" x1="1612.5" y1="690" x2="1651.5" y2="690"/></g>
+<text x="1602" y="676" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">D1·D2</text>
+<text x="1672" y="693" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">LTO · VVA</text>
+<text x="1700" y="607" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A2 → 1</text>
+<text x="1700" y="627" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A1 → 2</text>
+<text x="1700" y="642" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B2 → 3</text>
+<text x="1700" y="662" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B1 → 4</text>
+<text x="1700" y="677" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D2 → 5</text>
+<text x="1700" y="697" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D1 → 6</text>
+<path id="in_sRM20" class="w" d="M1654 620 V610 H1980"/>
+<path id="in_sRM21" class="w" d="M1610 620 V630 H1980"/>
+<path id="in_sRM22" class="w" d="M1654 655 V645 H1980"/>
+<path id="in_sRM23" class="w" d="M1610 655 V665 H1980"/>
+<path id="in_sRM24" class="w" d="M1654 690 V680 H1980"/>
+<path id="in_sRM25" class="w" d="M1610 690 V700 H1980"/>
 <path class="leader" style="stroke:#3E77E0" d="M1618 616 V604 H1710"/>
-<g id="in_clRM2_0" class="sym"><circle cx="1710" cy="740" r="2.5"/><circle cx="1754" cy="740" r="2.5"/><line class="bo" x1="1712.5" y1="740" x2="1747" y2="729"/><line class="bc" x1="1712.5" y1="740" x2="1751.5" y2="740"/></g>
-<path id="in_tRM20" class="w" d="M1754 740 H1980"/>
-<g id="in_clRM2_1" class="sym"><circle cx="1710" cy="760" r="2.5"/><circle cx="1754" cy="760" r="2.5"/><line class="bo" x1="1712.5" y1="760" x2="1747" y2="749"/><line class="bc" x1="1712.5" y1="760" x2="1751.5" y2="760"/></g>
-<path id="in_tRM21" class="w" d="M1754 760 H1980"/>
-<g id="in_clRM2_2" class="sym"><circle cx="1710" cy="780" r="2.5"/><circle cx="1754" cy="780" r="2.5"/><line class="bo" x1="1712.5" y1="780" x2="1747" y2="769"/><line class="bc" x1="1712.5" y1="780" x2="1751.5" y2="780"/></g>
-<path id="in_tRM22" class="w" d="M1754 780 H1980"/>
-<g id="in_clRM2_3" class="sym"><circle cx="1710" cy="800" r="2.5"/><circle cx="1754" cy="800" r="2.5"/><line class="bo" x1="1712.5" y1="800" x2="1747" y2="789"/><line class="bc" x1="1712.5" y1="800" x2="1751.5" y2="800"/></g>
-<path id="in_tRM23" class="w" d="M1754 800 H1980"/>
-<g id="in_clRM2_4" class="sym"><circle cx="1710" cy="820" r="2.5"/><circle cx="1754" cy="820" r="2.5"/><line class="bo" x1="1712.5" y1="820" x2="1747" y2="809"/><line class="bc" x1="1712.5" y1="820" x2="1751.5" y2="820"/></g>
-<path id="in_tRM24" class="w" d="M1754 820 H1980"/>
-<g id="in_clRM2_5" class="sym"><circle cx="1710" cy="840" r="2.5"/><circle cx="1754" cy="840" r="2.5"/><line class="bo" x1="1712.5" y1="840" x2="1747" y2="829"/><line class="bc" x1="1712.5" y1="840" x2="1751.5" y2="840"/></g>
-<path id="in_tRM25" class="w" d="M1754 840 H1980"/>
+<g id="in_clRM2_0" class="sym"><circle cx="1610" cy="795" r="2.5"/><circle cx="1654" cy="795" r="2.5"/><line class="bo" x1="1612.5" y1="795" x2="1647" y2="784"/><line class="bc" x1="1612.5" y1="795" x2="1651.5" y2="795"/></g>
+<text x="1602" y="781" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">A1·A2</text>
+<text x="1672" y="798" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">TRI · HSR</text>
+<g id="in_clRM2_1" class="sym"><circle cx="1610" cy="830" r="2.5"/><circle cx="1654" cy="830" r="2.5"/><line class="bo" x1="1612.5" y1="830" x2="1647" y2="819"/><line class="bc" x1="1612.5" y1="830" x2="1651.5" y2="830"/></g>
+<text x="1602" y="816" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">B1·B2</text>
+<text x="1672" y="833" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">TPA · reserva</text>
+<g id="in_clRM2_2" class="sym"><circle cx="1610" cy="865" r="2.5"/><circle cx="1654" cy="865" r="2.5"/><line class="bo" x1="1612.5" y1="865" x2="1647" y2="854"/><line class="bc" x1="1612.5" y1="865" x2="1651.5" y2="865"/></g>
+<text x="1602" y="851" text-anchor="start" style="font-size:6.5px;font-weight:600;fill:var(--text-primary)">D1·D2</text>
+<text x="1672" y="868" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">reserva</text>
+<text x="1700" y="782" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A2 → 7</text>
+<text x="1700" y="802" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">A1 → 8</text>
+<text x="1700" y="817" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B2 → 9</text>
+<text x="1700" y="837" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">B1 → 10</text>
+<text x="1700" y="852" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D2 → 11</text>
+<text x="1700" y="872" text-anchor="start" style="font-size:5.5px;fill:var(--text-secondary)">D1 → 12</text>
+<path id="in_tRM20" class="w" d="M1654 795 V785 H1980"/>
+<path id="in_tRM21" class="w" d="M1610 795 V805 H1980"/>
+<path id="in_tRM22" class="w" d="M1654 830 V820 H1980"/>
+<path id="in_tRM23" class="w" d="M1610 830 V840 H1876" style="stroke-dasharray:5 4"/>
+<path id="in_tRM24" class="w" d="M1654 865 V855 H1876" style="stroke-dasharray:5 4"/>
+<text x="1884" y="858" text-anchor="start" style="font-size:6px;font-style:italic;fill:var(--text-secondary)">reserva</text>
+<path id="in_tRM25" class="w" d="M1610 865 V875 H1876" style="stroke-dasharray:5 4"/>
+<text x="1884" y="878" text-anchor="start" style="font-size:6px;font-style:italic;fill:var(--text-secondary)">reserva</text>
+<text x="1884" y="843" text-anchor="start" style="font-size:6px;font-style:italic;fill:var(--text-secondary)">reserva</text>
 <path class="leader" style="stroke:#1D9E75" d="M1618 740 V740 H1710"/>
 <text x="1974" y="882" text-anchor="end" style="font-size:6.5px;font-weight:normal;fill:var(--text-secondary)">P44/P45 → 2H3/2H9 → telemandos</text>
-<path id="in_wLinea2526" class="w" d="M1340 456 H1500 V144 H1550" style="stroke:#2BA6A6"/>
-<path id="in_wLinea2728" class="w" d="M1340 516 H1520 V594 H1550" style="stroke:#EF9F27"/>
 <text x="2170" y="80" text-anchor="middle" style="font-size:9.5px;font-weight:700;fill:var(--text-primary)">S/ER · dos ITM cada una (redundancia)</text>
 <text x="2170" y="94" text-anchor="middle" style="font-size:8px;font-weight:normal;fill:var(--text-secondary)">si falla una cadena, la otra energiza</text>
 <rect x="2040" y="120" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
@@ -3633,32 +3326,32 @@ Para agregar un nuevo módulo:
 <text x="2123" y="186" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T502</text>
 <polygon id="in_t60" points="2210,172 2236,172 2223,152" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="186" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T602</text>
-<path id="in_fa0" class="w" d="M1980 150 H2010 V162 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb0" class="w" d="M1980 600 H2026 V162 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa0" class="w" d="M1980 160 H2010 V162 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb0" class="w" d="M1980 610 H2026 V162 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <rect x="2040" y="212" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="2050" y="230" text-anchor="start" style="font-size:10px;font-weight:700;fill:var(--text-primary)">S/ER BIL</text>
 <polygon id="in_t51" points="2110,264 2136,264 2123,244" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2123" y="278" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T504</text>
 <polygon id="in_t61" points="2210,264 2236,264 2223,244" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="278" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T604</text>
-<path id="in_fa1" class="w" d="M1980 170 H2010 V254 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb1" class="w" d="M1980 620 H2026 V254 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa1" class="w" d="M1980 180 H2010 V254 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb1" class="w" d="M1980 630 H2026 V254 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <rect x="2040" y="304" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="2050" y="322" text-anchor="start" style="font-size:10px;font-weight:700;fill:var(--text-primary)">S/ER LOR</text>
 <polygon id="in_t52" points="2110,356 2136,356 2123,336" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2123" y="370" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T501</text>
 <polygon id="in_t62" points="2210,356 2236,356 2223,336" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="370" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T601</text>
-<path id="in_fa2" class="w" d="M1980 190 H2010 V346 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb2" class="w" d="M1980 640 H2026 V346 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa2" class="w" d="M1980 195 H2010 V346 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb2" class="w" d="M1980 645 H2026 V346 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <rect x="2040" y="396" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="2050" y="414" text-anchor="start" style="font-size:10px;font-weight:700;fill:var(--text-primary)">S/ER RQU</text>
 <polygon id="in_t53" points="2110,448 2136,448 2123,428" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2123" y="462" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T503</text>
 <polygon id="in_t63" points="2210,448 2236,448 2223,428" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="462" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T603</text>
-<path id="in_fa3" class="w" d="M1980 210 H2010 V438 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb3" class="w" d="M1980 660 H2026 V438 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa3" class="w" d="M1980 215 H2010 V438 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb3" class="w" d="M1980 665 H2026 V438 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <rect x="2040" y="488" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="2050" y="506" text-anchor="start" style="font-size:10px;font-weight:700;fill:var(--text-primary)">S/ER LTO</text>
 <polygon id="in_t54" points="2110,540 2136,540 2123,520" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
@@ -3681,24 +3374,24 @@ Para agregar un nuevo módulo:
 <text x="2123" y="738" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T512</text>
 <polygon id="in_t66" points="2210,724 2236,724 2223,704" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="738" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T612</text>
-<path id="in_fa6" class="w" d="M1980 300 H2010 V714 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb6" class="w" d="M1980 750 H2026 V714 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa6" class="w" d="M1980 335 H2010 V714 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb6" class="w" d="M1980 785 H2026 V714 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <rect x="2040" y="764" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="2050" y="782" text-anchor="start" style="font-size:10px;font-weight:700;fill:var(--text-primary)">S/ER HSR</text>
 <polygon id="in_t57" points="2110,816 2136,816 2123,796" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2123" y="830" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T505</text>
 <polygon id="in_t67" points="2210,816 2236,816 2223,796" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="830" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T605</text>
-<path id="in_fa7" class="w" d="M1980 320 H2010 V806 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb7" class="w" d="M1980 770 H2026 V806 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa7" class="w" d="M1980 355 H2010 V806 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb7" class="w" d="M1980 805 H2026 V806 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <rect x="2040" y="856" width="260" height="76" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.1"/>
 <text x="2050" y="874" text-anchor="start" style="font-size:10px;font-weight:700;fill:var(--text-primary)">S/ER TPA</text>
 <polygon id="in_t58" points="2110,908 2136,908 2123,888" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2123" y="922" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#2BA6A6">T506</text>
 <polygon id="in_t68" points="2210,908 2236,908 2223,888" fill="#E24B4A" stroke="var(--border-strong)" stroke-width="0.8"/>
 <text x="2223" y="922" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#EF9F27">T606</text>
-<path id="in_fa8" class="w" d="M1980 340 H2010 V898 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
-<path id="in_fb8" class="w" d="M1980 790 H2026 V898 H2210" style="stroke:#EF9F27;stroke-width:1"/>
+<path id="in_fa8" class="w" d="M1980 370 H2010 V898 H2110" style="stroke:#2BA6A6;stroke-width:1"/>
+<path id="in_fb8" class="w" d="M1980 820 H2026 V898 H2210" style="stroke:#EF9F27;stroke-width:1"/>
 <text x="2170" y="974" text-anchor="middle" style="font-size:9px;font-weight:600;fill:#2BA6A6">El PCD energiza los ITM habilitados → 20 kV → 750 Vcc</text>
 <circle id="in_ledPCD" cx="2170" cy="996" r="9" class="lampc"/>
 </svg>
@@ -3708,6 +3401,7 @@ Para agregar un nuevo módulo:
 <legend>Comando</legend>
 <button class="btn" id="in_btnDG">▶ Cerrar el DG (ver la cascada paso a paso)</button>
 <button class="btn" id="in_btnPL2">Prueba de lámparas (PL)</button>
+<button class="btn" id="in_btnSER" disabled>⚡ PCD: Energizar las S/ER</button>
 <button class="btn" id="in_btnReset">Abrir el DG / reiniciar</button>
 </fieldset>
 <fieldset class="grp">
@@ -3716,7 +3410,7 @@ Para agregar un nuevo módulo:
 <label><input type="checkbox" id="in_f2"> Falla cadena RM2 (27/28)</label>
 </fieldset>
 </div>
-<div id="in_status">Cierra el DG y mira cómo se arman las dos cadenas RM y los dos ITM de cada S/ER.</div>
+<div id="in_status">Cierra el DG y sigue la cascada. Al final la Condición RM queda presente, pero las S/ER siguen abiertas hasta que el PCD dé la orden con el botón.</div>
 </main>
 </section>
 
@@ -3733,12 +3427,6 @@ var MODULOS = [
     disponible:true },
   { id:"mod-l4full", linea:"Línea 4", titulo:"⚡ Línea 4 completa · Vista sinóptica",
     desc:"El sinóptico oficial recreado: comando DG, 2 vías, 22 estaciones, las S/ER de frontera, los 4 SAT, la Vía Z y los ramales a Cocheras y Talleres.",
-    disponible:true },
-  { id:"mod-l4dg", linea:"Línea 4", titulo:"⚡ Condición Disyuntor General (DG)",
-    desc:"El circuito de mando del comando maestro: TPL de la platina C.A.T., R.DG, RR.DG, bucle de automantenimiento, prueba de lámparas y salidas hacia las zonas y el PCD.",
-    disponible:true },
-  { id:"mod-rm", linea:"Línea 4", titulo:"🔗 Condición RM · Cadena de habilitación",
-    desc:"De dónde sale la Condición RM 20 kV del DG y cómo recorre en serie las 9 S/ER (TOB…TPA) hasta habilitar al PCD. Abre un contacto y mira cómo se corta.",
     disponible:true },
   { id:"mod-l4za", linea:"Línea 4", titulo:"Condición de Zona A · Sección 1",
     desc:"Mando TPL desde el PCC, condición de zona (RZA, RR.ZA, KZA), corte de emergencia con bucle de ruptores, prueba TC, condición RS y cierre de IA en las 3 S/ER.",
@@ -4154,7 +3842,7 @@ render();
 /* ================= MÓDULO D: L4 · ZONA D · SECCIONES 5, 6 y 7 ================= */
 (function(){
 function g(id){return document.getElementById(id);}
-var BW=1300, BH=1560;
+var BW=2640, BH=1060;
 function setZoom(p){var s=g('d_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('d_zoom').value=p;g('d_zoomVal').textContent=Math.round(p)+'%';}
 function fit(){var w=g('d_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
 MODFIT['mod-l4zd'] = fit;
@@ -4184,8 +3872,11 @@ function solve(){
   }
   st.kzd = kzd;
   var rr1 = rrzd;
-  var rss5 = rrzd;  // bobina R.RS.S5 por el contacto Condición RS S5 del R.ZD
-  var rss7 = rr1;   // bobina R.RS.S7 por el contacto Condición RS S7 del repetidor RR1.ZD
+  // Lamina 41/42: 0V -> [R.CE.Sx || R.CEFS.Sx] -> R.ZD -> bobina R.RS.Sx -> +48V
+  // el corte de emergencia local tambien va en serie: si la seccion se valido por
+  // aislamiento (SAT abierto), su CE sigue golpeado y la condicion RS NO se forma
+  var rss5 = rrzd && (rce5 || st.cefs5);
+  var rss7 = rr1  && (rce7 || st.cefs7);
   // disparo: sin condición RS, los interruptores cerrados se abren solos
   if(!rss5 && !st.iasltAb) st.iasltAb = true;
   if(!rss7 && !st.iavvAb) st.iavvAb = true;
@@ -4267,13 +3958,12 @@ function render(){
       setLive('d_gS7ce',r.rrzd&&r.rce7);setLive('d_gS7cefs',r.rrzd&&st.cefs7);
       setOn('d_coRRZD',r.rrzd);},
     function(){setOn('d_ctRet',r.rrzd);setLive('d_gRet',r.rrzd);setOn('d_coKZD',r.kzd);
-      setOn('d_ctRS5',r.rss5);setLive('d_gRSS5',r.rss5);setOn('d_coRSS5',r.rss5);
+      setLive('d_gRSS5',r.rss5);setOn('d_ctRS5b',r.rrzd);setLive('d_wRRZDrs5',r.rss5);setLive('d_mkRRZD',r.rrzd);setOn('d_coRSS5',r.rss5);
       setOn('d_ctB5a',r.rss5);setOn('d_ctB5b',r.rss5);setLive('d_gBucle5',r.rss5);
       setOn('d_coNS1lt',r.rss5);setOn('d_tk5',r.rss5);
       setOn('d_iasSym5',!st.iasltAb);
       setOn('d_ctR1',r.rrzd);setLive('d_gR1',r.rrzd);setOn('d_coRR1',r.rr1);
-      setOn('d_ctRS6',r.rr1);setLive('d_gRS6',r.rr1);
-      setOn('d_ctRS7',r.rss7);setLive('d_gRSS7',r.rss7);setOn('d_coRSS7',r.rss7);
+      setOn('d_ctRS7',r.rss7);setLive('d_gRSS7',r.rss7);setLive('d_wRR1ZDrs7',r.rr1);setOn('d_coRSS7',r.rss7);
       setOn('d_ctB7a',r.rss7);setOn('d_ctB7b',r.rss7);setLive('d_gBucle7',r.rss7);
       setOn('d_coNS1vv',r.rss7);setOn('d_tk7',r.rss7);
       setOn('d_iaSym7',!st.iavvAb);
@@ -4668,13 +4358,16 @@ st.cefs={};
 
 function cond(n){
   if(!st.g[n] || st.cefs[n]) return true;   // CE sano o inhibido por CEFS
-  if(n==='2'||n==='3') return st.s23;
-  if(n==='5') return st.s56;
-  if(n==='6') return st.s56 && st.s67;
-  if(n==='7') return st.s67;
-  if(n==='10') return st.s1011;
-  if(n==='11') return st.s1011 && st.pt;
-  return false;
+  // si el CE esta golpeado, la seccion solo se puede AISLAR: SAT abierto Y su interruptor abierto
+  var ab = function(k){ return !st.itmS[k]; };            // interruptor abierto
+  if(n==='2')  return st.s23   && ab('lor_ias');          // SAT 2/3 + IAS S/ER LO
+  if(n==='3')  return st.s23   && ab('rqu_ia');           // SAT 2/3 + IA  S/ER RQ
+  if(n==='5')  return st.s56   && ab('lto_ias');          // SAT 5/6 + IAS S/ER LT
+  if(n==='6')  return st.s56   && st.s67;                 // S6 no tiene S/ER: los dos SAT
+  if(n==='7')  return st.s67   && ab('vva_ia');           // SAT 6/7 + IA  S/ER VV
+  if(n==='10') return st.s1011 && ab('hsr_ias');          // SAT 10/11 + IAS S/ER HS
+  if(n==='11') return st.s1011 && st.pt;                  // SAT 10/11 + PT en S11
+  return false;                                            // S1, S4, S8 y S9 no se pueden aislar
 }
 var zonaDe = {};
 for(var z2 in ZS) ZS[z2].forEach(function(n){zonaDe[n]=z2;});
@@ -4809,98 +4502,7 @@ render();
 })();
 
 /* ================= MÓDULO DG: CONDICIÓN DISYUNTOR GENERAL ================= */
-(function(){
-function g(id){return document.getElementById(id);}
-var BW=1180, BH=620;
-function setZoom(p){var s=g('dg_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('dg_zoom').value=p;g('dg_zoomVal').textContent=Math.round(p)+'%';}
-function fit(){var w=g('dg_wrap').clientWidth-12;setZoom(Math.max(40,Math.min(140,(w/BW)*100)));}
-MODFIT['mod-l4dg'] = fit;
-g('dg_zoom').oninput=function(){setZoom(parseFloat(this.value));};
-g('dg_btnFit').onclick=fit;
-
-var st = {giro:false, puls:false, sello:false, pl:false};
-function setOn(id,on){var e=g(id);if(e)e.classList.toggle('on',on);}
-function setLive(id,on){var e=g(id);if(e)e.querySelectorAll('.w').forEach(function(p){p.classList.toggle('live',on);});}
-function solve(){
-  st.sello = st.giro && (st.puls || st.sello);   // R.DG automantenido
-  return {rdg: st.sello, rrdg: st.sello};
-}
-function statusMsg(r){
-  if(st.pl) return 'Prueba de lámparas: la luz roja del TPL debe encenderse. Suéltala y sigue con el comando.';
-  if(!st.giro && !st.sello) return 'DG abierto. Gira el TPL DG en "Cerrado" (posición C): se encenderá la luz roja.';
-  if(st.giro && !st.sello) return 'TPL girado en "Cerrado": luz roja encendida. Oprime el pulso para cerrar el R.DG.';
-  return 'R.DG cerrado y automantenido: RR.DG energizado. Salidas activas hacia TPL ZA-ZB, ZC-ZD, ZE-ZF, ZG, reserva y el contacto de Condición RM 20 kV al PCD.';
-}
-function render(){
-  var r = solve();
-  var luzRoja = st.pl || (st.giro && !st.sello);
-  g('dg_lampRoja').style.fill = luzRoja ? '#E24B4A' : 'var(--surface-1)';
-  // contactos del TPL
-  setOn('dg_ctGiro', st.giro);
-  setOn('dg_ctPuls', st.puls);
-  // R.DG y su cadena
-  setOn('dg_coRDG', r.rdg);
-  setOn('dg_ctRDG', r.rdg);
-  setOn('dg_coRRDG', r.rrdg);
-  setOn('dg_ctSello', r.rrdg);
-  // vías vivas
-  setLive('dg_gTPL', st.giro && st.puls || (st.giro && !st.sello));
-  setLive('dg_gRRfeed', r.rdg);
-  setLive('dg_gSello', r.rrdg);
-  setLive('dg_gSalBus', r.rrdg);
-  for(var i=0;i<5;i++){ setOn('dg_ctSal'+i, r.rrdg); setLive('dg_gSal'+i, r.rrdg); }
-  setOn('dg_ctRM', r.rrdg); setLive('dg_gRM', r.rrdg);
-  // perilla DG de la C.A.T. gira 90° al cerrar
-  g('dg_catIndDG').setAttribute('transform', st.giro ? 'rotate(90 838 92)' : '');
-  g('dg_status').textContent = statusMsg(r);
-}
-g('dg_cbGiro').onchange=function(){st.giro=this.checked;render();};
-function pulsar(){ if(!st.giro) { render(); return; } st.puls=true; render(); setTimeout(function(){st.puls=false;render();},900); }
-g('dg_btnPuls').onclick=pulsar;
-function pl(){ st.pl=true; render(); setTimeout(function(){st.pl=false;render();},800); }
-g('dg_btnPL2').onclick=pl;
-g('dg_btnPL').onclick=pl;
-render();
-})();
 /* ================= MÓDULO RM: CADENA RM (didáctica) ================= */
-(function(){
-function g(id){return document.getElementById(id);}
-var BW=1360, BH=720;
-function setZoom(p){var s=g('rm_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('rm_zoom').value=p;g('rm_zoomVal').textContent=Math.round(p)+'%';}
-function fit(){var w=g('rm_wrap').clientWidth-12;setZoom(Math.max(40,Math.min(140,(w/BW)*100)));}
-MODFIT['mod-rm'] = fit;
-g('rm_zoom').oninput=function(){setZoom(parseFloat(this.value));};
-g('rm_btnFit').onclick=fit;
-var st = {dg:false};
-function setLive(id,on){var e=g(id);if(e)e.classList.toggle('live',on);}
-function setOn(id,on){var e=g(id);if(e)e.classList.toggle('on',on);}
-function render(){
-  var rm = st.dg;   // el DG cerrado arma la condición RM directamente
-  // cable de la Condición RM (del DG) energiza el bloque
-  setLive('rm_wDGin', st.dg);
-  // relés RM (K1 se automantiene, habilita K2)
-  setOn('rm_coK1', rm); setOn('rm_coK2', rm);
-  setOn('rm_ctSelloK1', rm);
-  setLive('rm_wCasc', rm);
-  // columnas de contactos y salidas
-  for(var i=0;i<6;i++){ setOn('rm_ck1_'+i, rm); setLive('rm_sK1'+i, rm);
-                        setOn('rm_ck2_'+i, rm); setLive('rm_sK2'+i, rm); }
-  for(var t=0;t<12;t++){ setLive('rm_tl'+t, rm); }
-  [0,2,4,6,8].forEach(function(i){ var e=g('rm_tri'+i); if(e) e.setAttribute('fill', rm?'#EF9F27':'#E24B4A'); });
-  // TK-RM1 DG: señal de estado al SCADA (azul cuando armada)
-  var tk=g('rm_wTKout'); if(tk) tk.classList.toggle('signal', rm);
-  // PCD
-  g('rm_ledPCD').classList.toggle('on', rm);
-  g('rm_ledPCD').classList.toggle('red', !rm);
-  var m;
-  if(!st.dg) m='DG abierto: sin la Condición RM, los relés RM están sin energía y el PCD no puede energizar los ITM. El SCADA muestra "RM no armada".';
-  else m='DG cerrado → Condición RM armada: R RM1-1 y R RM1-2 energizados y automantenidos habilitan los ITM (T502-TOB … T506-TPA). El PCD puede energizar a 20 kV. El TK-RM1 reporta al SCADA "RM armada".';
-  g('rm_status').textContent=m;
-}
-g('rm_cbDG').onchange=function(){st.dg=this.checked;render();};
-g('rm_btnReset').onclick=function(){ st.dg=false; g('rm_cbDG').checked=false; render(); };
-render();
-})();
 
 /* ================= MÓDULO INI: CONDICIÓN DG → RM ================= */
 (function(){
@@ -4911,7 +4513,7 @@ function fit(){var w=g('in_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(14
 MODFIT['mod-ini'] = fit;
 g('in_zoom').oninput=function(){setZoom(parseFloat(this.value));};
 g('in_btnFit').onclick=fit;
-var st={dg:false, pl:false, f1:false, f2:false, etapa:0};
+var st={dg:false, pl:false, f1:false, f2:false, etapa:0, ser:false};
 var timers=[];
 function setLive(id,on){var e=g(id);if(e)e.classList.toggle('live',on);}
 function setOn(id,on){var e=g(id);if(e)e.classList.toggle('on',on);}
@@ -4921,11 +4523,14 @@ function render(){
   var E = st.dg ? st.etapa : 0;
   var rm1 = E>=8 && !st.f1, rm2 = E>=8 && !st.f2;
   // ① TPL
-  g('in_lampDG').style.fill = !st.dg ? '' : (E>=7 ? '#FFFFFF' : '#E24B4A');
-  g('in_indDG').setAttribute('transform', st.dg ? 'rotate(90 130 150)' : '');
+  g('in_lampDG').style.fill = (E>=7) ? '' : '#E24B4A';
+  g('in_indDG').setAttribute('transform', st.dg ? 'rotate(90 120 310)' : '');
+  var ci=g('in_catIndDG'); if(ci) ci.setAttribute('transform', st.dg ? 'rotate(90 68 530)' : '');
+  var cl=g('in_catLampDG'); if(cl) cl.style.fill = (E>=7) ? 'var(--surface-1)' : (st.dg ? '#E24B4A' : 'var(--surface-1)');
   g('in_lampRoja').style.fill = st.pl ? '#E24B4A' : 'var(--surface-1)';
-  ['wTPL','wPupDG','wBus48P','wBus48N'].forEach(function(k){ setLive('in_'+k, st.dg); });
-  for(var q=0;q<7;q++) setLive('in_wPar_'+q, st.dg);
+  ['wSrcN','wM1','wM2','wPupDG'].forEach(function(k){ setLive('in_'+k, st.dg); });
+  setOn('in_ctTPL', st.dg);
+  setOn('in_ctPuls', st.dg && E<7);
   setLive('in_wPupDG', st.dg);
   // ② R DG y su lazo
   setOn('in_coRDG', E>=1);
@@ -4948,6 +4553,12 @@ function render(){
   ['ctA1','ctA3','ctA4','ctA5'].forEach(function(k){ camino(k, E>=4, COL.rr1); });   // RR DG1
   ['ctB0','ctB1','ctB2'].forEach(function(k){ camino(k, E>=6, COL.rr2); });          // RR DG2
   ['ctQ0','ctQ1','ctQ2'].forEach(function(k){ camino(k, E>=7, COL.rr3); });          // RR DG3
+  // sello del TPL: A1·A2 del RR DG3 puentea el pulsador (por 2P41 P4-A3)
+  pinta('in_wSel2', E>=7, COL.rr3);
+  // C3·C2 es NC: mantiene encendida la luz del TPL hasta que el RR DG3 se energiza
+  var luz = st.dg && E<7;
+  pinta('in_fL_ctQ1', luz, COL.rr3);
+  setLive('in_wLamp1', luz); setLive('in_wLamp2', luz);
   [['arC1',E>=2,COL.rdg],['arC2',E>=4,COL.rr1],['arC3',E>=6,COL.rr2]].forEach(function(p){
     var e=g('in_'+p[0]); if(e) e.setAttribute('fill', p[1]?p[2]:'var(--border)');
   });
@@ -4959,7 +4570,7 @@ function render(){
   pinta('in_wRR1a', E>=3, COL.rr1); pinta('in_wRR1b', E>=3, COL.rr1);
   pinta('in_wRR2a', E>=5, COL.rr2); pinta('in_wRR2b', E>=5, COL.rr2);
   pinta('in_wRR3a', E>=7, COL.rr3); pinta('in_wRR3b', E>=7, COL.rr3);
-  ['wZ02coil','wD02','wRet1','wRet2','wRet3'].forEach(function(k){ pinta('in_'+k, E>=1, COL.rdg); });
+  ['wZ02coil','wD02'].forEach(function(k){ pinta('in_'+k, E>=1, COL.rdg); });
   setLive('in_wCasc1', E>=2);
   // ③ RR DG1
   setOn('in_coRR1', E>=3);
@@ -4973,24 +4584,35 @@ function render(){
   ['wEng1','wEng2','wEng3','wEng4','wApag1','wApag2'].forEach(function(k){ setLive('in_'+k, E>=7); });
   // ⑥ salidas RM y cadenas del PCD
   // salidas RM: cada cable conserva el color del relé que lo alimenta
-  [['RM1',0,COL.rr2],['RM1',1,COL.rr2],['RM2',0,COL.rr2],['RM2',1,COL.rdg],
-   ['RMLC',0,COL.rr3],['RMLC',1,COL.rr3]].forEach(function(p){
-    pinta('in_w'+p[0]+'_'+p[1], E>=8, p[2]);
+  [['RM1_0',COL.rdg],['RM1_0b',COL.rdg],['RM1_1',COL.rdg],['RM1_1b',COL.rdg],
+   ['RM2_0',COL.rr2],['RM2_0b',COL.rr2],['RM2_1',COL.rr2],['RM2_1b',COL.rr2],
+   ['RMLC_0',COL.rr3],['RMLC_1',COL.rr3]].forEach(function(p){
+    pinta('in_w'+p[0], E>=8, p[1]);
   });
-  setLive('in_wLinea2526', rm1); setLive('in_wLinea2728', rm2);
   [['RM1',rm1],['RM2',rm2]].forEach(function(p){
     var k=p[0], on=p[1];
-    setOn('in_co'+k+'A',on); setOn('in_co'+k+'B',on); setOn('in_ctSello'+k,on); setLive('in_wCasc'+k,on);
-    for(var i=0;i<6;i++){ setOn('in_ck'+k+'_'+i,on); setLive('in_s'+k+i,on);
-                          setOn('in_cl'+k+'_'+i,on); setLive('in_t'+k+i,on); }
+    setOn('in_co'+k+'A',on); setOn('in_co'+k+'B',on); setOn('in_ctSello'+k,on); setOn('in_ctTKb'+k,on);
+    for(var i=0;i<3;i++){ setOn('in_ck'+k+'_'+i,on); setOn('in_cl'+k+'_'+i,on);
+                          setLive('in_bck'+k+i,on); setLive('in_bcl'+k+i,on); }
+    for(var i=0;i<6;i++){ setLive('in_s'+k+i,on); setLive('in_t'+k+i,on); }
   });
+  // la Condicion RM solo HABILITA; quien energiza las S/ER es el PCD
+  if(!(rm1||rm2)) st.ser=false;          // si cae el DG, las S/ER se abren solas
+  var ser1 = rm1 && st.ser, ser2 = rm2 && st.ser;
   for(var i=0;i<9;i++){
-    g('in_t5'+i).setAttribute('fill', rm1?'#EF9F27':'#E24B4A');
-    g('in_t6'+i).setAttribute('fill', rm2?'#EF9F27':'#E24B4A');
-    setLive('in_fa'+i, rm1); setLive('in_fb'+i, rm2);
+    g('in_t5'+i).setAttribute('fill', ser1?'#EF9F27':'#E24B4A');
+    g('in_t6'+i).setAttribute('fill', ser2?'#EF9F27':'#E24B4A');
+    setLive('in_fa'+i, ser1); setLive('in_fb'+i, ser2);
   }
-  var tk=g('in_wTK'); if(tk) tk.classList.toggle('signal', E>=7);
-  var ok = rm1||rm2;
+  pinta('in_mkRM1A', rm1, COL.rdg); pinta('in_mkRM1B', rm1, COL.rdg);
+  pinta('in_mkRM2A', rm2, COL.rr2); pinta('in_mkRM2B', rm2, COL.rr2);
+  pinta('in_wJmpRM1', rm1, COL.rdg); pinta('in_wTKrmRM1', rm1, COL.rdg);
+  pinta('in_wJmpRM2', rm2, COL.rr2); pinta('in_wTKrmRM2', rm2, COL.rr2);
+  var bs=g('in_btnSER');
+  if(bs){ bs.disabled = !(rm1||rm2);
+          bs.textContent = st.ser ? '⚡ PCD: S/ER energizadas' : '⚡ PCD: Energizar las S/ER'; }
+  pinta('in_wTK', E>=7, COL.rr3);
+  var ok = (rm1||rm2) && st.ser;
   g('in_ledPCD').classList.toggle('on', ok);
   g('in_ledPCD').classList.toggle('red', !ok);
   // estado
@@ -5002,8 +4624,8 @@ function render(){
     4:'④ El RR DG1 cierra sus 4 contactos: A1·A2 (TPL ZE y ZF), B1·B2 (ZG), D1·D2 (ZC y ZD) y C1·C2 (hacia RR DG2).',
     5:'⑤ El contacto C1·C2 del RR DG1 energiza la bobina RR DG2 (D24 +48VP → bobina → Z24).',
     6:'⑥ El RR DG2 cierra sus 3 contactos: A1·A2 y B1·B2 (hacia PCD CDC Vicente Valdés) y D1·D2 (hacia RR DG3).',
-    7:'⑦ El contacto D1·D2 del RR DG2 energiza el RR DG3, cuyos contactos A1·A2 y C3·C2 permiten el cierre del DG (sello) — la luz del TPL se apaga.',
-    8:'⑧ Cadena completa: las líneas 25/26 y 27/28 llegan al PCD CDC Vicente Valdés y arman RM1 y RM2 → los dos ITM de cada S/ER quedan habilitados. La 1/2 va al PCD Lord Cochrane.'
+    7:'⑦ El D1·D2 del RR DG2 energiza el RR DG3: su contacto A1·A2 cierra y sella el KTPL-DG (ya puedes soltar el pulsador), y el C3·C2 (NC) se abre y apaga la luz del botón TPL. Condición DG cumplida.',
+    8:'⑧ Condición DG formada. Los contactos de R RM1-1, R RM1-2, R RM2-1 y R RM2-2 L4 se cierran, pero OJO: no energizan las S/ER. Solo dejan la Condición RM presente (habilitada). Quien energiza es el PCD: el PCD hace el DG y es el que energiza las SRI y los ITM de cada S/ER.'
   };
   var m = msgs[E] || msgs[0];
   if(E>=8 && !(rm1&&rm2)){
@@ -5011,6 +4633,7 @@ function render(){
     else if(rm2) m='Cadena RM1 (25/26) caída: solo los ITM de RM2 quedan habilitados.';
     else m='Las dos cadenas RM caídas: ningún ITM habilitado.';
   }
+  if(st.ser && (rm1||rm2)) m='S/ER energizadas por el PCD. La Condición RM estaba presente y el PCD dio la orden: las SRI y los ITM quedan energizados. Si ahora abres el DG, las S/ER se abren junto con él.';
   if(st.pl) m='Prueba de lámparas: la luz roja del TPL debe encenderse.';
   g('in_status').textContent=m;
 }
@@ -5022,7 +4645,8 @@ function secuencia(){
   }
 }
 g('in_btnDG').onclick=secuencia;
-g('in_btnReset').onclick=function(){timers.forEach(clearTimeout);timers=[];st.dg=false;st.etapa=0;st.f1=false;st.f2=false;g('in_f1').checked=false;g('in_f2').checked=false;render();};
+g('in_btnSER').onclick=function(){ if(st.etapa>=8 && st.dg){ st.ser=!st.ser; render(); } };
+g('in_btnReset').onclick=function(){timers.forEach(clearTimeout);timers=[];st.dg=false;st.etapa=0;st.f1=false;st.f2=false;st.ser=false;g('in_f1').checked=false;g('in_f2').checked=false;render();};
 g('in_f1').onchange=function(){st.f1=this.checked;render();};
 g('in_f2').onchange=function(){st.f2=this.checked;render();};
 function pl(){st.pl=true;render();setTimeout(function(){st.pl=false;render();},800);}
@@ -5037,6 +4661,45 @@ render();
 
 
 
+</script>
+<script>
+/* Pantalla completa para el plano de cada modulo */
+(function(){
+  function secOf(el){ while(el && !(el.tagName==='SECTION' && el.classList.contains('mod'))) el=el.parentElement; return el; }
+  function fsEl(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function refit(){
+    var el = fsEl() || document.querySelector('section.mod.activo');
+    var sec = secOf(el);
+    if(sec && window.MODFIT && MODFIT[sec.id]) setTimeout(MODFIT[sec.id], 80);
+    Array.prototype.forEach.call(document.querySelectorAll('.btn-fs'), function(b){
+      b.textContent = fsEl() ? '\u2715 Salir de pantalla completa' : '\u26F6 Pantalla completa';
+    });
+  }
+  document.addEventListener('fullscreenchange', refit);
+  document.addEventListener('webkitfullscreenchange', refit);
+
+  Array.prototype.forEach.call(document.querySelectorAll('section.mod main .ctrl'), function(ctrl){
+    if(!ctrl.querySelector('[id$="_btnFit"]')) return;      // solo la barra que trae el zoom
+    var main = ctrl.parentElement;
+    while(main && main.tagName !== 'MAIN') main = main.parentElement;
+    if(!main || !main.querySelector('.scrollwrap')) return;
+    var z = ctrl.querySelector('input[type=range]');
+    if(z) z.max = 220;                                       // mas margen para acercarse
+    var b = document.createElement('button');
+    b.className = 'btn btn-fs'; b.type = 'button';
+    b.textContent = '\u26F6 Pantalla completa';
+    b.onclick = function(){
+      if(fsEl()){
+        (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document);
+      } else if(main.requestFullscreen || main.webkitRequestFullscreen){
+        (main.requestFullscreen || main.webkitRequestFullscreen).call(main);
+      } else {
+        alert('Tu navegador no permite pantalla completa. Gira el telefono o usa el zoom.');
+      }
+    };
+    ctrl.appendChild(b);
+  });
+})();
 </script>
 </body>
 </html>
