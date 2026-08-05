@@ -772,17 +772,17 @@ Para agregar un nuevo módulo:
 <span id="c_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
 </div>
 <div class="scrollwrap" id="c_wrap">
-<svg id="c_plano" width="1300" height="950" viewBox="0 0 1300 950" role="img">
+<svg id="c_plano" width="1300" height="840" viewBox="0 0 1300 840" role="img">
 <title>Condición de Zona C — Sección 4</title>
 <defs><marker id="c_arC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 
-<rect class="zona" x="20" y="50" width="445" height="570" rx="10"/>
+<rect class="zona" x="20" y="50" width="445" height="460" rx="10"/>
 <text x="28" y="70" style="font-weight:500;fill:var(--text-primary)">PCC · Pupitre Platina CAT y Armario Tracción</text>
-<line class="zona" x1="480" y1="50" x2="480" y2="620"/>
-<line class="zona" x1="520" y1="50" x2="520" y2="620"/>
+<line class="zona" x1="480" y1="50" x2="480" y2="510"/>
+<line class="zona" x1="520" y1="50" x2="520" y2="510"/>
 <text x="500" y="68" text-anchor="middle" style="font-size:10px">Túnel</text>
 <text x="500" y="82" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Cable ppal.</text>
-<rect class="zona" x="535" y="50" width="745" height="570" rx="10"/>
+<rect class="zona" x="535" y="50" width="745" height="460" rx="10"/>
 <text x="588" y="70" style="font-weight:500;fill:var(--text-primary)">Estación Las Torres · armario de tracción</text>
 
 <text x="1052" y="100" style="font-size:10px;fill:var(--text-secondary)">Bucle de ruptores S4 (vía / túnel)</text>
@@ -873,7 +873,7 @@ Para agregar un nuevo módulo:
 <!-- RR.ZC -->
 <g id="c_coRRZC" class="coil f-rrzb"><text x="1120" y="356" text-anchor="middle">RR.ZC</text><path class="zz" d="M 1100 380 L 1110 362 L 1120 380 L 1130 362 L 1140 380"/></g>
 <text x="1140" y="412" text-anchor="middle">0V</text>
-<path class="leader" style="stroke:#3E77E0" d="M1120 382 V720"/>
+<path class="leader" style="stroke:#3E77E0" d="M1120 382 V610"/>
 
 <!-- retorno al KZC (sello) -->
 <g id="c_ctRet" class="sym f-rrzb"><circle cx="1097.5" cy="470" r="2.5"/><circle cx="1142.5" cy="470" r="2.5"/><line class="bo" x1="1100" y1="470" x2="1134" y2="457"/><line class="bc" x1="1100" y1="470" x2="1140" y2="470"/></g>
@@ -882,7 +882,7 @@ Para agregar un nuevo módulo:
 <g id="c_coKZC" class="coil f-kzb"><path class="zz" d="M 260 470 L 270 452 L 280 470 L 290 452 L 300 470"/><text x="280" y="492" text-anchor="middle">KZC</text></g>
 <text x="236" y="474" text-anchor="end">0V</text>
 
-<line x1="20" y1="630" x2="1280" y2="630" stroke="var(--border)" stroke-width="1"/>
+<g transform="translate(0,-110)"><line x1="20" y1="630" x2="1280" y2="630" stroke="var(--border)" stroke-width="1"/>
 <text x="20" y="654" style="font-weight:600;fill:var(--text-primary);font-size:13px">② Condición RS S4 · relé de seguridad R.RS.S4 y bucle de 5V a los NS1 de las dos S/ER</text>
 
 <rect class="zona" x="20" y="670" width="225" height="150" rx="10"/>
@@ -924,7 +924,7 @@ Para agregar un nuevo módulo:
 <text x="90" y="810" text-anchor="middle" style="font-size:11px">→ 750 Vcc S4</text>
 
 <circle id="c_tk4" class="tkdot" cx="520" cy="796" r="6"/>
-<text x="534" y="800" style="font-size:11px">VMAT: TK RS.S4 al PCC</text>
+<text x="534" y="812" style="font-size:11px">VMAT: TK RS.S4 al PCC</text>
 
 <!-- Vía S4 (dos alimentadores) -->
 <rect id="c_via4" class="viabar" x="20" y="844" width="1260" height="30" rx="4"/>
@@ -939,7 +939,7 @@ Para agregar un nuevo módulo:
 <rect x="410" y="903" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="913" style="font-size:11px">RCE</text>
 <rect x="480" y="903" width="11" height="11" rx="2" fill="none" stroke="#2BA6A6" stroke-width="1.5"/><text x="497" y="913" style="font-size:11px">R Ai ZC</text>
 <rect x="580" y="903" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="597" y="913" style="font-size:11px">RR.ZC</text>
-</svg>
+</g></svg>
 </div>
 
 <div class="panel">
@@ -1358,7 +1358,7 @@ Para agregar un nuevo módulo:
 <g id="d_ctRS5b" class="sym f-rrzb"><text x="1120" y="743" text-anchor="middle">Condición RS S5</text><circle cx="1097.5" cy="757" r="2.5"/><circle cx="1142.5" cy="757" r="2.5"/><line class="bo" x1="1100" y1="757" x2="1134" y2="744"/><line class="bc" x1="1100" y1="757" x2="1140" y2="757"/></g>
 <g id="d_ctRS7" class="sym f-rrzb"><text x="1120" y="833" text-anchor="middle">Condición RS S7</text><circle cx="1097.5" cy="847" r="2.5"/><circle cx="1142.5" cy="847" r="2.5"/><line class="bo" x1="1100" y1="847" x2="1134" y2="834"/><line class="bc" x1="1100" y1="847" x2="1140" y2="847"/></g><path id="d_mkRRZD" class="w" style="stroke-dasharray:5 4" d="M1120 624 V812"/>
 <g id="d_wRRZDrs5"><path class="w" style="stroke-dasharray:5 4" d="M1142.5 757 H1380 V112 H1455"/></g>
-<g id="d_wRR1ZDrs7"><path class="w" style="stroke-dasharray:5 4" d="M1025 804 V847 H1097.5"/><path class="w" style="stroke-dasharray:5 4" d="M1142.5 847 H1440 V282 H1455"/></g>
+<g id="d_wRR1ZDrs7"><path class="w" style="stroke-dasharray:5 4" d="M1025 804 V847 H1097.5"/></g><g id="d_wRR1ZDrs7b"><path class="w" style="stroke-dasharray:5 4" d="M1142.5 847 H1440 V282 H1455"/></g>
 <g id="d_viasBottom">
 <line x1="40" y1="944" x2="2600" y2="944" stroke="var(--border)" stroke-width="1"/>
 <text x="40" y="962" style="font-weight:600;fill:var(--text-primary);font-size:13px">③ Vías de tracción · 750 Vcc · la S6 se alimenta a través de los SAT</text>
@@ -1455,17 +1455,17 @@ Para agregar un nuevo módulo:
 <span id="e_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
 </div>
 <div class="scrollwrap" id="e_wrap">
-<svg id="e_plano" width="1300" height="1000" viewBox="0 0 1300 1000" role="img">
+<svg id="e_plano" width="1300" height="890" viewBox="0 0 1300 890" role="img">
 <title>Condición de Zona E — Sección 8</title>
 <defs><marker id="e_arE" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 
-<rect class="zona" x="20" y="50" width="445" height="570" rx="10"/>
+<rect class="zona" x="20" y="50" width="445" height="460" rx="10"/>
 <text x="28" y="70" style="font-weight:500;fill:var(--text-primary)">PCC · Pupitre Platina CAT y Armario Tracción</text>
-<line class="zona" x1="480" y1="50" x2="480" y2="620"/>
-<line class="zona" x1="520" y1="50" x2="520" y2="620"/>
+<line class="zona" x1="480" y1="50" x2="480" y2="510"/>
+<line class="zona" x1="520" y1="50" x2="520" y2="510"/>
 <text x="500" y="68" text-anchor="middle" style="font-size:10px">Túnel</text>
 <text x="500" y="82" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Cable ppal.</text>
-<rect class="zona" x="535" y="50" width="745" height="570" rx="10"/>
+<rect class="zona" x="535" y="50" width="745" height="460" rx="10"/>
 <text x="588" y="70" style="font-weight:500;fill:var(--text-primary)">Estación Trinidad · armario de tracción</text>
 
 <text x="1132" y="100" style="font-size:10px;fill:var(--text-secondary)">Bucle de ruptores S8</text>
@@ -1546,7 +1546,7 @@ Para agregar un nuevo módulo:
 
 <g id="e_coRRZE" class="coil f-rrzb"><text x="1120" y="356" text-anchor="middle">RR.ZE</text><path class="zz" d="M 1100 380 L 1110 362 L 1120 380 L 1130 362 L 1140 380"/></g>
 <text x="1140" y="412" text-anchor="middle">0V</text>
-<path class="leader" style="stroke:#3E77E0" d="M1120 382 V740"/>
+<path class="leader" style="stroke:#3E77E0" d="M1120 382 V630"/>
 
 <g id="e_ctRet" class="sym f-rrzb"><circle cx="1097.5" cy="470" r="2.5"/><circle cx="1142.5" cy="470" r="2.5"/><line class="bo" x1="1100" y1="470" x2="1134" y2="457"/><line class="bc" x1="1100" y1="470" x2="1140" y2="470"/></g>
 <g id="e_gRet"><path class="w" d="M 1145 470 H 1175"/><path class="w" d="M 1095 470 H 300"/><path class="w" d="M 260 470 H 240"/></g>
@@ -1556,7 +1556,7 @@ Para agregar un nuevo módulo:
 
 <!-- Condición RS S8: ver franja ② abajo -->
 
-<line x1="20" y1="650" x2="1280" y2="650" stroke="var(--border)" stroke-width="1"/>
+<g transform="translate(0,-110)"><line x1="20" y1="650" x2="1280" y2="650" stroke="var(--border)" stroke-width="1"/>
 <text x="20" y="674" style="font-weight:600;fill:var(--text-primary);font-size:13px">② Condición RS S8 · relé de seguridad R.RS.S8 y bucle de 5V a los NS1 de las dos S/ER</text>
 
 <rect class="zona" x="20" y="690" width="225" height="150" rx="10"/>
@@ -1598,7 +1598,7 @@ Para agregar un nuevo módulo:
 <text x="90" y="830" text-anchor="middle" style="font-size:11px">→ 750 Vcc S8</text>
 
 <circle id="e_tk8" class="tkdot" cx="520" cy="816" r="6"/>
-<text x="534" y="820" style="font-size:11px">VMAT: TK RS.S8 al PCC</text>
+<text x="534" y="832" style="font-size:11px">VMAT: TK RS.S8 al PCC</text>
 
 <!-- Vía S8 (dos alimentadores) -->
 <rect id="e_via8" class="viabar" x="20" y="864" width="1260" height="30" rx="4"/>
@@ -1612,7 +1612,7 @@ Para agregar un nuevo módulo:
 <text x="288" y="964" style="font-size:11px">energizado</text>
 <rect x="410" y="953" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="963" style="font-size:11px">RCE</text>
 <rect x="480" y="953" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="497" y="963" style="font-size:11px">RR.ZE</text>
-</svg>
+</g></svg>
 </div>
 
 <div class="panel">
@@ -1670,17 +1670,17 @@ Para agregar un nuevo módulo:
 <span id="f_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
 </div>
 <div class="scrollwrap" id="f_wrap">
-<svg id="f_plano" width="1300" height="950" viewBox="0 0 1300 950" role="img">
+<svg id="f_plano" width="1300" height="840" viewBox="0 0 1300 840" role="img">
 <title>Condición de Zona F — Sección 9</title>
 <defs><marker id="f_arF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 
-<rect class="zona" x="20" y="50" width="445" height="570" rx="10"/>
+<rect class="zona" x="20" y="50" width="445" height="460" rx="10"/>
 <text x="28" y="70" style="font-weight:500;fill:var(--text-primary)">PCC · Pupitre Platina CAT y Armario Tracción</text>
-<line class="zona" x1="480" y1="50" x2="480" y2="620"/>
-<line class="zona" x1="520" y1="50" x2="520" y2="620"/>
+<line class="zona" x1="480" y1="50" x2="480" y2="510"/>
+<line class="zona" x1="520" y1="50" x2="520" y2="510"/>
 <text x="500" y="68" text-anchor="middle" style="font-size:10px">Túnel</text>
 <text x="500" y="82" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Cable ppal.</text>
-<rect class="zona" x="535" y="50" width="745" height="570" rx="10"/>
+<rect class="zona" x="535" y="50" width="745" height="460" rx="10"/>
 <text x="588" y="70" style="font-weight:500;fill:var(--text-primary)">Estación Hospital Sotero del Río · armario de tracción</text>
 
 <text x="1132" y="100" style="font-size:10px;fill:var(--text-secondary)">Bucle de ruptores S9</text>
@@ -1761,7 +1761,7 @@ Para agregar un nuevo módulo:
 
 <g id="f_coRRZF" class="coil f-rrzb"><text x="1120" y="356" text-anchor="middle">RR.ZF</text><path class="zz" d="M 1100 380 L 1110 362 L 1120 380 L 1130 362 L 1140 380"/></g>
 <text x="1140" y="412" text-anchor="middle">0V</text>
-<path class="leader" style="stroke:#3E77E0" d="M 1120 382 V 720"/>
+<path class="leader" style="stroke:#3E77E0" d="M 1120 382 V 610"/>
 
 <g id="f_ctRet" class="sym f-rrzb"><circle cx="1097.5" cy="470" r="2.5"/><circle cx="1142.5" cy="470" r="2.5"/><line class="bo" x1="1100" y1="470" x2="1134" y2="457"/><line class="bc" x1="1100" y1="470" x2="1140" y2="470"/></g>
 <g id="f_gRet"><path class="w" d="M 1145 470 H 1175"/><path class="w" d="M 1095 470 H 300"/><path class="w" d="M 260 470 H 240"/></g>
@@ -1771,7 +1771,7 @@ Para agregar un nuevo módulo:
 
 <!-- Condición RS S9: ver franja ② abajo -->
 
-<line x1="20" y1="630" x2="1280" y2="630" stroke="var(--border)" stroke-width="1"/>
+<g transform="translate(0,-110)"><line x1="20" y1="630" x2="1280" y2="630" stroke="var(--border)" stroke-width="1"/>
 <text x="20" y="654" style="font-weight:600;fill:var(--text-primary);font-size:13px">② Condición RS S9 · relé de seguridad R.RS.S9 y bucle de 5V a los NS1 de las dos S/ER</text>
 
 <rect class="zona" x="20" y="670" width="225" height="150" rx="10"/>
@@ -1813,7 +1813,7 @@ Para agregar un nuevo módulo:
 <text x="90" y="810" text-anchor="middle" style="font-size:11px">→ 750 Vcc S9</text>
 
 <circle id="f_tk9" class="tkdot" cx="520" cy="796" r="6"/>
-<text x="534" y="800" style="font-size:11px">VMAT: TK RS.S9 al PCC</text>
+<text x="534" y="812" style="font-size:11px">VMAT: TK RS.S9 al PCC</text>
 
 <!-- Vía S9 (dos alimentadores) -->
 <rect id="f_via9" class="viabar" x="20" y="844" width="1260" height="30" rx="4"/>
@@ -1827,7 +1827,7 @@ Para agregar un nuevo módulo:
 <text x="288" y="914" style="font-size:11px">energizado</text>
 <rect x="410" y="903" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="913" style="font-size:11px">RCE</text>
 <rect x="480" y="903" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="497" y="913" style="font-size:11px">RR.ZF</text>
-</svg>
+</g></svg>
 </div>
 
 <div class="panel">
@@ -1887,17 +1887,17 @@ Para agregar un nuevo módulo:
 <span id="g_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
 </div>
 <div class="scrollwrap" id="g_wrap">
-<svg id="g_plano" width="1300" height="1420" viewBox="0 0 1300 1420" role="img">
+<svg id="g_plano" width="1300" height="1230" viewBox="0 0 1300 1230" role="img">
 <title>Condición de Zona G — Secciones 10 y 11</title>
 <defs><marker id="g_arG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 
-<rect class="zona" x="20" y="50" width="445" height="780" rx="10"/>
+<rect class="zona" x="20" y="50" width="445" height="590" rx="10"/>
 <text x="28" y="70" style="font-weight:500;fill:var(--text-primary)">PCC · Pupitre Platina CAT y Armario Tracción</text>
-<line class="zona" x1="480" y1="50" x2="480" y2="830"/>
-<line class="zona" x1="520" y1="50" x2="520" y2="830"/>
+<line class="zona" x1="480" y1="50" x2="480" y2="640"/>
+<line class="zona" x1="520" y1="50" x2="520" y2="640"/>
 <text x="500" y="68" text-anchor="middle" style="font-size:10px">Túnel</text>
 <text x="500" y="82" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Cable ppal.</text>
-<rect class="zona" x="535" y="50" width="745" height="780" rx="10"/>
+<rect class="zona" x="535" y="50" width="745" height="590" rx="10"/>
 <text x="588" y="70" style="font-weight:500;fill:var(--text-primary)">Estación Hospital Sotero del Río · armario de tracción</text>
 
 <text x="966" y="122" style="font-size:9px;fill:var(--text-secondary)">Bucle ruptores S10 · Est. Hospital Sotero del Río</text>
@@ -2081,7 +2081,7 @@ Para agregar un nuevo módulo:
 
 <g id="g_coRRZG" class="coil f-rrzb"><text x="1120" y="486" text-anchor="middle">RR.ZG</text><path class="zz" d="M 1100 510 L 1110 492 L 1120 510 L 1130 492 L 1140 510"/></g>
 <text x="1140" y="542" text-anchor="middle">0V</text>
-<path class="leader" style="stroke:#3E77E0" d="M 1120 512 V 1150"/>
+<path class="leader" style="stroke:#3E77E0" d="M 1120 512 V 960"/>
 
 <g id="g_ctRet" class="sym f-rrzb"><circle cx="1097.5" cy="600" r="2.5"/><circle cx="1142.5" cy="600" r="2.5"/><line class="bo" x1="1100" y1="600" x2="1134" y2="587"/><line class="bc" x1="1100" y1="600" x2="1140" y2="600"/></g>
 <g id="g_gRet"><path class="w" d="M 1145 600 H 1175"/><path class="w" d="M 1095 600 H 300"/><path class="w" d="M 260 600 H 240"/></g>
@@ -2091,7 +2091,7 @@ Para agregar un nuevo módulo:
 
 <!-- Condiciones RS S10 y S11: ver franja ② abajo -->
 
-<line x1="20" y1="890" x2="1280" y2="890" stroke="var(--border)" stroke-width="1"/>
+<g transform="translate(0,-190)"><line x1="20" y1="890" x2="1280" y2="890" stroke="var(--border)" stroke-width="1"/>
 <text x="20" y="914" style="font-weight:600;fill:var(--text-primary);font-size:13px">② Condición RS por sección · relé de seguridad R.RS y bucle de 5V al NS1</text>
 
 <rect class="zona" x="20" y="930" width="340" height="150" rx="10"/>
@@ -2123,7 +2123,7 @@ Para agregar un nuevo módulo:
 <g id="g_iasSym10" class="sym f-sat"><circle cx="60.5" cy="1044" r="2.5"/><circle cx="115.5" cy="1044" r="2.5"/><line class="bo" x1="63" y1="1044" x2="107" y2="1031"/><line class="bc" x1="63" y1="1044" x2="113" y2="1044"/></g>
 <text x="88" y="1075" text-anchor="middle" style="font-size:11px">→ 750 Vcc S10</text>
 <circle id="g_tk10" class="tkdot" cx="400" cy="1056" r="6"/>
-<text x="414" y="1060" style="font-size:11px">VMAT: TK RS.S10 al PCC</text>
+<text x="414" y="1048" style="font-size:11px">VMAT: TK RS.S10 al PCC</text>
 <rect class="zona" x="20" y="1100" width="340" height="150" rx="10"/>
 <text x="30" y="1120" style="font-weight:500;fill:var(--text-primary);font-size:12px">S/ER Las Mercedes</text>
 <rect class="zona" x="380" y="1100" width="900" height="150" rx="10"/>
@@ -2153,7 +2153,7 @@ Para agregar un nuevo módulo:
 <g id="g_iaSym11" class="sym f-sat"><circle cx="60.5" cy="1214" r="2.5"/><circle cx="115.5" cy="1214" r="2.5"/><line class="bo" x1="63" y1="1214" x2="107" y2="1201"/><line class="bc" x1="63" y1="1214" x2="113" y2="1214"/></g>
 <text x="88" y="1245" text-anchor="middle" style="font-size:11px">→ 750 Vcc S11</text>
 <circle id="g_tk11" class="tkdot" cx="400" cy="1226" r="6"/>
-<text x="414" y="1230" style="font-size:11px">VMAT: TK RS.S11 al PCC</text>
+<text x="414" y="1218" style="font-size:11px">VMAT: TK RS.S11 al PCC</text>
 
 <!-- Vías con cuchilla SAT 10/11 -->
 <line x1="20" y1="1274" x2="1280" y2="1274" stroke="var(--border)" stroke-width="1"/>
@@ -2176,7 +2176,7 @@ Para agregar un nuevo módulo:
 <rect x="410" y="1373" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="1383" style="font-size:11px">RCE</text>
 <rect x="480" y="1373" width="11" height="11" rx="2" fill="none" stroke="#2BA6A6" stroke-width="1.5"/><text x="497" y="1383" style="font-size:11px">SAT / IAS / PT-FT</text>
 <rect x="620" y="1373" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="637" y="1383" style="font-size:11px">RR.ZG</text>
-</svg>
+</g></svg>
 </div>
 
 <div class="panel">
@@ -3615,9 +3615,12 @@ function solve(){
   var kzb=st.kzb, rzb=false, rrzb=false;
   for(var i=0;i<5;i++){ rzb=st.dg&&st.giro&&(st.puls||kzb); rrzb=rzb&&chain; kzb=rrzb; }
   var rs2=rrzb, rs3=rrzb;
-  // Relés de seguridad RS: la bobina R.RS se alimenta por el contacto Condición RS del R.ZB
-  var rss2 = rrzb;
-  var rss3 = rrzb;
+  // Relés de seguridad RS: 0V -> R.CE.Sx -> R.CEFS.Sx -> R.ZB -> bobina R.RS.Sx -> +48V.
+  // El contacto Condición RS del R.ZB cierra con la zona validada, pero el CE local va en
+  // SERIE: si la sección se validó por aislamiento (SAT abierto) con su CE golpeado,
+  // la condición RS de esa sección NO se forma y su IAS/IA queda bloqueado.
+  var rss2 = rrzb && (rce2 || st.cefs2);
+  var rss3 = rrzb && (rce3 || st.cefs3);
   // si cae la condición RS con el interruptor cerrado, el IA/IAS dispara (se abre solo)
   if(!rss2 && !st.iasloAb) st.iasloAb = true;
   if(!rss3 && !st.iarqAb) st.iarqAb = true;
@@ -3741,7 +3744,7 @@ render();
 /* ================= MÓDULO C: L4 · ZONA C · SECCIÓN 4 ================= */
 (function(){
 function g(id){return document.getElementById(id);}
-var BW=1300, BH=950;
+var BW=1300, BH=840;
 function setZoom(p){var s=g('c_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('c_zoom').value=p;g('c_zoomVal').textContent=Math.round(p)+'%';}
 function fit(){var w=g('c_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
 MODFIT['mod-l4zc'] = fit;
@@ -3963,7 +3966,7 @@ function render(){
       setOn('d_coNS1lt',r.rss5);setOn('d_tk5',r.rss5);
       setOn('d_iasSym5',!st.iasltAb);
       setOn('d_ctR1',r.rrzd);setLive('d_gR1',r.rrzd);setOn('d_coRR1',r.rr1);
-      setOn('d_ctRS7',r.rss7);setLive('d_gRSS7',r.rss7);setLive('d_wRR1ZDrs7',r.rr1);setOn('d_coRSS7',r.rss7);
+      setOn('d_ctRS7',r.rr1);setLive('d_gRSS7',r.rss7);setLive('d_wRR1ZDrs7',r.rr1);setLive('d_wRR1ZDrs7b',r.rss7);setOn('d_coRSS7',r.rss7);
       setOn('d_ctB7a',r.rss7);setOn('d_ctB7b',r.rss7);setLive('d_gBucle7',r.rss7);
       setOn('d_coNS1vv',r.rss7);setOn('d_tk7',r.rss7);
       setOn('d_iaSym7',!st.iavvAb);
@@ -4004,7 +4007,7 @@ render();
 /* ================= MÓDULO E: L4 · ZONA E · SECCIÓN 8 ================= */
 (function(){
 function g(id){return document.getElementById(id);}
-var BW=1300, BH=1000;
+var BW=1300, BH=890;
 function setZoom(p){var s=g('e_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('e_zoom').value=p;g('e_zoomVal').textContent=Math.round(p)+'%';}
 function fit(){var w=g('e_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
 MODFIT['mod-l4ze'] = fit;
@@ -4097,7 +4100,7 @@ render();
 /* ================= MÓDULO F: L4 · ZONA F · SECCIÓN 9 ================= */
 (function(){
 function g(id){return document.getElementById(id);}
-var BW=1300, BH=950;
+var BW=1300, BH=840;
 function setZoom(p){var s=g('f_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('f_zoom').value=p;g('f_zoomVal').textContent=Math.round(p)+'%';}
 function fit(){var w=g('f_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
 MODFIT['mod-l4zf'] = fit;
@@ -4190,7 +4193,7 @@ render();
 /* ================= MÓDULO G: L4 · ZONA G · SECCIONES 10 y 11 ================= */
 (function(){
 function g(id){return document.getElementById(id);}
-var BW=1300, BH=1420;
+var BW=1300, BH=1230;
 function setZoom(p){var s=g('g_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('g_zoom').value=p;g('g_zoomVal').textContent=Math.round(p)+'%';}
 function fit(){var w=g('g_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
 MODFIT['mod-l4zg'] = fit;
@@ -4217,7 +4220,10 @@ function solve(){
     kzg  = rrzg;
   }
   st.kzg = kzg;
-  var rss10 = rrzg, rss11 = rrzg;
+  // 0V -> R.CE.Sx -> R.CEFS.Sx -> R.ZG -> bobina R.RS.Sx -> +48V: el CE local va en SERIE,
+  // asi que una seccion validada solo por aislamiento (SAT abierto) con su CE golpeado NO forma RS.
+  var rss10 = rrzg && (rce10 || st.cefs10);
+  var rss11 = rrzg && (rce11 || st.cefs11);
   if(!rss10 && !st.iashsAb) st.iashsAb = true;
   if(!rss11 && !st.ia1Ab) st.ia1Ab = true;
   var via10 = rss10 && !st.iashsAb;
@@ -4293,10 +4299,10 @@ function render(){
       setOn('g_coRRZG',r.rrzg);},
     function(){setOn('g_ctRet',r.rrzg);setLive('g_gRet',r.rrzg);setOn('g_coKZG',r.kzg);},
     function(){
-      setOn('g_ctRS10',r.rss10);setLive('g_gRSS10',r.rss10);setOn('g_coRSS10',r.rss10);
+      setOn('g_ctRS10',r.rrzg);setLive('g_gRSS10',r.rss10);setOn('g_coRSS10',r.rss10);
       setOn('g_ctB10a',r.rss10);setOn('g_ctB10b',r.rss10);setLive('g_gBucle10',r.rss10);
       setOn('g_coNS1hs',r.rss10);setOn('g_tk10',r.rss10);setOn('g_iasSym10',!st.iashsAb);
-      setOn('g_ctRS11',r.rss11);setLive('g_gRSS11',r.rss11);setOn('g_coRSS11',r.rss11);
+      setOn('g_ctRS11',r.rrzg);setLive('g_gRSS11',r.rss11);setOn('g_coRSS11',r.rss11);
       setOn('g_ctB11a',r.rss11);setOn('g_ctB11b',r.rss11);setLive('g_gBucle11',r.rss11);
       setOn('g_coNS1lme',r.rss11);setOn('g_tk11',r.rss11);setOn('g_iaSym11',!st.ia1Ab);
       setOn('g_via10',r.via10);g('g_via10t').classList.toggle('on',r.via10);
