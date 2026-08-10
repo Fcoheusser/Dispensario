@@ -748,19 +748,19 @@ Para agregar un nuevo módulo:
 <header>
 <button class="btn volver" onclick="irMenu()">&#8592; Volver al menú</button>
 <h1>Condición de <span>Zona C</span> · Sección 4 · Línea 4</h1>
-<p class="sub">Estación Las Torres · Relé condición de zona RR.ZC · Enclavamiento con ramal Cocheras (R Ai ZC) · Plano 1202-DSM-04-066-30573 Ind. B</p>
+<p class="sub">Estación Las Torres · Relé condición de zona RR.ZC · Enclavamiento con ramal Cocheras (R A ZC) · Plano 1202-DSM-04-066-30573 Ind. B</p>
 </header>
 <details class="guia">
 <summary>📖 Guía rápida para quien recién llega (clic para abrir)</summary>
 <div class="cont">
 <p><b>Qué estás viendo:</b> el circuito de mando (48 Vcc) que valida la condición de Zona C y activa el relé <b>RR.ZC</b> en el armario de tracción de la estación Las Torres. Barra inclinada = contacto abierto; horizontal = cerrado. El tramo con corriente se pinta ámbar.</p>
-<p><b>Esta zona tiene una sola sección (S4)</b>, como la Zona A. La cadena exige: <b>RCE.S4</b> cerrado (sin golpe de puño) o inhibido por <b>RCEFS.S4</b>, <b>Y</b> el contacto <b>R Ai ZC</b> cerrado.</p>
-<p><b>R Ai ZC es la novedad de esta zona:</b> es el enclavamiento con el <b>ramal de Cocheras</b>. Cuando desde Cocheras se abre la Zona C (ver plano Condición Cocheras), este contacto se abre y bota la zona aunque todo lo demás esté bien.</p>
+<p><b>Esta zona tiene una sola sección (S4)</b>, como la Zona A. La cadena exige: <b>RCE.S4</b> cerrado (sin golpe de puño) o inhibido por <b>RCEFS.S4</b>, <b>Y</b> el contacto <b>R A ZC</b> cerrado.</p>
+<p><b>R A ZC es la novedad de esta zona:</b> es el enclavamiento con el <b>ramal de Cocheras</b>. Cuando desde Cocheras se abre la Zona C (ver plano Condición Cocheras), este contacto se abre y bota la zona aunque todo lo demás esté bien.</p>
 <p><b>El mando es igual a las otras zonas:</b> R.DG → TPL ZC (girar y oprimir) → bobina RZC en el PCC → cadena por el cable principal → RR.ZC → retorno que sella con KZC (bucle de auto-mantenimiento, se apaga la luz roja). El pupitre además tiene <b>PL · Prueba Lámpara</b>: un botón para verificar que la ampolleta roja no esté quemada.</p>
-<p><b>Ejercicio 1 — Armar la zona:</b> marca "TPL ZC girado" y aprieta "Oprimir TPL". La ola recorre RZC → RCE.S4 → R Ai ZC → RR.ZC, sella el KZC y se apaga la luz.</p>
+<p><b>Ejercicio 1 — Armar la zona:</b> marca "TPL ZC girado" y aprieta "Oprimir TPL". La ola recorre RZC → RCE.S4 → R A ZC → RR.ZC, sella el KZC y se apaga la luz.</p>
 <p><b>Ejercicio 2 — Golpe de puño (ruptores):</b> con la zona armada, acciona un "Ruptor vía 1 S4" (grupo 2): se rompe el lazo del bucle, cae R.CE.S4 y se desarma todo. Márcale "Inhib. CEFS S4" y rearma: la rama queda puenteada por el relé de fuera de servicio.</p>
 <p><b>Ejercicio 2b — Prueba TC:</b> desde el PCC se prueba el CE sin golpear un ruptor real: "TC: Abrir R.PCE.S4" abre el lazo emulando un golpe (cae R.CE.S4 y toda la cadena; el TK Bucle informa al PCC). "TC: Cerrar" repone y puedes rearmar.</p>
-<p><b>Ejercicio 3 — Apertura desde Cocheras:</b> con la zona armada, marca "Cocheras abre la zona (R Ai ZC)": el contacto se abre y RR.ZC cae al instante, aunque el CE esté sano y el TPL girado. Es la protección del ramal: si Cocheras necesita la zona abierta, nadie la puede armar desde el PCC.</p>
+<p><b>Ejercicio 3 — Apertura desde Cocheras:</b> con la zona armada, marca "Cocheras abre la zona (R A ZC)": el contacto se abre y RR.ZC cae al instante, aunque el CE esté sano y el TPL girado. Es la protección del ramal: si Cocheras necesita la zona abierta, nadie la puede armar desde el PCC.</p>
 <p><b>Ejercicio 4 — Energizar la vía (grupo 4):</b> con la zona armada, R.RS.S4 activa el bucle de 5V y los <b>NS1 quedan listos en las dos S/ER</b> (Rotonda Quilín y Las Torres) — pero la vía sigue muerta. La S4 tiene <b>dos alimentadores</b>: cierra el IAS RQ o el IA LT (basta uno para que la vía tome los 750 Vcc; lo normal es cerrar ambos). Si con la vía energizada cae la condición (golpe de puño o apertura desde Cocheras), los interruptores <b>disparan</b> solos.</p>
 <p><b>Ejercicio 5 — Prueba de lámpara:</b> aprieta "PL · Prueba lámpara": la luz roja enciende mientras dura la prueba, sin tocar la condición de zona. Así el operador confirma que la ampolleta funciona.</p>
 </div>
@@ -864,11 +864,11 @@ Para agregar un nuevo módulo:
 <g id="c_gCEFS4"><path class="w" d="M 620 380 V 422 H 662"/><path class="w" d="M 718 422 H 760 V 380"/></g>
 <g id="c_ctCEFS4" class="sym"><text x="690" y="444" text-anchor="middle">RCEFS.S4</text><circle cx="662.5" cy="422" r="2.5"/><circle cx="717.5" cy="422" r="2.5"/><line class="bo" x1="665" y1="422" x2="709" y2="409"/><line class="bc" x1="665" y1="422" x2="715" y2="422"/></g>
 
-<!-- R Ai ZC: enclavamiento con el ramal Cocheras -->
+<!-- R A ZC: enclavamiento con el ramal Cocheras -->
 <text x="930" y="326" text-anchor="middle" style="font-size:10px;fill:var(--text-secondary)">Apertura de la Zona</text>
-<text x="930" y="339" text-anchor="middle" style="font-size:10px;fill:var(--text-secondary)">(ver Condición Cocheras)</text>
+<text x="930" y="339" text-anchor="middle" style="font-size:10px;fill:var(--text-secondary)" style="cursor:pointer;text-decoration:underline" onclick="irModulo('mod-l4cin')">(ver Condición Cocheras)</text>
 <path d="M 930 346 V 362" stroke="var(--text-secondary)" stroke-width="1" marker-end="url(#c_arC)" fill="none"/>
-<g id="c_ctAi" class="sym f-sat"><text x="930" y="372" text-anchor="middle">R Ai ZC</text><circle cx="902.5" cy="380" r="2.5"/><circle cx="957.5" cy="380" r="2.5"/><line class="bo" x1="905" y1="380" x2="949" y2="367"/><line class="bc" x1="905" y1="380" x2="955" y2="380"/></g>
+<g id="c_ctAi" class="sym f-sat"><text x="930" y="372" text-anchor="middle">R A ZC</text><circle cx="902.5" cy="380" r="2.5"/><circle cx="957.5" cy="380" r="2.5"/><line class="bo" x1="905" y1="380" x2="949" y2="367"/><line class="bc" x1="905" y1="380" x2="955" y2="380"/></g>
 
 <!-- RR.ZC -->
 <g id="c_coRRZC" class="coil f-rrzb"><text x="1120" y="356" text-anchor="middle">RR.ZC</text><path class="zz" d="M 1100 380 L 1110 362 L 1120 380 L 1130 362 L 1140 380"/></g>
@@ -937,7 +937,7 @@ Para agregar un nuevo módulo:
 <line x1="240" y1="910" x2="280" y2="910" stroke="#EF9F27" stroke-width="2" stroke-dasharray="6 4"/>
 <text x="288" y="914" style="font-size:11px">energizado</text>
 <rect x="410" y="903" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="913" style="font-size:11px">RCE</text>
-<rect x="480" y="903" width="11" height="11" rx="2" fill="none" stroke="#2BA6A6" stroke-width="1.5"/><text x="497" y="913" style="font-size:11px">R Ai ZC</text>
+<rect x="480" y="903" width="11" height="11" rx="2" fill="none" stroke="#2BA6A6" stroke-width="1.5"/><text x="497" y="913" style="font-size:11px">R A ZC</text>
 <rect x="580" y="903" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="597" y="913" style="font-size:11px">RR.ZC</text>
 </g></svg>
 </div>
@@ -960,7 +960,7 @@ Para agregar un nuevo módulo:
 </fieldset>
 <fieldset class="grp">
 <legend>3 · Ramal Cocheras</legend>
-<label><input type="checkbox" id="c_cbAi"> Cocheras abre la zona (R Ai ZC)</label>
+<label><input type="checkbox" id="c_cbAi"> Cocheras abre la zona (R A ZC)</label>
 </fieldset>
 <fieldset class="grp">
 <legend>4 · Energizar vía (comando del operador, requiere Condición RS S4)</legend>
@@ -971,6 +971,248 @@ Para agregar un nuevo módulo:
 </fieldset>
 </div>
 <div id="c_status">Marca "TPL ZC girado" y aprieta "Oprimir TPL" para armar la Zona C.</div>
+</main>
+</section>
+
+
+<!-- ================= MÓDULO: CONDICIÓN COCHERAS · APERTURA ZONA C ================= -->
+<section id="mod-l4cin" class="mod">
+<header>
+<button class="btn volver" onclick="irMenu()">&#8592; Volver al menú</button>
+<h1>Condición <span>Cocheras</span> · Apertura de la Zona C · Línea 4</h1>
+<p class="sub">Local Técnico Talleres Cocheras Intermedia · R A ZC y su repetidor RR A ZC en Las Torres · Plano 1202-HDD-04-0647-30573 hoja 6/18 Ind. B1</p>
+</header>
+<details class="guia">
+<summary>📖 Guía rápida para quien recién llega (clic para abrir)</summary>
+<div class="cont">
+<p><b>Qué estás viendo:</b> la cadena que vive en el <b>Local Técnico Talleres Cocheras Intermedia</b> y que decide si el ramal de Cocheras deja trabajar a la Zona C. Es el plano que en el módulo de Zona C aparece solo como una flecha ("ver Condición Cocheras").</p>
+<p><b>El recorrido:</b> 0V → las condiciones de las tres vías del recinto (VM, VC y VT) en serie → bobina <b>R A ZC</b> (1P6) → +48V. Con el R A ZC energizado, su contacto A1·A2 manda +48V por el <b>cable túnel</b>, pasa por el <b>armario RQU</b> (Rotonda Quilín) y llega a <b>Las Torres</b>, donde energiza el repetidor <b>RR A ZC</b> (P2). El contacto del RR A ZC es el que entra a la cadena de Condición de Zona C.</p>
+<p><b>Cada vía tiene dos ramas</b>, igual que las secciones de la Zona D: la rama del <b>corte de emergencia</b> (CE sano, o inhibido por su RR.CEFS) <i>o</i> la rama de <b>desconexión</b> — el <b>disyuntor</b> y el <b>seccionador</b> de esa vía abiertos. Si la vía está desconectada, su CE ya no puede botar la Zona C.</p>
+<p><b>Los aparatos:</b> la fila lleva <b>2P3 DVM</b> y <b>2P4 SVM</b> (vía VM), <b>2P7 DVC1</b> y <b>2P8 SVC1 (C1)</b> (vía VC) y <b>3P3 DVC2</b> (vía VT). Aparte, el <b>3P1 SVC</b> es el <b>puente general del ramal</b>: va <b>en paralelo con toda la fila</b>, del mismo nodo del 0V hasta el Z20 que entra al R A ZC. Con el SVC abierto, Cocheras queda desconectada y nada de lo que pase adentro puede botar la Zona C. Los seis son operables (posiciones A y C, como los SAT).</p>
+<p><b>Ejercicio 1 — Golpear un CE del recinto:</b> con todo sano, marca "CE VM golpeado": cae el R A ZC, cae el RR A ZC en Las Torres y su contacto se abre. Ábre el módulo de Zona C y verás que con "R A ZC abierto" la zona no arma.</p>
+<p><b>Ejercicio 2 — Desconectar la vía:</b> con el CE VM golpeado, abre <b>DVM y SVM</b>: la vía queda desconectada, su rama de aislamiento valida y el R A ZC vuelve. Con uno solo de los dos abierto no basta.</p>
+<p><b>Ejercicio 3 — Inhibir:</b> "Inhib. RR.CEFS.VM" puentea la rama del CE, igual que el CEFS de cualquier sección.</p>
+<p><b>Ejercicio 4 — El puente general:</b> golpea los tres CE del recinto y después abre el <b>SVC</b>: la fila entera se apaga pero el R A ZC sigue energizado por el camino de arriba. Es el ramal completo fuera de servicio.</p>
+<p><b>Nomenclatura:</b> los tres cortes de emergencia son por recinto — <b>VM</b> Vías Maniobra, <b>VC</b> Vías Cocheras, <b>VT</b> Vías Talleres.</p>
+<p><b>Nomenclatura de los aparatos:</b> <b>D</b> = disyuntor, <b>S</b> = seccionador, <b>V</b> = de vía, y el número final dice en qué <b>cabina</b> está el aparato (la cabina es donde están los interruptores). Así, <b>DVC1</b> es el disyuntor de vía de la cabina 1 y <b>SVC1</b> su seccionador; <b>DVC2</b> el de la cabina 2; <b>SV</b> es el seccionador de vía. Todos se accionan a mano en terreno, en el recinto de Cocheras.</p>
+<p><b>Para qué sirve la rama de los aparatos:</b> es la <b>maniobra de respaldo</b>. Cuando el disyuntor no se puede cerrar (o abrir) por comando desde el PCC, hay que ir a terreno y seccionar a mano. Por eso estos seis contactos son los únicos de toda la cadena que se accionan manualmente en el recinto de Cocheras: el resto de la lógica es automática y remota.</p>
+<p><b>Por qué van los dos en serie:</b> el <b>disyuntor</b> es el que maniobra en carga — tiene poder de corte y es el que dispara ante una falla. El <b>seccionador</b> no corta carga: se maniobra sin tensión y su función es garantizar el corte, dejando una separación visible y cierta. Ninguno por sí solo prueba que el recinto está aislado: con solo el disyuntor abierto el recinto queda sin tensión pero todavía conectado. Por eso el bucle exige los dos contactos auxiliares para dar por desconectado el recinto y seguir armado sin su corte de emergencia.</p>
+<p><b>⚠ Léelo antes que nada: acá el criterio es al revés.</b> Este relé se llama <b>R A ZC = relé de apertura de zona C</b>. No da permiso, <b>abre</b>. Y se energiza <b>cuando el circuito se abre</b>, no cuando se cierra.</p>
+<p><b>Cómo funciona:</b> es un montaje de seguridad. Mientras el bucle esté cerrado, la bobina queda <b>cortocircuitada</b> y el relé no ve tensión: está en reposo y la Zona C funciona. Al abrirse el bucle en cualquier punto, se pierde ese cortocircuito, la corriente se va obligada por la bobina, el R A ZC se energiza, y su repetidor RR A ZC en Las Torres <b>abre la Zona C</b>. Por eso basta con <b>un solo</b> corte de emergencia: al ir las tres vías en serie, cualquiera que se abra rompe el puente completo.</p>
+<p><b>Las dos maneras de mantener el puente en cada vía:</b> por abajo el bucle de ruptores del corte de emergencia (con su RR.CEFS de respaldo), o por arriba los contactos de sus aparatos, que cierran cuando el recinto queda desconectado. Por eso al sacar un recinto de servicio su corte de emergencia deja de poder abrir la zona: el puente se mantiene por arriba.</p>
+<p><b>El SVC (3P1):</b> su rama sale del contacto <b>A</b> por el <b>Z20</b>, o sea conduce con el SVC <b>abierto</b>. Es el puente general: con Cocheras fuera de servicio mantiene el cortocircuito y nada de allá adentro puede abrir la Zona C.</p>
+<p><b>Trazado (dictado desde el plano):</b> por la izquierda el <b>D26</b> del DVM es el nodo común de las tres ramas. Por la derecha, la fila de aparatos y la rama de los CE (que sube del <b>D8</b>) se juntan en el <b>D12</b> del DVC2, y el SVC vuelve por su propio <b>Z20</b>. De esa unión sale la bobina.</p>
+<p><b>Lámina hermana:</b> la hoja 5/18 del mismo plano es la <b>Condición RS IAC</b>, que usa los mismos aparatos por otros contactos auxiliares y lleva además el R.ZC y el CE S4. Probablemente sea esa la que desconecta Cocheras de la línea ante un percance, dejando la Zona C en servicio.</p>
+</div>
+</details>
+<main>
+<div class="ctrl" style="margin-bottom:6px">
+<button class="btn" id="cin_btnFit">Ajustar a pantalla</button>
+<label>Zoom <input type="range" id="cin_zoom" min="30" max="140" value="100"></label>
+<span id="cin_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
+</div>
+<div class="scrollwrap" id="cin_wrap">
+<svg id="cin_plano" width="1300" height="700" viewBox="0 0 1300 700" role="img">
+<title>Condición Cocheras — Apertura de la Zona C</title>
+<defs><marker id="cin_ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<rect class="zona" x="20" y="50" width="800" height="560" rx="10"/>
+<text x="28" y="70" style="font-weight:500;fill:var(--text-primary)">Local Técnico Talleres Cocheras Intermedia · armario MC</text>
+<text x="28" y="86" style="font-size:9px;fill:var(--text-secondary)">Cadena de apertura de la Zona C · 1202-HDD-04-0647-30573 hoja 6/18 (esquema_cadena_CIN)</text>
+<text x="28" y="104" style="font-size:9px;fill:var(--text-secondary)">Criterio invertido: mientras el bucle esté cerrado la bobina queda cortocircuitada y el R A ZC NO se energiza. Al abrirse en cualquier punto, el relé actúa y ABRE la Zona C.</text>
+
+<line class="zona" x1="832" y1="50" x2="832" y2="610"/>
+<line class="zona" x1="866" y1="50" x2="866" y2="610"/>
+<text x="849" y="68" text-anchor="middle" style="font-size:9px">Cable</text>
+<text x="849" y="80" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Túnel</text>
+<rect class="zona" x="876" y="50" width="56" height="560" rx="6"/>
+<text x="904" y="68" text-anchor="middle" style="font-size:9px">Armario</text>
+<text x="904" y="80" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">RQU</text>
+<line class="zona" x1="942" y1="50" x2="942" y2="610"/>
+<line class="zona" x1="976" y1="50" x2="976" y2="610"/>
+<text x="959" y="68" text-anchor="middle" style="font-size:9px">Cable</text>
+<text x="959" y="80" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Túnel</text>
+
+<rect class="zona" x="990" y="50" width="290" height="560" rx="10"/>
+<text x="998" y="70" style="font-weight:500;fill:var(--text-primary)">Local Técnico Las Torres · armario MC</text>
+
+<text x="30" y="434" text-anchor="end">0V</text>
+<g id="cin_gSrc"><path class="w" d="M 36 430 H 70"/></g>
+<g id="cin_gUp"><path class="w" d="M 610 430 V 210"/></g>
+<g id="cin_gChain"><path class="w" d="M 610 210 H 650"/><path class="w" d="M 690 210 H 720"/></g>
+
+<text x="160" y="290" text-anchor="middle" style="font-size:11px;fill:#2BA6A6;font-weight:600">Vías Maniobra · VM</text>
+<circle cx="70" cy="430" r="3" fill="var(--border-strong)"/><circle cx="250" cy="430" r="3" fill="var(--border-strong)"/>
+<g id="cin_gISOVM"><path class="w" d="M 70 430 V 370 H 97"/><path class="w" d="M 153 370 H 167"/><path class="w" d="M 223 370 H 250 V 430"/></g>
+<g id="cin_ctDVM" class="conm">
+<text x="125" y="312" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">2P3 · MX641</text>
+<text x="125" y="324" text-anchor="middle" class="cname">DVM</text>
+<rect class="cbox" x="100" y="332" width="50" height="18"/>
+<text x="112" y="345" text-anchor="middle" class="clab">A</text><text x="138" y="345" text-anchor="middle" class="clab">C</text>
+<circle cx="97" cy="370" r="2.5"/><circle cx="153" cy="370" r="2.5"/>
+<circle cx="112" cy="370" r="2.5"/><circle cx="138" cy="370" r="2.5"/>
+<line class="blade a" x1="99" y1="370" x2="112" y2="370"/>
+<line class="blade c" x1="138" y1="370" x2="151" y2="370"/>
+<line class="barra a" x1="112" y1="378" x2="120" y2="378"/>
+<line class="barra c" x1="130" y1="378" x2="138" y2="378"/>
+</g>
+<g id="cin_ctSVM" class="conm">
+<text x="195" y="312" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">2P4 · MX641</text>
+<text x="195" y="324" text-anchor="middle" class="cname">SVM</text>
+<rect class="cbox" x="170" y="332" width="50" height="18"/>
+<text x="182" y="345" text-anchor="middle" class="clab">A</text><text x="208" y="345" text-anchor="middle" class="clab">C</text>
+<circle cx="167" cy="370" r="2.5"/><circle cx="223" cy="370" r="2.5"/>
+<circle cx="182" cy="370" r="2.5"/><circle cx="208" cy="370" r="2.5"/>
+<line class="blade a" x1="169" y1="370" x2="182" y2="370"/>
+<line class="blade c" x1="208" y1="370" x2="221" y2="370"/>
+<line class="barra a" x1="182" y1="378" x2="190" y2="378"/>
+<line class="barra c" x1="200" y1="378" x2="208" y2="378"/>
+</g>
+<g id="cin_gCEVM"><path class="w" d="M 70 430 H 132.5"/><path class="w" d="M 187.5 430 H 250"/></g>
+<text x="160" y="400" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P4 · MX643-B</text>
+<g id="cin_ctCEVM" class="sym f-rce"><text x="160" y="412" text-anchor="middle">CE VM</text><circle cx="132.5" cy="430" r="2.5"/><circle cx="187.5" cy="430" r="2.5"/><line class="bo" x1="135" y1="430" x2="179" y2="417"/><line class="bc" x1="135" y1="430" x2="185" y2="430"/></g>
+<g id="cin_gCEFSVM"><path class="w" d="M 70 430 V 490 H 132.5"/><path class="w" d="M 187.5 490 H 250 V 430"/></g>
+<g id="cin_ctCEFSVM" class="sym "><text x="160" y="512" text-anchor="middle">RR.CEFS.VM</text><circle cx="132.5" cy="490" r="2.5"/><circle cx="187.5" cy="490" r="2.5"/><line class="bo" x1="135" y1="490" x2="179" y2="477"/><line class="bc" x1="135" y1="490" x2="185" y2="490"/></g>
+
+<text x="340" y="290" text-anchor="middle" style="font-size:11px;fill:#2BA6A6;font-weight:600">Vías Cocheras · VC</text>
+<circle cx="250" cy="430" r="3" fill="var(--border-strong)"/><circle cx="430" cy="430" r="3" fill="var(--border-strong)"/>
+<g id="cin_gISOVC"><path class="w" d="M 250 430 V 370 H 277"/><path class="w" d="M 333 370 H 347"/><path class="w" d="M 403 370 H 430 V 430"/></g>
+<g id="cin_ctDVC1" class="conm">
+<text x="305" y="312" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">2P7 · MX641</text>
+<text x="305" y="324" text-anchor="middle" class="cname">DVC1</text>
+<rect class="cbox" x="280" y="332" width="50" height="18"/>
+<text x="292" y="345" text-anchor="middle" class="clab">A</text><text x="318" y="345" text-anchor="middle" class="clab">C</text>
+<circle cx="277" cy="370" r="2.5"/><circle cx="333" cy="370" r="2.5"/>
+<circle cx="292" cy="370" r="2.5"/><circle cx="318" cy="370" r="2.5"/>
+<line class="blade a" x1="279" y1="370" x2="292" y2="370"/>
+<line class="blade c" x1="318" y1="370" x2="331" y2="370"/>
+<line class="barra a" x1="292" y1="378" x2="300" y2="378"/>
+<line class="barra c" x1="310" y1="378" x2="318" y2="378"/>
+</g>
+<g id="cin_ctSVC1" class="conm">
+<text x="375" y="312" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">2P8 · MX641</text>
+<text x="375" y="324" text-anchor="middle" class="cname">SVC1 (C1)</text>
+<rect class="cbox" x="350" y="332" width="50" height="18"/>
+<text x="362" y="345" text-anchor="middle" class="clab">A</text><text x="388" y="345" text-anchor="middle" class="clab">C</text>
+<circle cx="347" cy="370" r="2.5"/><circle cx="403" cy="370" r="2.5"/>
+<circle cx="362" cy="370" r="2.5"/><circle cx="388" cy="370" r="2.5"/>
+<line class="blade a" x1="349" y1="370" x2="362" y2="370"/>
+<line class="blade c" x1="388" y1="370" x2="401" y2="370"/>
+<line class="barra a" x1="362" y1="378" x2="370" y2="378"/>
+<line class="barra c" x1="380" y1="378" x2="388" y2="378"/>
+</g>
+<g id="cin_gCEVC"><path class="w" d="M 250 430 H 312.5"/><path class="w" d="M 367.5 430 H 430"/></g>
+<text x="340" y="400" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P2 · MX643-B</text>
+<g id="cin_ctCEVC" class="sym f-rce"><text x="340" y="412" text-anchor="middle">CE VC</text><circle cx="312.5" cy="430" r="2.5"/><circle cx="367.5" cy="430" r="2.5"/><line class="bo" x1="315" y1="430" x2="359" y2="417"/><line class="bc" x1="315" y1="430" x2="365" y2="430"/></g>
+<g id="cin_gCEFSVC"><path class="w" d="M 250 430 V 490 H 312.5"/><path class="w" d="M 367.5 490 H 430 V 430"/></g>
+<g id="cin_ctCEFSVC" class="sym "><text x="340" y="512" text-anchor="middle">RR.CEFS.VC</text><circle cx="312.5" cy="490" r="2.5"/><circle cx="367.5" cy="490" r="2.5"/><line class="bo" x1="315" y1="490" x2="359" y2="477"/><line class="bc" x1="315" y1="490" x2="365" y2="490"/></g>
+
+<text x="520" y="290" text-anchor="middle" style="font-size:11px;fill:#2BA6A6;font-weight:600">Vías Talleres · VT</text>
+<circle cx="430" cy="430" r="3" fill="var(--border-strong)"/><circle cx="610" cy="430" r="3" fill="var(--border-strong)"/>
+<g id="cin_gISOVT"><path class="w" d="M 430 430 V 370 H 492"/><path class="w" d="M 548 370 H 610 V 430"/></g>
+<g id="cin_ctDVC2" class="conm">
+<text x="520" y="312" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">3P3 · MX641</text>
+<text x="520" y="324" text-anchor="middle" class="cname">DVC2</text>
+<rect class="cbox" x="495" y="332" width="50" height="18"/>
+<text x="507" y="345" text-anchor="middle" class="clab">A</text><text x="533" y="345" text-anchor="middle" class="clab">C</text>
+<circle cx="492" cy="370" r="2.5"/><circle cx="548" cy="370" r="2.5"/>
+<circle cx="507" cy="370" r="2.5"/><circle cx="533" cy="370" r="2.5"/>
+<line class="blade a" x1="494" y1="370" x2="507" y2="370"/>
+<line class="blade c" x1="533" y1="370" x2="546" y2="370"/>
+<line class="barra a" x1="507" y1="378" x2="515" y2="378"/>
+<line class="barra c" x1="525" y1="378" x2="533" y2="378"/>
+</g>
+<g id="cin_gCEVT"><path class="w" d="M 430 430 H 492.5"/><path class="w" d="M 547.5 430 H 610"/></g>
+<text x="520" y="400" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P3 · MX643-B</text>
+<g id="cin_ctCEVT" class="sym f-rce"><text x="520" y="412" text-anchor="middle">CE VT</text><circle cx="492.5" cy="430" r="2.5"/><circle cx="547.5" cy="430" r="2.5"/><line class="bo" x1="495" y1="430" x2="539" y2="417"/><line class="bc" x1="495" y1="430" x2="545" y2="430"/></g>
+<g id="cin_gCEFSVT"><path class="w" d="M 430 430 V 490 H 492.5"/><path class="w" d="M 547.5 490 H 610 V 430"/></g>
+<g id="cin_ctCEFSVT" class="sym "><text x="520" y="512" text-anchor="middle">RR.CEFS.VT</text><circle cx="492.5" cy="490" r="2.5"/><circle cx="547.5" cy="490" r="2.5"/><line class="bo" x1="495" y1="490" x2="539" y2="477"/><line class="bc" x1="495" y1="490" x2="545" y2="490"/></g>
+
+<g id="cin_gSVC"><path class="w" d="M 70 430 V 210 H 472"/><path class="w" d="M 528 210 H 610"/></g>
+<g id="cin_ctSVC" class="conm">
+<text x="500" y="152" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">3P1 · MX641</text>
+<text x="500" y="164" text-anchor="middle" class="cname">SVC</text>
+<rect class="cbox" x="475" y="172" width="50" height="18"/>
+<text x="487" y="185" text-anchor="middle" class="clab">C</text><text x="513" y="185" text-anchor="middle" class="clab">A</text>
+<circle cx="472" cy="210" r="2.5"/><circle cx="528" cy="210" r="2.5"/>
+<circle cx="487" cy="210" r="2.5"/><circle cx="513" cy="210" r="2.5"/>
+<line class="blade c" x1="474" y1="210" x2="487" y2="210"/>
+<line class="blade a" x1="513" y1="210" x2="526" y2="210"/>
+<line class="barra c" x1="487" y1="218" x2="495" y2="218"/>
+<line class="barra a" x1="505" y1="218" x2="513" y2="218"/>
+</g>
+
+
+<text x="468" y="230" text-anchor="end" style="font-size:8px;fill:var(--text-secondary)">D18</text>
+<text x="74" y="452" style="font-size:8px;fill:var(--text-secondary)">D26</text>
+<text x="606" y="452" text-anchor="end" style="font-size:8px;fill:var(--text-secondary)">D12</text>
+<text x="616" y="232" style="font-size:8px;fill:var(--text-secondary)">Z20</text>
+<circle cx="610" cy="210" r="3" fill="var(--border-strong)"/>
+
+<text x="670" y="174" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P6 · MX642</text>
+<g id="cin_coRAZC" class="coil f-rrzb"><text x="670" y="186" text-anchor="middle">R A ZC</text><path class="zz" d="M 650 210 L 660 192 L 670 210 L 680 192 L 690 210"/></g>
+<text x="724" y="214">+48V</text>
+<path class="leader" style="stroke:#3E77E0" d="M 670 214 V 586"/>
+
+<text x="500" y="594" text-anchor="end">+48V</text>
+<g id="cin_gFeed"><path class="w" d="M 506 590 H 632.5"/></g>
+<g id="cin_ctRAZC" class="sym f-rrzb"><text x="600" y="578" text-anchor="end">R A ZC · A1·A2</text><circle cx="632.5" cy="590" r="2.5"/><circle cx="687.5" cy="590" r="2.5"/><line class="bo" x1="635" y1="590" x2="679" y2="577"/><line class="bc" x1="635" y1="590" x2="685" y2="590"/></g>
+<g id="cin_gLink"><path class="w" style="stroke-dasharray:5 4" d="M 687.5 590 H 1080"/></g>
+<text x="845" y="582" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">2J1·7C</text>
+<text x="959" y="582" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">7C·2J11</text>
+
+<g id="cin_coRRAZC" class="coil f-rrzb"><text x="1100" y="566" text-anchor="middle">RR A ZC</text><path class="zz" d="M 1080 590 L 1090 572 L 1100 590 L 1110 572 L 1120 590"/></g>
+<g id="cin_gLink2"><path class="w" d="M 1120 590 H 1170"/></g>
+<text x="1174" y="594">0V</text>
+<text x="1100" y="552" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">P2 · MX642</text>
+<path class="leader" style="stroke:#3E77E0" d="M 1100 250 V 550"/>
+
+<text x="1030" y="244" text-anchor="end">+48V</text>
+<g id="cin_gOut"><path class="w" d="M 1036 240 H 1072.5"/><path class="w" d="M 1127.5 240 H 1200"/></g>
+<g id="cin_ctRRAZC" class="sym f-rrzb"><text x="1100" y="232" text-anchor="middle">RR A ZC</text><circle cx="1072.5" cy="240" r="2.5"/><circle cx="1127.5" cy="240" r="2.5"/><line class="bo" x1="1075" y1="240" x2="1119" y2="227"/><line class="bc" x1="1075" y1="240" x2="1125" y2="240"/></g>
+<path d="M 1200 240 V 162" stroke="var(--text-secondary)" stroke-width="1" marker-end="url(#cin_ar)" fill="none"/>
+<text x="1200" y="136" text-anchor="middle" style="font-size:10px;fill:var(--text-secondary)">a la cadena de</text>
+<text x="1200" y="150" text-anchor="middle" style="font-size:10px;fill:var(--text-secondary)">Condición de Zona C</text>
+
+<g class="sym"><circle cx="30" cy="660" r="2.5"/><circle cx="58" cy="660" r="2.5"/><line x1="33" y1="660" x2="53" y2="649"/></g>
+<text x="66" y="664" style="font-size:11px">abierto</text>
+<g class="sym"><circle cx="140" cy="660" r="2.5"/><circle cx="168" cy="660" r="2.5"/><line x1="143" y1="660" x2="165" y2="660"/></g>
+<text x="176" y="664" style="font-size:11px">cerrado</text>
+<line x1="240" y1="660" x2="280" y2="660" stroke="#EF9F27" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="288" y="664" style="font-size:11px">energizado</text>
+<rect x="410" y="653" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="427" y="663" style="font-size:11px">CE del recinto</text>
+<rect x="540" y="653" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="557" y="663" style="font-size:11px">R A ZC · RR A ZC</text>
+</svg>
+
+
+
+</div>
+
+<div class="panel">
+<fieldset class="grp">
+<legend>1 · Cortes de emergencia del recinto (golpe · inhibición CEFS)</legend>
+<label><input type="checkbox" id="cin_cbCEVM"> CE VM golpeado</label>
+<label><input type="checkbox" id="cin_cbFSVM"> Inhib. RR.CEFS.VM</label>
+<label><input type="checkbox" id="cin_cbCEVC"> CE VC golpeado</label>
+<label><input type="checkbox" id="cin_cbFSVC"> Inhib. RR.CEFS.VC</label>
+<label><input type="checkbox" id="cin_cbCEVT"> CE VT golpeado</label>
+<label><input type="checkbox" id="cin_cbFSVT"> Inhib. RR.CEFS.VT</label>
+</fieldset>
+<fieldset class="grp">
+<legend>2 · Aparatos · D = disyuntor · S = seccionador · conducen cerrados</legend>
+<label><input type="checkbox" id="cin_cbDVM"> DVM abierto</label>
+<label><input type="checkbox" id="cin_cbSVM"> SVM abierto</label>
+<label><input type="checkbox" id="cin_cbDVC"> DVC1 abierto</label>
+<label><input type="checkbox" id="cin_cbSVC1"> SVC1 abierto</label>
+<label><input type="checkbox" id="cin_cbDVT"> DVC2 abierto</label>
+<label><input type="checkbox" id="cin_cbSVC"> SVC abierto (3P1 · en serie)</label>
+</fieldset>
+<fieldset class="grp">
+<legend>3 · Ir al módulo enganchado</legend>
+<button class="btn" onclick="irModulo('mod-l4zc')">Abrir Condición de Zona C</button>
+</fieldset>
+</div>
+<div id="cin_status">Cadena sana: R A ZC energizado y RR A ZC cerrado en Las Torres. Golpea un CE del recinto para abrir la Zona C.</div>
 </main>
 </section>
 
@@ -1126,8 +1368,12 @@ Para agregar un nuevo módulo:
 <circle id="d_tkb7" class="tkdot" cx="1017.0" cy="452" r="6"/>
 <text x="1029.0" y="456" style="font-size:9px">TK Bucle</text>
 
-<rect x="730" y="460" width="345" height="242" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/>
-<text x="740" y="476" style="font-size:10px;fill:var(--text-secondary)">Estación Vicente Valdés · armario remoto</text>
+<text x="596" y="592" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">Las Torres</text>
+<text x="664" y="592" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">Vicuña Mackenna</text>
+<text x="776" y="592" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">Vicuña Mackenna</text>
+<text x="844" y="592" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">Vicente Valdés</text>
+<text x="956" y="592" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">Vicente Valdés</text>
+<text x="1024" y="592" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">Vicente Valdés</text>
 
 <text x="30" y="114">0V</text>
 <g id="d_gMando">
@@ -1870,7 +2116,7 @@ Para agregar un nuevo módulo:
 <div class="cont">
 <p><b>Qué estás viendo:</b> la última zona de la Línea 4. Dos secciones en serie validan el <b>RR.ZG</b> en el armario del Hospital Sotero del Río: S10 (entre la S/ER HS y el SAT 10/11) y S11 (de Las Mercedes hacia el final de línea), más el enclavamiento del <b>ramal a Talleres</b>.</p>
 <p><b>Las ramas de aislamiento:</b> S10 = SAT 10/11 + IAS S/ER HS · S11 = SAT 10/11 + <b>PT/FT S11</b>. El PT/FT es el aparato del extremo de la S11 y sus posiciones se llaman PT y FT (no A y C). <b>Confirmado por el manual:</b> "SAT 10/11 abierto y PT en S11" — la posición PT es la que valida el aislamiento.</p>
-<p><b>R Ai ZG · ramal Talleres:</b> el plano indica "Apertura de la Zona si IATS cerrado y ruptor accionado" — es decir, si el interruptor del ramal a Talleres está cerrado y alguien acciona un ruptor, el relé abre este contacto y bota la Zona G completa. Pariente del R Ai ZC de Cocheras, pero con condición compuesta.</p>
+<p><b>R Ai ZG · ramal Talleres:</b> el plano indica "Apertura de la Zona si IATS cerrado y ruptor accionado" — es decir, si el interruptor del ramal a Talleres está cerrado y alguien acciona un ruptor, el relé abre este contacto y bota la Zona G completa. Pariente del R A ZC de Cocheras, pero con condición compuesta.</p>
 <p><b>El RR.ZG entrega directo las Condiciones RS S10 y S11</b> (a diferencia de la Zona D, aquí no hace falta relé repetidor).</p>
 <p><b>Ejercicio 1 — Armar la zona:</b> TPL ZG girado + Oprimir TPL: valida S10 → S11 → R Ai ZG → RR.ZG, sella el KZG y se apaga la luz.</p>
 <p><b>Ejercicio 2 — Aislar la S11:</b> acciona un ruptor de S11 (grupo 2); para validarla por aislamiento abre el SAT 10/11 y pasa el PT/FT a posición PT. La S10 sigue validando por su CE.</p>
@@ -2749,7 +2995,7 @@ Para agregar un nuevo módulo:
 <label><input type="checkbox" id="lc_s67"> SAT 6/7 abierto</label>
 <label><input type="checkbox" id="lc_s1011"> SAT 10/11 abierto</label>
 <label><input type="checkbox" id="lc_pt"> PT/FT S11 en PT</label>
-<label><input type="checkbox" id="lc_coch"> Cocheras abre Zona C (R Ai ZC)</label>
+<label><input type="checkbox" id="lc_coch"> Cocheras abre Zona C (R A ZC)</label>
 <label><input type="checkbox" id="lc_tall"> Talleres abre Zona G (IATS + ruptor)</label>
 </fieldset>
 </div>
@@ -3435,7 +3681,10 @@ var MODULOS = [
     desc:"Dos secciones (Los Orientales y Rotonda Quilín) con SAT 2/3 de seccionamiento telemandado. Esquema de relés + mini-SCADA sincronizados, con estado Fuera de Mando.",
     disponible:true },
   { id:"mod-l4zc", linea:"Línea 4", titulo:"Condición de Zona C · Sección 4",
-    desc:"Estación Las Torres. Una sección como la Zona A, más el enclavamiento R Ai ZC: el ramal de Cocheras puede abrir la zona (plano Condición Cocheras).",
+    desc:"Estación Las Torres. Una sección como la Zona A, más el enclavamiento R A ZC: el ramal de Cocheras puede abrir la zona (plano Condición Cocheras).",
+    disponible:true },
+  { id:"mod-l4cin", linea:"Línea 4", titulo:"Condición Cocheras · Apertura de la Zona C",
+    desc:"Local Técnico Talleres Cocheras Intermedia. La cadena de las tres vías del recinto que arma el R A ZC y su repetidor RR A ZC en Las Torres: el ramal puede abrir la Zona C.",
     disponible:true },
   { id:"", linea:"Línea 4", titulo:"Lote de energía S/ER · IA e IAS",
     desc:"Detalle de los interruptores de alimentación y de socorro dentro de la subestación.", disponible:false },
@@ -3778,7 +4027,7 @@ function solve(){
 function statusMsg(r){
   if(st.pl) return 'PL · Prueba de lámpara: la ampolleta roja enciende mientras dura la prueba, sin alterar la condición de zona.';
   if(!st.dg) return 'R.DG abierto: sin el relé de vigilancia no hay mando. Vuelve a cerrarlo.';
-  if(st.aiAb && st.giro) return 'R Ai ZC abierto: el ramal de Cocheras tiene abierta la Zona C (ver plano Condición Cocheras). RR.ZC no puede armar aunque el resto esté bien.';
+  if(st.aiAb && st.giro) return 'R A ZC abierto: el ramal de Cocheras tiene abierta la Zona C (ver plano Condición Cocheras). RR.ZC no puede armar aunque el resto esté bien.';
   if((st.re4a||st.re4b) && !st.cefs4 && st.giro) return 'Ruptor accionado en S4: se rompió el lazo del bucle y cayó R.CE.S4 (sin inhibición). La cadena se corta y RR.ZC no arma (o se desarma si estaba armada).';
   if(!st.pce4 && !st.cefs4 && st.giro) return 'R.PCE.S4 abierto por comando TC (prueba CE): el lazo queda abierto emulando un ruptor y cae R.CE.S4. Con "TC: Cerrar R.PCE.S4" se repone.';
   if(r.kzc){
@@ -3839,6 +4088,92 @@ g('c_btnIAS').onclick=function(){st.iasAb=false;render();};
 g('c_btnIASa').onclick=function(){st.iasAb=true;render();};
 g('c_btnIA').onclick=function(){st.iaAb=false;render();};
 g('c_btnIAa').onclick=function(){st.iaAb=true;render();};
+render();
+})();
+
+
+/* ================= MÓDULO CIN: CONDICIÓN COCHERAS · APERTURA ZONA C ================= */
+(function(){
+function g(id){return document.getElementById(id);}
+var BW=1300, BH=700;
+function setZoom(p){var s=g('cin_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('cin_zoom').value=p;g('cin_zoomVal').textContent=Math.round(p)+'%';}
+function fit(){var w=g('cin_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
+MODFIT['mod-l4cin'] = fit;
+g('cin_zoom').oninput=function(){setZoom(parseFloat(this.value));};
+g('cin_btnFit').onclick=fit;
+
+var st = {ceVM:false, ceVC:false, ceVT:false, fsVM:false, fsVC:false, fsVT:false,
+  abDVM:false, abSVM:false, abDVC:false, abSVC1:false, abDVT:false, abSVC:false};
+
+function solve(){
+  // Por vía: los aparatos EN SERIE entre ellos y esa rama EN PARALELO con el CE + CEFS.
+  // Las tres vías van en serie, y en serie con ellas el SVC, que se une al R A ZC en el Z20.
+  var ceVM = !st.ceVM || st.fsVM, ceVC = !st.ceVC || st.fsVC, ceVT = !st.ceVT || st.fsVT;
+  var apVM = st.abDVM && st.abSVM;    // vía desconectada: la rama de aparatos toma el paso
+  var apVC = st.abDVC && st.abSVC1;
+  var apVT = st.abDVT;                // la vía VT lleva solo el DVC2
+  var cVM = ceVM || apVM, cVC = ceVC || apVC, cVT = ceVT || apVT;
+  var fila = cVM && cVC && cVT;       // las tres vías en serie
+  var svc = st.abSVC;                 // esta rama sale del contacto A: conduce con el SVC ABIERTO
+  // MONTAJE DE SEGURIDAD: mientras haya camino cerrado, la bobina queda cortocircuitada
+  // y el relé NO se energiza. Al abrirse el bucle la corriente se va por la bobina y el
+  // R A ZC se activa, abriendo la Zona C. Por eso basta con UN solo corte de emergencia.
+  var puente = svc || fila;           // el camino que mantiene el cortocircuito
+  var razc  = !puente;                // el relé se energiza cuando el circuito se ABRE
+  var rrazc = razc;
+  return {ceVM:ceVM, ceVC:ceVC, ceVT:ceVT, apVM:apVM, apVC:apVC, apVT:apVT,
+    cVM:cVM, cVC:cVC, cVT:cVT, fila:fila, svc:svc, puente:puente, razc:razc, rrazc:rrazc};
+}
+
+function statusMsg(r){
+  if(!r.razc) return 'ESTADO NORMAL: el bucle está cerrado, así que la bobina del R A ZC queda cortocircuitada y el relé NO se energiza. Tampoco el RR A ZC de Las Torres. La Zona C sigue en servicio.';
+  var q = !r.cVM?'el CE de Vías Maniobra':(!r.cVC?'el CE de Vías Cocheras':(!r.cVT?'el CE de Vías Talleres':'la fila'));
+  return 'SE ABRIÓ EL BUCLE en '+q+': se pierde el cortocircuito y la corriente se va por la bobina. Se ENERGIZA el R A ZC (relé de apertura de zona) y con él el RR A ZC de Las Torres, que ABRE la Zona C. Basta con un solo punto abierto.';
+}
+
+function setOn(id,on){var e=g(id);if(e)e.classList.toggle('on',on);}
+function setLive(id,on){document.querySelectorAll('#'+id+' .w').forEach(function(p){p.classList.toggle('live',on);});}
+function setConm(id, abierto, live){
+  var e=g(id); if(!e) return;
+  function act(sel,on){var el=e.querySelector(sel); if(el) el.classList.toggle('on',on);}
+  act('.blade.a',abierto); act('.barra.a',abierto);
+  act('.blade.c',!abierto); act('.barra.c',!abierto);
+  e.classList.toggle('live', live);
+}
+
+var timers=[];
+function render(){
+  timers.forEach(clearTimeout); timers=[];
+  var r = solve();
+  var stages=[
+    function(){
+      [['VM',r.ceVM,st.fsVM,r.apVM,st.abDVM,st.abSVM],
+       ['VC',r.ceVC,st.fsVC,r.apVC,st.abDVC,st.abSVC1],
+       ['VT',r.ceVT,st.fsVT,r.apVT,st.abDVT,null]].forEach(function(q){
+        var t=q[0], ce=q[1], fs=q[2], ap=q[3];
+        setOn('cin_ctCE'+t, !st['ce'+t]); setOn('cin_ctCEFS'+t, fs);
+        setLive('cin_gCE'+t, r.fila&&ce); setLive('cin_gCEFS'+t, r.fila&&fs);
+        setLive('cin_gISO'+t, r.fila&&ap);
+      });
+      setConm('cin_ctDVM', st.abDVM, r.fila&&r.apVM); setConm('cin_ctSVM', st.abSVM, r.fila&&r.apVM);
+      setConm('cin_ctDVC1', st.abDVC, r.fila&&r.apVC); setConm('cin_ctSVC1', st.abSVC1, r.fila&&r.apVC);
+      setConm('cin_ctDVC2', st.abDVT, r.fila&&r.apVT);},
+    function(){setConm('cin_ctSVC', st.abSVC, r.svc); setLive('cin_gSVC', r.svc); setLive('cin_gUp', r.fila); setLive('cin_gSrc', true);},
+    function(){setLive('cin_gChain',r.razc);setOn('cin_coRAZC',r.razc);},
+    function(){setOn('cin_ctRAZC',r.razc);setLive('cin_gFeed',r.razc);setLive('cin_gLink',r.razc);},
+    function(){setOn('cin_coRRAZC',r.rrazc);setLive('cin_gLink2',r.rrazc);},
+    function(){setOn('cin_ctRRAZC',r.rrazc);setLive('cin_gOut',r.rrazc);
+      g('cin_status').textContent=statusMsg(r);}
+  ];
+  stages.forEach(function(fn,i){timers.push(setTimeout(fn,i*300));});
+}
+
+[['cin_cbCEVM','ceVM'],['cin_cbCEVC','ceVC'],['cin_cbCEVT','ceVT'],
+ ['cin_cbFSVM','fsVM'],['cin_cbFSVC','fsVC'],['cin_cbFSVT','fsVT'],
+ ['cin_cbDVM','abDVM'],['cin_cbSVM','abSVM'],['cin_cbDVC','abDVC'],
+ ['cin_cbSVC1','abSVC1'],['cin_cbDVT','abDVT'],['cin_cbSVC','abSVC']].forEach(function(pr){
+  g(pr[0]).onchange=function(){st[pr[1]]=this.checked;render();};
+});
 render();
 })();
 
@@ -4365,7 +4700,7 @@ st.cefs={};
 function cond(n){
   if(!st.g[n] || st.cefs[n]) return true;   // CE sano o inhibido por CEFS
   // si el CE esta golpeado, la seccion solo se puede AISLAR: SAT abierto Y su interruptor abierto
-  var ab = function(k){ return !st.itmS[k]; };            // interruptor abierto
+  var ab = function(k){ return !st.br[k]; };              // el IA/IAS abierto (st.br), no el ITM del rectificador
   if(n==='2')  return st.s23   && ab('lor_ias');          // SAT 2/3 + IAS S/ER LO
   if(n==='3')  return st.s23   && ab('rqu_ia');           // SAT 2/3 + IA  S/ER RQ
   if(n==='5')  return st.s56   && ab('lto_ias');          // SAT 5/6 + IAS S/ER LT
