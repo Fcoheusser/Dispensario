@@ -975,6 +975,416 @@ Para agregar un nuevo módulo:
 </section>
 
 
+
+<style>
+#t_plano .w{stroke:var(--border-strong);stroke-width:1.6;fill:none;transition:stroke .3s}
+#t_plano .w.live{stroke:#EF9F27;stroke-width:2.6;stroke-dasharray:7 5;animation:flow 1s linear infinite}
+#t_plano .ap circle{fill:var(--bg-card);stroke:var(--text-secondary);stroke-width:1.4}
+#t_plano .ap .bc{stroke:var(--text-primary);stroke-width:2;display:none}
+#t_plano .ap .bo{stroke:var(--text-primary);stroke-width:2}
+#t_plano .ap.on .bc{display:block}
+#t_plano .ap.on .bo{display:none}
+#t_plano .ap.live circle{stroke:#EF9F27}
+#t_plano .ap.live .bc{stroke:#EF9F27}
+#t_plano .apn{font-size:13px;fill:var(--text-primary);font-weight:500}
+#t_plano .cab{font-size:13px;fill:var(--text-secondary);font-weight:500}
+#t_plano .via{font-size:12px;fill:var(--text-secondary)}
+#t_plano .soc{font-size:11px;fill:#2BA6A6}
+#t_plano .dst{font-size:11px;fill:var(--text-secondary)}
+#t_plano .dst.on{fill:#EF9F27}
+#t_esc .btn{margin:0 6px 6px 0}
+#t_esc .btn.act{border-color:#2BA6A6;color:#2BA6A6}
+</style>
+
+
+<!-- ================= MÓDULO: CONDICIÓN RS IAT · TALLER PUENTE ALTO ================= -->
+<section id="mod-l4iat" class="mod">
+<header>
+<button class="btn volver" onclick="irMenu()">&#8592; Volver al menú</button>
+<h1>Condición <span>RS IAT</span> · Taller Puente Alto · Línea 4</h1>
+<p class="sub">Local Técnico Talleres Puente Alto · Las Mercedes · S/ER TPA · Plano 1202-HDD-04-0474-30573 hoja 6/7 Ind. D</p>
+</header>
+<details class="guia">
+<summary>📖 Guía rápida para quien recién llega (clic para abrir)</summary>
+<div class="cont">
+<p><b>Qué estás viendo:</b> la lógica de 48 V del Taller Puente Alto, la que decide si el IAT puede cerrarse. Es la hermana del módulo de alimentación: aquel muestra por dónde circula el 750 V, este muestra el permiso.</p>
+<p><b>El recorrido:</b> 0V → los cuatro recintos en serie → el <b>SVT</b> → el contacto <b>RR CE S11</b> → bobina <b>RS IAT</b> → +48V. La señal sale por cable túnel al Local S/ER TPA, donde el RS IAT habilita el cierre del IAT.</p>
+<p><b>Cada recinto tiene dos caminos</b>, igual que en las zonas: los <b>aparatos</b> (en serie entre ellos) o su <b>corte de emergencia</b> (con su R.CEFS en paralelo). Los grupos son: <b>DVM + SVMS</b> con el CE VM, <b>SVC1S + DVC1</b> con el CE VC, <b>DVC2</b> con el CE VT, y <b>DVP</b> con el CE VP.</p>
+<p><b>El SGTS va en paralelo</b> sobre toda la fila, puenteando los cuatro recintos de una vez. El <b>SVT</b> queda aparte, en serie, así que si se abre corta la cadena completa.</p>
+<p><b>La secuencia — esto es lo importante.</b> No se arma de una: son <b>dos pasos, en este orden</b>.</p>
+<ol>
+<li><b>Primero la condición de zona G.</b> En Las Mercedes, con el <b>RR.ZG</b> energizado y el <b>CE S11</b> sano (o inhibido por su R.CEFS.S11), se energiza el <b>RR CE S11</b>.</li>
+<li><b>Después la condición RS.</b> Ese RR CE S11 cierra su contacto en la cadena del taller. Recién ahí, si además los aparatos y los cortes de emergencia del taller están en orden, se forma el <b>RS IAT</b>.</li>
+</ol>
+<p><b>Y el IAT no cierra solo:</b> con el RS IAT formado el interruptor queda <b>habilitado</b>, y es el <b>PMT quien lo cierra por comando</b>. Si el RS IAT se cae con el IAT cerrado, el IAT <b>se abre</b>.</p>
+<p><b>Es el patrón general del sistema:</b> condición de zona, más las condiciones RCE (bucle de ruptores cerrado) y/o RCEFS (CEFS activo), generan la condición RS. Acá la condición de zona viene de la G y los RCE son los del taller, pero la estructura es la misma que en cualquier estación.</p>
+<p><b>Prueba esto:</b> parte con todo caído. Arma primero la zona G y fíjate que el RR CE S11 se energiza. Después verás que el RS IAT se forma y el botón de cierre del IAT se habilita. Ahora golpea un CE del taller: cae el RS IAT y el IAT se abre solo.</p>
+<p><b>Fuente:</b> plano 1202-HDD-04-0474-30573 hoja 6/7 Ind. D (esquema_cadena_TPA_1). La estructura de la cadena está dictada: aparatos en serie, SGTS en paralelo, cada CE con su CEFS en paralelo.</p>
+</div>
+</details>
+<main>
+<div class="ctrl" style="margin-bottom:6px">
+<button class="btn" id="i_btnFit">Ajustar a pantalla</button>
+<label>Zoom <input type="range" id="i_zoom" min="30" max="140" value="100"></label>
+<span id="i_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
+</div>
+<div class="scrollwrap" id="i_wrap">
+<svg id="i_plano" width="2120" height="1020" viewBox="-70 0 2120 1020" role="img">
+<title>Condición RS IAT — Taller Puente Alto</title>
+<rect class="zona" x="-60" y="60" width="1780" height="640" rx="10"/><text x="-50" y="82" style="font-weight:500;fill:var(--text-primary)">Local Técnico Talleres Puente Alto · armario MC</text><text x="-50" y="98" style="font-size:9px;fill:var(--text-secondary)">Condición RS IAT · 1202-HDD-04-0474-30573 hoja 6/7 Ind. D (esquema_cadena_TPA_1)</text><text x="-50" y="114" style="font-size:9px;fill:var(--text-secondary)">Por recinto: los aparatos en serie entre ellos y esa rama en paralelo con su corte de emergencia. El SGTS puentea toda la fila.</text><text x="-34" y="434" text-anchor="end">0V</text>
+<g id="i_gSrc"><path class="w" d="M -28 430 H -10"/></g>
+<circle cx="-10" cy="430" r="3.5" fill="var(--border-strong)"/>
+<circle cx="110" cy="430" r="3.5" fill="var(--border-strong)"/>
+
+<g id="i_ctSVT" class="conm">
+<text x="40" y="444" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">3P4 · MX641</text>
+<text x="40" y="456" text-anchor="middle" class="cname">SVT</text>
+<rect class="cbox" x="14" y="464" width="52" height="18"/>
+<text x="27" y="477" text-anchor="middle" class="clab">A</text><text x="53" y="477" text-anchor="middle" class="clab">C</text>
+<circle cx="14" cy="500" r="2.5"/><circle cx="66" cy="500" r="2.5"/>
+<circle cx="27" cy="500" r="2.5"/><circle cx="53" cy="500" r="2.5"/>
+<line class="blade a" x1="16" y1="500" x2="27" y2="500"/>
+<line class="blade c" x1="53" y1="500" x2="64" y2="500"/>
+<line class="barra a" x1="27" y1="508" x2="35" y2="508"/>
+<line class="barra c" x1="45" y1="508" x2="53" y2="508"/>
+</g>
+<rect x="-46" y="542" width="200" height="170" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="54" y="562" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">1P6 · RR CE S11 · MX642</text>
+<g id="i_gRR2"><path class="w" d="M -10 500 V 590 H 12"/><path class="w" d="M 68 590 H 110 V 500"/></g>
+<g id="i_gSVT2"><path class="w" d="M -10 430 V 500 H 14"/><path class="w" d="M 66 500 H 110 V 430"/></g>
+<g id="i_ctRR" class="sym f-rrzb"><text x="40" y="582" text-anchor="middle">contacto</text><circle cx="12" cy="590" r="2.5"/><circle cx="68" cy="590" r="2.5"/><line class="bo" x1="15" y1="590" x2="59" y2="577"/><line class="bc" x1="15" y1="590" x2="65" y2="590"/></g>
+<text x="-14" y="606" style="font-size:8px;fill:var(--text-secondary)">D28</text><text x="72" y="606" style="font-size:8px;fill:var(--text-secondary)">D30</text>
+<text x="118" y="530" style="font-size:8px;fill:var(--text-secondary)">D30 → D06</text>
+<g id="i_gBob"><path class="w" d="M 100 680 H 150"/></g>
+<g id="i_coRRCES11" class="coil f-rrzb"><text x="70" y="658" text-anchor="middle">RR CES11</text><path class="zz" d="M 40 680 L 55 658 L 70 680 L 85 658 L 100 680"/></g>
+<text x="156" y="684" style="font-size:9px;fill:#3E77E0">viene de Las Mercedes</text>
+
+
+<g id="i_gSGTS"><path class="w" d="M 110 430 V 170 H 674"/><path class="w" d="M 726 170 H 1350 V 430"/></g><g id="i_ctSGTS" class="conm">
+<text x="700" y="112" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">1P5 · MX641</text>
+<text x="700" y="124" text-anchor="middle" class="cname">SGTS</text>
+<rect class="cbox" x="674" y="132" width="52" height="18"/>
+<text x="687" y="145" text-anchor="middle" class="clab">A</text><text x="713" y="145" text-anchor="middle" class="clab">C</text>
+<circle cx="671" cy="170" r="2.5"/><circle cx="729" cy="170" r="2.5"/>
+<circle cx="687" cy="170" r="2.5"/><circle cx="713" cy="170" r="2.5"/>
+<line class="blade a" x1="673" y1="170" x2="687" y2="170"/>
+<line class="blade c" x1="713" y1="170" x2="727" y2="170"/>
+<line class="barra a" x1="687" y1="178" x2="695" y2="178"/>
+<line class="barra c" x1="705" y1="178" x2="713" y2="178"/>
+</g>
+<text x="700" y="204" text-anchor="middle" class="soc">puentea toda la fila de aparatos</text><circle cx="110" cy="430" r="3.5" fill="var(--border-strong)"/><circle cx="470" cy="430" r="3.5" fill="var(--border-strong)"/><g id="i_gApVM"><path class="w" d="M 110 430 V 300 H 181"/><path class="w" d="M 239 300 H 341"/><path class="w" d="M 399 300 H 470 V 430"/></g>
+<g id="i_ctDVM" class="conm">
+<text x="210" y="242" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">2P3 · MX641</text>
+<text x="210" y="254" text-anchor="middle" class="cname">DVM</text>
+<rect class="cbox" x="184" y="262" width="52" height="18"/>
+<text x="197" y="275" text-anchor="middle" class="clab">A</text><text x="223" y="275" text-anchor="middle" class="clab">C</text>
+<circle cx="181" cy="300" r="2.5"/><circle cx="239" cy="300" r="2.5"/>
+<circle cx="197" cy="300" r="2.5"/><circle cx="223" cy="300" r="2.5"/>
+<line class="blade a" x1="183" y1="300" x2="197" y2="300"/>
+<line class="blade c" x1="223" y1="300" x2="237" y2="300"/>
+<line class="barra a" x1="197" y1="308" x2="205" y2="308"/>
+<line class="barra c" x1="215" y1="308" x2="223" y2="308"/>
+</g>
+<g id="i_ctSVMS" class="conm">
+<text x="370" y="242" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">2P4 · MX641</text>
+<text x="370" y="254" text-anchor="middle" class="cname">SVMS</text>
+<rect class="cbox" x="344" y="262" width="52" height="18"/>
+<text x="357" y="275" text-anchor="middle" class="clab">A</text><text x="383" y="275" text-anchor="middle" class="clab">C</text>
+<circle cx="341" cy="300" r="2.5"/><circle cx="399" cy="300" r="2.5"/>
+<circle cx="357" cy="300" r="2.5"/><circle cx="383" cy="300" r="2.5"/>
+<line class="blade a" x1="343" y1="300" x2="357" y2="300"/>
+<line class="blade c" x1="383" y1="300" x2="397" y2="300"/>
+<line class="barra a" x1="357" y1="308" x2="365" y2="308"/>
+<line class="barra c" x1="375" y1="308" x2="383" y2="308"/>
+</g>
+<g id="i_gCEVM"><path class="w" d="M 110 430 H 262"/><path class="w" d="M 318 430 H 470"/></g>
+<text x="186" y="416" text-anchor="middle" style="font-size:9px;fill:#EF9F27">el 0V viaja por aquí</text>
+<text x="118" y="422" style="font-size:8px;fill:var(--text-secondary)">D06</text><text x="290" y="408" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P3 · MX643-B</text><g id="i_ctCEVM" class="sym f-rce"><text x="290" y="420" text-anchor="middle">CE VM</text><circle cx="262" cy="430" r="2.5"/><circle cx="318" cy="430" r="2.5"/><line class="bo" x1="265" y1="430" x2="309" y2="417"/><line class="bc" x1="265" y1="430" x2="315" y2="430"/></g>
+<g id="i_gFSVM"><path class="w" d="M 110 430 V 550 H 262"/><path class="w" d="M 318 550 H 470 V 430"/></g><g id="i_ctFSVM" class="sym "><text x="290" y="572" text-anchor="middle">R.CEFS.VM</text><circle cx="262" cy="550" r="2.5"/><circle cx="318" cy="550" r="2.5"/><line class="bo" x1="265" y1="550" x2="309" y2="537"/><line class="bc" x1="265" y1="550" x2="315" y2="550"/></g>
+<circle cx="470" cy="430" r="3.5" fill="var(--border-strong)"/><circle cx="830" cy="430" r="3.5" fill="var(--border-strong)"/><g id="i_gApVC"><path class="w" d="M 470 430 V 300 H 541"/><path class="w" d="M 599 300 H 701"/><path class="w" d="M 759 300 H 830 V 430"/></g>
+<g id="i_ctSVC1S" class="conm">
+<text x="570" y="242" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">2P8 · MX641</text>
+<text x="570" y="254" text-anchor="middle" class="cname">SVC1S</text>
+<rect class="cbox" x="544" y="262" width="52" height="18"/>
+<text x="557" y="275" text-anchor="middle" class="clab">A</text><text x="583" y="275" text-anchor="middle" class="clab">C</text>
+<circle cx="541" cy="300" r="2.5"/><circle cx="599" cy="300" r="2.5"/>
+<circle cx="557" cy="300" r="2.5"/><circle cx="583" cy="300" r="2.5"/>
+<line class="blade a" x1="543" y1="300" x2="557" y2="300"/>
+<line class="blade c" x1="583" y1="300" x2="597" y2="300"/>
+<line class="barra a" x1="557" y1="308" x2="565" y2="308"/>
+<line class="barra c" x1="575" y1="308" x2="583" y2="308"/>
+</g>
+<g id="i_ctDVC1" class="conm">
+<text x="730" y="242" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">2P7 · MX641</text>
+<text x="730" y="254" text-anchor="middle" class="cname">DVC1</text>
+<rect class="cbox" x="704" y="262" width="52" height="18"/>
+<text x="717" y="275" text-anchor="middle" class="clab">A</text><text x="743" y="275" text-anchor="middle" class="clab">C</text>
+<circle cx="701" cy="300" r="2.5"/><circle cx="759" cy="300" r="2.5"/>
+<circle cx="717" cy="300" r="2.5"/><circle cx="743" cy="300" r="2.5"/>
+<line class="blade a" x1="703" y1="300" x2="717" y2="300"/>
+<line class="blade c" x1="743" y1="300" x2="757" y2="300"/>
+<line class="barra a" x1="717" y1="308" x2="725" y2="308"/>
+<line class="barra c" x1="735" y1="308" x2="743" y2="308"/>
+</g>
+<g id="i_gCEVC"><path class="w" d="M 470 430 H 622"/><path class="w" d="M 678 430 H 830"/></g><text x="650" y="408" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P1 · MX643-B</text><g id="i_ctCEVC" class="sym f-rce"><text x="650" y="420" text-anchor="middle">CE VC</text><circle cx="622" cy="430" r="2.5"/><circle cx="678" cy="430" r="2.5"/><line class="bo" x1="625" y1="430" x2="669" y2="417"/><line class="bc" x1="625" y1="430" x2="675" y2="430"/></g>
+<g id="i_gFSVC"><path class="w" d="M 470 430 V 550 H 622"/><path class="w" d="M 678 550 H 830 V 430"/></g><g id="i_ctFSVC" class="sym "><text x="650" y="572" text-anchor="middle">R.CEFS.VC</text><circle cx="622" cy="550" r="2.5"/><circle cx="678" cy="550" r="2.5"/><line class="bo" x1="625" y1="550" x2="669" y2="537"/><line class="bc" x1="625" y1="550" x2="675" y2="550"/></g>
+<circle cx="830" cy="430" r="3.5" fill="var(--border-strong)"/><circle cx="1090" cy="430" r="3.5" fill="var(--border-strong)"/><g id="i_gApVT"><path class="w" d="M 830 430 V 300 H 931"/><path class="w" d="M 989 300 H 1090 V 430"/></g>
+<g id="i_ctDVC2" class="conm">
+<text x="960" y="242" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">3P3 · MX641</text>
+<text x="960" y="254" text-anchor="middle" class="cname">DVC2</text>
+<rect class="cbox" x="934" y="262" width="52" height="18"/>
+<text x="947" y="275" text-anchor="middle" class="clab">A</text><text x="973" y="275" text-anchor="middle" class="clab">C</text>
+<circle cx="931" cy="300" r="2.5"/><circle cx="989" cy="300" r="2.5"/>
+<circle cx="947" cy="300" r="2.5"/><circle cx="973" cy="300" r="2.5"/>
+<line class="blade a" x1="933" y1="300" x2="947" y2="300"/>
+<line class="blade c" x1="973" y1="300" x2="987" y2="300"/>
+<line class="barra a" x1="947" y1="308" x2="955" y2="308"/>
+<line class="barra c" x1="965" y1="308" x2="973" y2="308"/>
+</g>
+<g id="i_gCEVT"><path class="w" d="M 830 430 H 932"/><path class="w" d="M 988 430 H 1090"/></g><text x="960" y="408" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P2 · MX643-B</text><g id="i_ctCEVT" class="sym f-rce"><text x="960" y="420" text-anchor="middle">CE VT</text><circle cx="932" cy="430" r="2.5"/><circle cx="988" cy="430" r="2.5"/><line class="bo" x1="935" y1="430" x2="979" y2="417"/><line class="bc" x1="935" y1="430" x2="985" y2="430"/></g>
+<g id="i_gFSVT"><path class="w" d="M 830 430 V 550 H 932"/><path class="w" d="M 988 550 H 1090 V 430"/></g><g id="i_ctFSVT" class="sym "><text x="960" y="572" text-anchor="middle">R.CEFS.VT</text><circle cx="932" cy="550" r="2.5"/><circle cx="988" cy="550" r="2.5"/><line class="bo" x1="935" y1="550" x2="979" y2="537"/><line class="bc" x1="935" y1="550" x2="985" y2="550"/></g>
+<circle cx="1090" cy="430" r="3.5" fill="var(--border-strong)"/><circle cx="1350" cy="430" r="3.5" fill="var(--border-strong)"/><g id="i_gApVP"><path class="w" d="M 1090 430 V 300 H 1191"/><path class="w" d="M 1249 300 H 1350 V 430"/></g>
+<g id="i_ctDVP" class="conm">
+<text x="1220" y="242" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">3P7 · MX641</text>
+<text x="1220" y="254" text-anchor="middle" class="cname">DVP</text>
+<rect class="cbox" x="1194" y="262" width="52" height="18"/>
+<text x="1207" y="275" text-anchor="middle" class="clab">A</text><text x="1233" y="275" text-anchor="middle" class="clab">C</text>
+<circle cx="1191" cy="300" r="2.5"/><circle cx="1249" cy="300" r="2.5"/>
+<circle cx="1207" cy="300" r="2.5"/><circle cx="1233" cy="300" r="2.5"/>
+<line class="blade a" x1="1193" y1="300" x2="1207" y2="300"/>
+<line class="blade c" x1="1233" y1="300" x2="1247" y2="300"/>
+<line class="barra a" x1="1207" y1="308" x2="1215" y2="308"/>
+<line class="barra c" x1="1225" y1="308" x2="1233" y2="308"/>
+</g>
+<g id="i_gCEVP"><path class="w" d="M 1090 430 H 1192"/><path class="w" d="M 1248 430 H 1350"/></g><text x="1220" y="408" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P4 · MX643-B</text><g id="i_ctCEVP" class="sym f-rce"><text x="1220" y="420" text-anchor="middle">CE VP</text><circle cx="1192" cy="430" r="2.5"/><circle cx="1248" cy="430" r="2.5"/><line class="bo" x1="1195" y1="430" x2="1239" y2="417"/><line class="bc" x1="1195" y1="430" x2="1245" y2="430"/></g>
+<g id="i_gFSVP"><path class="w" d="M 1090 430 V 550 H 1192"/><path class="w" d="M 1248 550 H 1350 V 430"/></g><g id="i_ctFSVP" class="sym "><text x="1220" y="572" text-anchor="middle">R.CEFS.VP</text><circle cx="1192" cy="550" r="2.5"/><circle cx="1248" cy="550" r="2.5"/><line class="bo" x1="1195" y1="550" x2="1239" y2="537"/><line class="bc" x1="1195" y1="550" x2="1245" y2="550"/></g>
+<circle cx="1560" cy="430" r="3.5" fill="var(--border-strong)"/><g id="i_gCEout"><path class="w" d="M 1350 430 H 1590"/></g>
+<text x="1620" y="394" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P6 · MX642</text><g id="i_coRSIAT" class="coil f-rss"><text x="1620" y="406" text-anchor="middle">RS IAT</text><path class="zz" d="M 1590 430 L 1605 408 L 1620 430 L 1635 408 L 1650 430"/></g><g id="i_gCoil"><path class="w" d="M 1650 430 H 1690"/></g><text x="1696" y="434">+48V</text><rect class="zona" x="20" y="740" width="480" height="190" rx="10"/><text x="30" y="762" style="font-weight:500;fill:var(--text-primary)">Local Técnico Las Mercedes · armario MC</text><text x="70" y="822" text-anchor="end">0V</text><g id="i_gZG"><path class="w" d="M 76 818 H 122"/></g><text x="150" y="794" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">P2 · MX642</text><g id="i_coRRZG" class="sym f-rrzb"><text x="150" y="806" text-anchor="middle">RR.ZG</text><circle cx="122" cy="818" r="2.5"/><circle cx="178" cy="818" r="2.5"/><line class="bo" x1="125" y1="818" x2="169" y2="805"/><line class="bc" x1="125" y1="818" x2="175" y2="818"/></g><g id="i_gZG2"><path class="w" d="M 178 818 H 190"/></g><text x="250" y="792" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">1P1 · MX643-B</text><g id="i_ctCES11" class="sym f-rce"><text x="250" y="804" text-anchor="middle">CE S11</text><circle cx="222" cy="818" r="2.5"/><circle cx="278" cy="818" r="2.5"/><line class="bo" x1="225" y1="818" x2="269" y2="805"/><line class="bc" x1="225" y1="818" x2="275" y2="818"/></g>
+<circle cx="190" cy="818" r="3.5" fill="var(--border-strong)"/><circle cx="310" cy="818" r="3.5" fill="var(--border-strong)"/><g id="i_gFSS11"><path class="w" d="M 190 818 V 878 H 222"/><path class="w" d="M 278 878 H 310 V 818"/></g>
+<g id="i_ctFSS11" class="sym "><text x="250" y="900" text-anchor="middle">R.CEFS.S11</text><circle cx="222" cy="878" r="2.5"/><circle cx="278" cy="878" r="2.5"/><line class="bo" x1="225" y1="878" x2="269" y2="865"/><line class="bc" x1="225" y1="878" x2="275" y2="878"/></g>
+<g id="i_gS11out"><path class="w" d="M 310 818 H 430"/></g>
+<text x="436" y="822" style="font-size:10px;fill:#3E77E0">al taller</text><path class="leader" style="stroke:#3E77E0" d="M 430 818 V 760 H 200 V 678"/><text x="-46" y="736" style="font-size:10px;fill:var(--text-secondary)">la bobina se energiza desde Las Mercedes y cierra su contacto, dejando pasar el 0V</text>
+<text x="-46" y="752" style="font-size:10px;fill:var(--text-secondary)">del D30 del contacto sale al D06 del bloque CE VM</text><line class="zona" x1="1740" y1="60" x2="1740" y2="700"/><line class="zona" x1="1774" y1="60" x2="1774" y2="700"/><text x="1757" y="80" text-anchor="middle" style="font-size:9px">Cable</text><text x="1757" y="92" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">Túnel</text><rect class="zona" x="1790" y="60" width="220" height="640" rx="10"/><text x="1800" y="82" style="font-weight:500;fill:var(--text-primary)">Local S/ER TPA</text><g id="i_gLink"><path class="w" style="stroke-dasharray:5 4" d="M 1620 394 V 200 H 1870"/></g><text x="1900" y="164" text-anchor="middle" style="font-size:8px;fill:var(--text-secondary)">4C · 2J2 · 1P44</text><g id="i_coRSIATb" class="coil f-rss"><text x="1900" y="176" text-anchor="middle">RS IAT</text><path class="zz" d="M 1870 200 L 1885 178 L 1900 200 L 1915 178 L 1930 200"/></g><g id="i_gLink2"><path class="w" d="M 1930 200 H 1970"/></g><text x="1976" y="204">0V</text><path class="leader" style="stroke:#3E77E0" d="M 1900 204 V 300"/><text x="1900" y="322" text-anchor="middle" style="font-size:11px;fill:var(--text-secondary)">habilita el cierre</text><text x="1900" y="338" text-anchor="middle" style="font-size:11px;fill:var(--text-secondary)">del IAT por el PMT</text><g class="sym"><circle cx="34" cy="988" r="2.5"/><circle cx="62" cy="988" r="2.5"/><line x1="37" y1="988" x2="57" y2="977"/></g><text x="70" y="992" style="font-size:11px">abierto</text><g class="sym"><circle cx="150" cy="988" r="2.5"/><circle cx="178" cy="988" r="2.5"/><line x1="153" y1="988" x2="175" y2="988"/></g><text x="186" y="992" style="font-size:11px">cerrado</text><line x1="260" y1="988" x2="300" y2="988" stroke="#EF9F27" stroke-width="2" stroke-dasharray="6 4"/><text x="308" y="992" style="font-size:11px">energizado</text><rect x="430" y="981" width="11" height="11" rx="2" fill="none" stroke="#E24B4A" stroke-width="1.5"/><text x="447" y="991" style="font-size:11px">corte de emergencia</text><rect x="620" y="981" width="11" height="11" rx="2" fill="none" stroke="#3E77E0" stroke-width="1.5"/><text x="637" y="991" style="font-size:11px">relés de Las Mercedes</text></svg>
+
+</div>
+
+<div class="panel">
+<fieldset class="grp">
+<legend>1 · Condición de zona G · Las Mercedes</legend>
+<label><input type="checkbox" id="i_cbZG" checked> Contacto RR.ZG cerrado <span style="color:var(--text-secondary)">(zona G armada)</span></label>
+<label><input type="checkbox" id="i_cbCES11"> CE S11 golpeado</label>
+<label><input type="checkbox" id="i_cbFSS11"> Inhib. R.CEFS.S11</label>
+</fieldset>
+<fieldset class="grp">
+<legend>2 · Aparatos · por recinto, en paralelo con su CE</legend>
+<label><input type="checkbox" id="i_cbDVM"> DVM abierto</label>
+<label><input type="checkbox" id="i_cbSVMS"> SVMS abierto <span style="color:var(--text-secondary)">(recinto VM)</span></label>
+<label><input type="checkbox" id="i_cbSVC1S"> SVC1S abierto</label>
+<label><input type="checkbox" id="i_cbDVC1"> DVC1 abierto</label>
+<label><input type="checkbox" id="i_cbDVC2"> DVC2 abierto</label>
+<label><input type="checkbox" id="i_cbDVP"> DVP abierto</label>
+<label><input type="checkbox" id="i_cbSVT"> SVT abierto <span style="color:var(--text-secondary)">(socorro, en paralelo con el contacto RR CE S11)</span></label>
+<label><input type="checkbox" id="i_cbSGTS"> SGTS cerrado <span style="color:#2BA6A6">(puentea la fila)</span></label>
+</fieldset>
+<fieldset class="grp">
+<legend>3 · Cortes de emergencia del taller</legend>
+<label><input type="checkbox" id="i_cbCEVM"> CE VM golpeado</label>
+<label><input type="checkbox" id="i_cbFSVM"> Inhib. R.CEFS.VM</label>
+<label><input type="checkbox" id="i_cbCEVC"> CE VC golpeado</label>
+<label><input type="checkbox" id="i_cbFSVC"> Inhib. R.CEFS.VC</label>
+<label><input type="checkbox" id="i_cbCEVT"> CE VT golpeado</label>
+<label><input type="checkbox" id="i_cbFSVT"> Inhib. R.CEFS.VT</label>
+<label><input type="checkbox" id="i_cbCEVP"> CE VP golpeado</label>
+<label><input type="checkbox" id="i_cbFSVP"> Inhib. R.CEFS.VP</label>
+</fieldset>
+<fieldset class="grp">
+<legend>4 · Mando del PMT</legend>
+<button class="btn" id="i_btnCerrar">Cerrar IAT</button>
+<button class="btn" id="i_btnAbrir">Abrir IAT</button>
+<button class="btn" id="i_btnRep">Reponer todo</button>
+<span id="i_estIAT" style="font-size:12px;color:var(--text-secondary)"></span>
+</fieldset>
+<fieldset class="grp">
+<legend>Ir al módulo enganchado</legend>
+<button class="btn" onclick="irModulo('mod-l4tpa')">Alimentación del Taller</button>
+<button class="btn" onclick="irModulo('mod-l4zg')">Condición de Zona G</button>
+</fieldset>
+</div>
+<div id="i_status"></div>
+</main>
+</section>
+
+<!-- ================= MÓDULO: TALLER PUENTE ALTO · ALIMENTACIÓN 750 V ================= -->
+<section id="mod-l4tpa" class="mod">
+<header>
+<button class="btn volver" onclick="irMenu()">&#8592; Volver al menú</button>
+<h1>Taller <span>Puente Alto</span> · Alimentación con corriente de tracción · Línea 4</h1>
+<p class="sub">S/ER Talleres · Cabina A · Cabinas C1, C2 y VP · Árbol de 750 Vcc con sus socorros</p>
+</header>
+<details class="guia">
+<summary>📖 Guía rápida para quien recién llega (clic para abrir)</summary>
+<div class="cont">
+<p><b>Qué estás viendo:</b> todo el árbol de 750 V del Taller Puente Alto, desde la S/ER hasta cada cochera y cada haz de vías. A diferencia de los otros módulos, acá no hay lógica de 48 V: es <b>potencia</b>. La pregunta que responde es simple — <i>¿hasta dónde llega la corriente con estos aparatos así?</i></p>
+<p><b>Cómo se alimenta normalmente:</b> por el <b>IAT</b>, telecomandado desde el PCC. Entra a la Cabina A por el <b>SIAT</b>, pasa por el <b>DGT</b> y de la barra salen las cinco derivaciones: DVM (vías de maniobras, con su CTP para el tramo de protección), SCVP (cabina VP), SVC1 (cabina C1) y SVC2 (cabina C2).</p>
+<p><b>Los socorros — esto es lo importante.</b> El mismo patrón se repite en cada nivel: cada disyuntor tiene al lado un seccionador que lo puentea, para poder seguir alimentando si el disyuntor falla.</p>
+<ul>
+<li><b>Falla el IAT</b> → se alimenta con el <b>SVT</b> manual y el <b>IATS</b> motorizado, ambos en el recinto de la S/ER del Taller. Dos orígenes posibles: desde la propia S/ER con el <b>IA</b> cerrado, o — si además falló la S/ER — desde las <b>vías principales</b> por la vía de enlace, o sea desde la <b>Zona G</b>.</li>
+<li><b>Falla el DGT</b> → lo puentea el <b>SGTS</b> y la barra de la Cabina A queda alimentada igual.</li>
+<li><b>Falla el DVM</b> → lo puentea el <b>SVMS</b> y las vías de maniobras siguen con tensión.</li>
+<li><b>Falla el DVC1</b> → lo puentea el <b>SVC1S</b> y la Cabina C1 sigue alimentando las cocheras.</li>
+</ul>
+<p><b>Prueba esto:</b> aprieta los botones de escenario de arriba. Cada uno arma la situación completa y verás el camino de la corriente moverse: por dónde entra ahora y qué quedó sin alimentación. Después abre y cierra aparatos a mano para ver qué se apaga.</p>
+<p><b>Las cocheras se alimentan por dos lados:</b> el haz de ingreso (SVH1 para las cocheras 1 a 9, SVH2 para las 10 a 16) y el grupo de la vía (SGC1 a SGC4, de a cuatro cocheras). Por eso cerrando distinto puedes dejar una cochera con tensión de un extremo y no del otro.</p>
+<p><b>La vía de pruebas:</b> el <b>SA</b> y el <b>SAE</b> arman el circuito de las resistencias C1 y C2. Con los dos cerrados el tren puede frenar con <b>recuperación</b>: la energía que devuelve al frenar sube por su diodo y se disipa en esas resistencias. Con ellos abiertos la vía tiene tensión pero sin frenado de recuperación. Fíjate en los diodos de las dos bajadas: obligan el sentido, tracción baja por una y recuperación vuelve por la otra.</p>
+<p><b>Los cortes de tramo:</b> fíjate en las marcas verticales sobre la vía. La energía de las vías principales llega hasta la <b>vía de enlace</b> y ahí se detiene — el tramo de protección y la vía de maniobras están separados de ella. Esos dos se alimentan <b>solo desde la cabina A</b>, por el DVM y su CTP. Así el taller y la línea nunca quedan unidos por la vía.</p>
+<p><b>Entonces para qué sirve la vía de enlace:</b> para alimentar el taller <b>en socorro</b>. Cuando falla el IAT, el SVT y el IATS toman tensión desde las vías principales por el enlace y la meten a la cabina A. Alimenta el circuito, no la vía.</p>
+<p><b>De dónde viene la tensión de la vía de enlace:</b> de la <b>Zona G</b>. Si la Zona G está energizada, la vía de enlace también lo está, y por ahí se puede alimentar el taller en socorro. Si la Zona G se cae, ese camino desaparece y el único origen posible pasa a ser la propia S/ER del Taller. Pruébalo con la casilla "Zona G sin tensión".</p>
+<p><b>Sobre los ruptores:</b> este diagrama es de <b>potencia</b> — muestra por dónde circula el 750 Vcc. Los ruptores de vía son parte de la lógica de mando de 48 V y no se representan acá, igual que en las figuras originales. Solo para dejarlo dicho: cuando se hace mantenimiento nocturno en las vías se deja operado un ruptor, eso abre el IAT y queda enclavado hasta normalizarlo en terreno, y para reponer hay que cumplir además la condición de zona y RS. Esa lógica va en un módulo aparte.</p>
+<p><b>La conexión con el resto del simulador:</b> la vía de enlace que ves abajo a la izquierda es la que une el taller con las vías principales. Es el mismo enlace que aparece en el módulo de Zona G, en el rótulo "Apertura de la Zona si IATS cerrado y ruptor accionado".</p>
+<p><b>Fuente:</b> figuras 6, 7, 8 y 9 de la descripción de alimentación del Taller Puente Alto. Los aparatos, sus nombres y qué alimenta cada uno salen de ahí. El trazado se dibujó siguiendo esas figuras.</p>
+</div>
+</details>
+<main>
+<div class="ctrl" style="margin-bottom:6px">
+<button class="btn" id="t_btnFit">Ajustar a pantalla</button>
+<label>Zoom <input type="range" id="t_zoom" min="30" max="140" value="100"></label>
+<span id="t_zoomVal" style="font-size:12px;color:var(--text-secondary)">100%</span>
+</div>
+
+<div class="panel" style="margin-bottom:8px">
+<fieldset class="grp" id="t_esc" style="flex:1 1 100%">
+<legend>Escenarios · aprieta uno y se arma solo</legend>
+<button class="btn" id="t_e0">Normal · por el IAT</button>
+<button class="btn" id="t_e1">Falla el IAT · socorro desde la S/ER</button>
+<button class="btn" id="t_e2">Falla la S/ER · socorro desde vías principales</button>
+<button class="btn" id="t_e3">Falla el DGT · puentear con SGTS</button>
+<button class="btn" id="t_e4">Falla el DVM · puentear con SVMS</button>
+<button class="btn" id="t_e5">Falla el DVC1 · puentear con SVC1S</button>
+</fieldset>
+</div>
+
+<div class="scrollwrap" id="t_wrap">
+<svg id="t_plano" width="1720" height="1180" viewBox="0 0 1720 1180" role="img">
+<title>Alimentación del Taller Puente Alto con corriente de tracción</title>
+<defs><marker id="t_ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="30" y="60" width="260" height="430" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/><text x="160" y="78" text-anchor="middle" class="cab">S/ER Talleres</text>
+<path d="M 110 96 H 170 L 140 128 Z" fill="none" stroke="var(--text-primary)" stroke-width="1.6"/><text x="140" y="90" text-anchor="middle" class="cab">rectificador</text><g id="t_gRect"><path class="w" d="M 140 128 V 150"/></g><circle cx="140" cy="150" r="3.5" fill="var(--border-strong)"/><g id="t_gBarSER"><path class="w" d="M 80 150 H 215"/></g><g id="t_gIAcol"><path class="w" d="M 80 150 V 172"/></g><g id="t_IA" class="ap"><circle cx="80" cy="172" r="3"/><circle cx="80" cy="202" r="3"/><line class="bc" x1="80" y1="172" x2="80" y2="202"/><line class="bo" x1="80" y1="172" x2="93" y2="198"/><text x="94" y="188" class="apn">IA</text></g>
+<g id="t_gIAmid"><path class="w" d="M 80 202 V 252"/></g><g id="t_SV" class="ap"><circle cx="80" cy="252" r="3"/><circle cx="80" cy="282" r="3"/><line class="bc" x1="80" y1="252" x2="80" y2="282"/><line class="bo" x1="80" y1="252" x2="93" y2="278"/><text x="94" y="268" class="apn">SV</text></g>
+<g id="t_gIAbot"><path class="w" d="M 80 282 V 452 H 215"/></g><g id="t_gIATcol"><path class="w" d="M 215 150 V 172"/></g><g id="t_IAT" class="ap"><circle cx="215" cy="172" r="3"/><circle cx="215" cy="202" r="3"/><line class="bc" x1="215" y1="172" x2="215" y2="202"/><line class="bo" x1="215" y1="172" x2="228" y2="198"/><text x="229" y="188" class="apn">IAT</text></g>
+<g id="t_gIATmid"><path class="w" d="M 215 202 V 226"/></g><circle cx="215" cy="226" r="3.5" fill="var(--border-strong)"/><g id="t_IATS" class="ap"><circle cx="215" cy="250" r="3"/><circle cx="215" cy="280" r="3"/><line class="bc" x1="215" y1="250" x2="215" y2="280"/><line class="bo" x1="215" y1="250" x2="228" y2="276"/><text x="229" y="266" class="apn">IATS</text></g>
+<circle cx="262" cy="250" r="9" fill="none" stroke="var(--text-secondary)"/><text x="262" y="254" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">M</text><path d="M 232 250 H 250" stroke="var(--text-secondary)" stroke-width="1" stroke-dasharray="2 2"/><g id="t_gIATSbot"><path class="w" d="M 215 280 V 330"/></g><g id="t_SVT" class="ap"><circle cx="215" cy="330" r="3"/><circle cx="215" cy="360" r="3"/><line class="bc" x1="215" y1="330" x2="215" y2="360"/><line class="bo" x1="215" y1="330" x2="228" y2="356"/><text x="236" y="350" class="apn">SVT</text></g>
+<g id="t_gSVTbot"><path class="w" d="M 215 360 V 452"/></g><circle cx="215" cy="452" r="3.5" fill="var(--border-strong)"/><g id="t_gEnl"><path class="w" d="M 215 452 V 620"/></g><g id="t_gEnl2"><path class="w" d="M 60 620 H 264"/></g><text x="150" y="600" text-anchor="middle" class="via">Vía de enlace</text><path d="M 60 620 V 668" stroke="var(--text-secondary)" stroke-width="1.4" marker-end="url(#t_ar)" fill="none"/><text x="60" y="688" text-anchor="middle" class="via">Vías principales</text><text x="60" y="702" text-anchor="middle" style="font-size:11px;fill:var(--text-secondary)">(Zona G)</text><rect x="320" y="60" width="1180" height="500" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/><text x="910" y="78" text-anchor="middle" class="cab">Cabina A</text>
+<g id="t_gEntA"><path class="w" d="M 215 226 H 300 V 300 H 380"/></g><g id="t_SIAT" class="ap"><circle cx="380" cy="300" r="3"/><circle cx="410" cy="300" r="3"/><line class="bc" x1="380" y1="300" x2="410" y2="300"/><line class="bo" x1="380" y1="300" x2="406" y2="287"/><text x="395" y="282" text-anchor="middle" class="apn">SIAT</text></g>
+<g id="t_gSIAT"><path class="w" d="M 410 300 H 440 V 240"/></g><circle cx="440" cy="240" r="3.5" fill="var(--border-strong)"/><circle cx="440" cy="330" r="3.5" fill="var(--border-strong)"/><g id="t_gDGTin"><path class="w" d="M 440 240 H 560 V 262"/></g><g id="t_DGT" class="ap"><circle cx="560" cy="262" r="3"/><circle cx="560" cy="292" r="3"/><line class="bc" x1="560" y1="262" x2="560" y2="292"/><line class="bo" x1="560" y1="262" x2="573" y2="288"/><text x="578" y="278" class="apn">DGT</text></g>
+<g id="t_gDGTout"><path class="w" d="M 560 292 V 330"/></g><g id="t_gSGTS"><path class="w" d="M 440 240 H 470 V 262"/><path class="w" d="M 470 292 V 330"/></g><g id="t_SGTS" class="ap"><circle cx="470" cy="262" r="3"/><circle cx="470" cy="292" r="3"/><line class="bc" x1="470" y1="262" x2="470" y2="292"/><line class="bo" x1="470" y1="262" x2="483" y2="288"/><text x="452" y="252" text-anchor="end" class="apn">SGTS</text></g>
+<text x="452" y="316" text-anchor="end" class="soc">socorro del DGT</text><g id="t_gBarA"><path class="w" d="M 470 330 H 1420"/></g><circle cx="470" cy="330" r="3.5" fill="var(--border-strong)"/><circle cx="700" cy="330" r="3.5" fill="var(--border-strong)"/><circle cx="820" cy="330" r="3.5" fill="var(--border-strong)"/><circle cx="1000" cy="330" r="3.5" fill="var(--border-strong)"/><circle cx="1180" cy="330" r="3.5" fill="var(--border-strong)"/><circle cx="1360" cy="330" r="3.5" fill="var(--border-strong)"/><text x="1000" y="352" class="via">barra cabina A</text><g id="t_DVM" class="ap"><circle cx="760" cy="360" r="3"/><circle cx="760" cy="390" r="3"/><line class="bc" x1="760" y1="360" x2="760" y2="390"/><line class="bo" x1="760" y1="360" x2="773" y2="386"/><text x="774" y="376" class="apn">DVM</text></g>
+<g id="t_gDVMin"><path class="w" d="M 760 330 V 360"/></g><g id="t_gDVMout"><path class="w" d="M 760 390 V 470"/></g><circle cx="760" cy="330" r="3.5" fill="var(--border-strong)"/><circle cx="760" cy="470" r="3.5" fill="var(--border-strong)"/>
+<g id="t_SVMS" class="ap"><circle cx="860" cy="380" r="3"/><circle cx="860" cy="410" r="3"/><line class="bc" x1="860" y1="380" x2="860" y2="410"/><line class="bo" x1="860" y1="380" x2="873" y2="406"/><text x="874" y="398" class="apn">SVMS</text></g>
+<g id="t_gSVMSin"><path class="w" d="M 860 330 V 380"/></g><g id="t_gSVMSout"><path class="w" d="M 860 410 V 470 H 760"/></g><text x="876" y="424" class="soc">socorro del DVM</text><g id="t_gVM"><path class="w" d="M 760 470 V 620"/></g>
+<circle cx="760" cy="620" r="3.5" fill="var(--border-strong)"/>
+<g id="t_gVMder"><path class="w" d="M 760 620 H 521"/><path class="w" d="M 760 620 H 840"/></g>
+<g id="t_gCTPin"><path class="w" d="M 760 470 H 470 V 520"/></g>
+<g id="t_CTP" class="ap"><circle cx="470" cy="520" r="3"/><circle cx="470" cy="550" r="3"/><line class="bc" x1="470" y1="520" x2="470" y2="550"/><line class="bo" x1="470" y1="520" x2="483" y2="546"/><text x="490" y="540" class="apn">CTP</text></g>
+<g id="t_gCTPout"><path class="w" d="M 470 550 V 620"/><path class="w" d="M 509 620 H 276"/></g>
+<line x1="270" y1="606" x2="270" y2="634" stroke="var(--text-primary)" stroke-width="2.5"/>
+<line x1="515" y1="606" x2="515" y2="634" stroke="var(--text-primary)" stroke-width="2.5"/>
+<text x="270" y="600" text-anchor="middle" style="font-size:10px;fill:var(--text-primary)">corte</text>
+<text x="515" y="600" text-anchor="middle" style="font-size:10px;fill:var(--text-primary)">corte</text>
+<text x="392" y="648" text-anchor="middle" class="soc">tramo de protección</text>
+
+<text x="640" y="600" text-anchor="middle" class="via">Vía de maniobras</text><path d="M 840 620 H 890" stroke="var(--text-secondary)" stroke-width="1.4" marker-end="url(#t_ar)" fill="none"/><g id="t_SCVP" class="ap"><circle cx="1000" cy="380" r="3"/><circle cx="1000" cy="410" r="3"/><line class="bc" x1="1000" y1="380" x2="1000" y2="410"/><line class="bo" x1="1000" y1="380" x2="1013" y2="406"/><text x="1014" y="396" class="apn">SCVP</text></g>
+<g id="t_SCVP_in"><path class="w" d="M 1000 330 V 380"/></g><g id="t_SVC1" class="ap"><circle cx="1180" cy="380" r="3"/><circle cx="1180" cy="410" r="3"/><line class="bc" x1="1180" y1="380" x2="1180" y2="410"/><line class="bo" x1="1180" y1="380" x2="1193" y2="406"/><text x="1194" y="396" class="apn">SVC1</text></g>
+<g id="t_SVC1_in"><path class="w" d="M 1180 330 V 380"/></g><g id="t_SVC2" class="ap"><circle cx="1360" cy="380" r="3"/><circle cx="1360" cy="410" r="3"/><line class="bc" x1="1360" y1="380" x2="1360" y2="410"/><line class="bo" x1="1360" y1="380" x2="1373" y2="406"/><text x="1374" y="396" class="apn">SVC2</text></g>
+<g id="t_SVC2_in"><path class="w" d="M 1360 330 V 380"/></g><g id="t_gToVP"><path class="w" d="M 1000 410 V 470"/></g><rect x="890" y="656" width="290" height="230" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/><text x="900" y="646" class="cab">Cabina VP · vía de pruebas</text>
+<g id="t_gVPin"><path class="w" d="M 1000 470 V 660"/></g><g id="t_DVP" class="ap"><circle cx="1000" cy="660" r="3"/><circle cx="1000" cy="690" r="3"/><line class="bc" x1="1000" y1="660" x2="1000" y2="690"/><line class="bo" x1="1000" y1="660" x2="1013" y2="686"/><text x="1014" y="676" class="apn">DVP</text></g>
+<g id="t_gDVPout"><path class="w" d="M 1000 690 V 720"/></g><circle cx="1000" cy="720" r="3.5" fill="var(--border-strong)"/><g id="t_gSA"><path class="w" d="M 1000 720 H 1040"/><path class="w" d="M 1070 720 H 1130"/></g><g id="t_SA" class="ap"><circle cx="1040" cy="720" r="3"/><circle cx="1070" cy="720" r="3"/><line class="bc" x1="1040" y1="720" x2="1070" y2="720"/><line class="bo" x1="1040" y1="720" x2="1066" y2="707"/><text x="1055" y="702" text-anchor="middle" class="apn">SA</text></g>
+<g id="t_gSAE"><path class="w" d="M 1040 800 H 1130"/></g><g id="t_SAE" class="ap"><circle cx="1010" cy="800" r="3"/><circle cx="1040" cy="800" r="3"/><line class="bc" x1="1010" y1="800" x2="1040" y2="800"/><line class="bo" x1="1010" y1="800" x2="1036" y2="787"/><text x="1025" y="782" text-anchor="middle" class="apn">SAE</text></g>
+<circle cx="1075" cy="720" r="3.5" fill="var(--border-strong)"/><circle cx="1075" cy="800" r="3.5" fill="var(--border-strong)"/>
+<g id="t_C1" class="ap"><circle cx="1075" cy="730" r="3"/><circle cx="1075" cy="752" r="3"/><line class="bc" x1="1075" y1="730" x2="1075" y2="752"/><line class="bo" x1="1075" y1="730" x2="1086" y2="748"/><text x="1090" y="746" class="apn">C1</text></g>
+<g id="t_gC1"><path class="w" d="M 1075 720 V 730"/><path class="w" d="M 1075 752 V 762"/><path class="w" d="M 1075 762 h7 v6 h-14 v6 h14 v6 h-14 v6 h7 V 800"/></g>
+<circle cx="1130" cy="720" r="3.5" fill="var(--border-strong)"/><circle cx="1130" cy="800" r="3.5" fill="var(--border-strong)"/>
+<g id="t_C2" class="ap"><circle cx="1130" cy="730" r="3"/><circle cx="1130" cy="752" r="3"/><line class="bc" x1="1130" y1="730" x2="1130" y2="752"/><line class="bo" x1="1130" y1="730" x2="1141" y2="748"/><text x="1145" y="746" class="apn">C2</text></g>
+<g id="t_gC2"><path class="w" d="M 1130 720 V 730"/><path class="w" d="M 1130 752 V 762"/><path class="w" d="M 1130 762 h7 v6 h-14 v6 h14 v6 h-14 v6 h7 V 800"/></g>
+<g id="t_gVPvia"><path class="w" d="M 1000 720 V 900"/></g><path d="M 994 840 h12 l-6 10 z" fill="none" stroke="var(--text-secondary)" stroke-width="1.2"/><g id="t_gVPret"><path class="w" d="M 1010 800 V 900"/></g><text x="1000" y="920" text-anchor="middle" class="via">Vía de pruebas · frenado de recuperación</text><rect x="60" y="716" width="780" height="404" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/><text x="260" y="736" text-anchor="middle" class="cab">Cabina C1 · Cocheras de Operación</text>
+<g id="t_gToC1"><path class="w" d="M 1180 410 V 660 H 700 V 740"/></g><g id="t_DVC1" class="ap"><circle cx="700" cy="740" r="3"/><circle cx="700" cy="770" r="3"/><line class="bc" x1="700" y1="740" x2="700" y2="770"/><line class="bo" x1="700" y1="740" x2="713" y2="766"/><text x="714" y="756" class="apn">DVC1</text></g>
+<g id="t_gDVC1out"><path class="w" d="M 700 770 V 800"/></g><g id="t_gSVC1S"><path class="w" d="M 700 700 H 600 V 740"/><path class="w" d="M 600 770 V 800"/></g><g id="t_SVC1S" class="ap"><circle cx="600" cy="740" r="3"/><circle cx="600" cy="770" r="3"/><line class="bc" x1="600" y1="740" x2="600" y2="770"/><line class="bo" x1="600" y1="740" x2="613" y2="766"/><text x="614" y="756" class="apn">SVC1S</text></g>
+<text x="596" y="694" text-anchor="end" class="soc">socorro del DVC1</text><g id="t_gBarC1"><path class="w" d="M 120 800 H 700"/></g><circle cx="700" cy="800" r="3.5" fill="var(--border-strong)"/><circle cx="600" cy="800" r="3.5" fill="var(--border-strong)"/><circle cx="120" cy="800" r="3.5" fill="var(--border-strong)"/><g id="t_SVH1_in"><path class="w" d="M 120 800 V 840"/></g><g id="t_SVH1" class="ap"><circle cx="120" cy="840" r="3"/><circle cx="120" cy="870" r="3"/><line class="bc" x1="120" y1="840" x2="120" y2="870"/><line class="bo" x1="120" y1="840" x2="133" y2="866"/><text x="120" y="826" text-anchor="middle" class="apn">SVH1</text></g>
+<g id="t_SVH1_out"><path class="w" d="M 120 870 V 1000"/></g><text x="120" y="1018" text-anchor="middle" class="dst">Haz de vías</text><text x="120" y="1032" text-anchor="middle" class="dst">cocheras 1 a 9</text><circle cx="230" cy="800" r="3.5" fill="var(--border-strong)"/><g id="t_SVH2_in"><path class="w" d="M 230 800 V 840"/></g><g id="t_SVH2" class="ap"><circle cx="230" cy="840" r="3"/><circle cx="230" cy="870" r="3"/><line class="bc" x1="230" y1="840" x2="230" y2="870"/><line class="bo" x1="230" y1="840" x2="243" y2="866"/><text x="230" y="826" text-anchor="middle" class="apn">SVH2</text></g>
+<g id="t_SVH2_out"><path class="w" d="M 230 870 V 1000"/></g><text x="230" y="1018" text-anchor="middle" class="dst">Haz de vías</text><text x="230" y="1032" text-anchor="middle" class="dst">cocheras 10 a 16</text><circle cx="340" cy="800" r="3.5" fill="var(--border-strong)"/><g id="t_SGC1_in"><path class="w" d="M 340 800 V 840"/></g><g id="t_SGC1" class="ap"><circle cx="340" cy="840" r="3"/><circle cx="340" cy="870" r="3"/><line class="bc" x1="340" y1="840" x2="340" y2="870"/><line class="bo" x1="340" y1="840" x2="353" y2="866"/><text x="340" y="826" text-anchor="middle" class="apn">SGC1</text></g>
+<g id="t_SGC1_out"><path class="w" d="M 340 870 V 1000"/></g><text x="340" y="1018" text-anchor="middle" class="dst">Cocheras</text><text x="340" y="1032" text-anchor="middle" class="dst">G1-G4</text><circle cx="440" cy="800" r="3.5" fill="var(--border-strong)"/><g id="t_SGC2_in"><path class="w" d="M 440 800 V 840"/></g><g id="t_SGC2" class="ap"><circle cx="440" cy="840" r="3"/><circle cx="440" cy="870" r="3"/><line class="bc" x1="440" y1="840" x2="440" y2="870"/><line class="bo" x1="440" y1="840" x2="453" y2="866"/><text x="440" y="826" text-anchor="middle" class="apn">SGC2</text></g>
+<g id="t_SGC2_out"><path class="w" d="M 440 870 V 1000"/></g><text x="440" y="1018" text-anchor="middle" class="dst">Cocheras</text><text x="440" y="1032" text-anchor="middle" class="dst">G5-G8</text><circle cx="540" cy="800" r="3.5" fill="var(--border-strong)"/><g id="t_SGC3_in"><path class="w" d="M 540 800 V 840"/></g><g id="t_SGC3" class="ap"><circle cx="540" cy="840" r="3"/><circle cx="540" cy="870" r="3"/><line class="bc" x1="540" y1="840" x2="540" y2="870"/><line class="bo" x1="540" y1="840" x2="553" y2="866"/><text x="540" y="826" text-anchor="middle" class="apn">SGC3</text></g>
+<g id="t_SGC3_out"><path class="w" d="M 540 870 V 1000"/></g><text x="540" y="1018" text-anchor="middle" class="dst">Cocheras</text><text x="540" y="1032" text-anchor="middle" class="dst">G9-G12</text><circle cx="640" cy="800" r="3.5" fill="var(--border-strong)"/><g id="t_SGC4_in"><path class="w" d="M 640 800 V 840"/></g><g id="t_SGC4" class="ap"><circle cx="640" cy="840" r="3"/><circle cx="640" cy="870" r="3"/><line class="bc" x1="640" y1="840" x2="640" y2="870"/><line class="bo" x1="640" y1="840" x2="653" y2="866"/><text x="640" y="826" text-anchor="middle" class="apn">SGC4</text></g>
+<g id="t_SGC4_out"><path class="w" d="M 640 870 V 1000"/></g><text x="640" y="1018" text-anchor="middle" class="dst">Cocheras</text><text x="640" y="1032" text-anchor="middle" class="dst">G13-G16</text><text x="120" y="1052" text-anchor="middle" class="soc">+ cola de maniobras</text><rect x="1180" y="646" width="500" height="360" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/><text x="1300" y="672" text-anchor="middle" class="cab">Cabina C2 · Taller de Material Rodante</text>
+<g id="t_gToC2"><path class="w" d="M 1360 410 V 680"/></g><g id="t_DVC2" class="ap"><circle cx="1360" cy="680" r="3"/><circle cx="1360" cy="710" r="3"/><line class="bc" x1="1360" y1="680" x2="1360" y2="710"/><line class="bo" x1="1360" y1="680" x2="1373" y2="706"/><text x="1374" y="696" class="apn">DVC2</text></g>
+<g id="t_gDVC2out"><path class="w" d="M 1360 710 V 750"/></g><g id="t_gBarC2"><path class="w" d="M 1240 750 H 1620"/></g><circle cx="1240" cy="750" r="3.5" fill="var(--border-strong)"/><g id="t_SVTM_in"><path class="w" d="M 1240 750 V 790"/></g><g id="t_SVTM" class="ap"><circle cx="1240" cy="790" r="3"/><circle cx="1240" cy="820" r="3"/><line class="bc" x1="1240" y1="790" x2="1240" y2="820"/><line class="bo" x1="1240" y1="790" x2="1253" y2="816"/><text x="1240" y="776" text-anchor="middle" class="apn">SVTM</text></g>
+<circle cx="1360" cy="750" r="3.5" fill="var(--border-strong)"/><g id="t_SVL_in"><path class="w" d="M 1360 750 V 790"/></g><g id="t_SVL" class="ap"><circle cx="1360" cy="790" r="3"/><circle cx="1360" cy="820" r="3"/><line class="bc" x1="1360" y1="790" x2="1360" y2="820"/><line class="bo" x1="1360" y1="790" x2="1373" y2="816"/><text x="1360" y="776" text-anchor="middle" class="apn">SVL</text></g>
+<circle cx="1490" cy="750" r="3.5" fill="var(--border-strong)"/><g id="t_SVM2_in"><path class="w" d="M 1490 750 V 790"/></g><g id="t_SVM2" class="ap"><circle cx="1490" cy="790" r="3"/><circle cx="1490" cy="820" r="3"/><line class="bc" x1="1490" y1="790" x2="1490" y2="820"/><line class="bo" x1="1490" y1="790" x2="1503" y2="816"/><text x="1490" y="776" text-anchor="middle" class="apn">SVM2</text></g>
+<circle cx="1620" cy="750" r="3.5" fill="var(--border-strong)"/><g id="t_SVM1_in"><path class="w" d="M 1620 750 V 790"/></g><g id="t_SVM1" class="ap"><circle cx="1620" cy="790" r="3"/><circle cx="1620" cy="820" r="3"/><line class="bc" x1="1620" y1="790" x2="1620" y2="820"/><line class="bo" x1="1620" y1="790" x2="1633" y2="816"/><text x="1620" y="776" text-anchor="middle" class="apn">SVM1</text></g>
+<g id="t_SVTM_out"><path class="w" d="M 1240 820 V 900"/></g><text x="1240" y="918" text-anchor="middle" class="dst">Armario de troles</text><text x="1240" y="932" text-anchor="middle" class="dst">vías M1 a M4</text><g id="t_SVL_out"><path class="w" d="M 1360 820 V 860"/></g><rect x="1300" y="860" width="120" height="110" rx="8" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/><text x="1360" y="878" text-anchor="middle" class="cab">Cabina lavado</text>
+<g id="t_SVCL" class="ap"><circle cx="1360" cy="900" r="3"/><circle cx="1360" cy="930" r="3"/><line class="bc" x1="1360" y1="900" x2="1360" y2="930"/><line class="bo" x1="1360" y1="900" x2="1373" y2="926"/><text x="1374" y="916" class="apn">SVCL</text></g>
+<circle cx="1400" cy="900" r="9" fill="none" stroke="var(--text-secondary)"/><text x="1400" y="904" text-anchor="middle" style="font-size:9px;fill:var(--text-secondary)">M</text><path d="M 1376 900 H 1390" stroke="var(--text-secondary)" stroke-width="1" stroke-dasharray="2 2"/><g id="t_SVCL_out"><path class="w" d="M 1360 930 V 1000"/></g><text x="1360" y="1018" text-anchor="middle" class="dst">Nave de lavado</text><text x="1360" y="1032" text-anchor="middle" class="dst">y secado de trenes</text><g id="t_SVM2_out"><path class="w" d="M 1490 820 V 940"/></g><text x="1490" y="958" text-anchor="middle" class="dst">Torno en Foso y</text><text x="1490" y="972" text-anchor="middle" class="dst">T. Revisión · M5-M6-M7</text><g id="t_SVM1_out"><path class="w" d="M 1620 820 V 940"/></g><text x="1620" y="958" text-anchor="middle" class="dst">Talleres de</text><text x="1620" y="972" text-anchor="middle" class="dst">mantención · M1-M4</text></svg>
+</div>
+
+<div class="panel">
+<fieldset class="grp">
+<legend>Origen de la tensión</legend>
+<label><input type="checkbox" id="t_cbSER"> S/ER Talleres fuera de servicio</label>
+<label><input type="checkbox" id="t_cbZG"> Zona G sin tensión <span style="color:var(--text-secondary)">(deja la vía de enlace muerta)</span></label>
+<button class="btn" id="t_btnRep">Reponer todo a normal</button>
+</fieldset>
+<fieldset class="grp">
+<legend>S/ER Talleres y entrada</legend>
+<label><input type="checkbox" id="t_cbIA" checked> IA cerrado</label>
+<label><input type="checkbox" id="t_cbSV" checked> SV cerrado</label>
+<label><input type="checkbox" id="t_cbIAT" checked> IAT cerrado</label>
+<label><input type="checkbox" id="t_cbIATS"> IATS cerrado</label>
+<label><input type="checkbox" id="t_cbSVT"> SVT cerrado</label>
+<label><input type="checkbox" id="t_cbSIAT" checked> SIAT cerrado</label>
+</fieldset>
+<fieldset class="grp">
+<legend>Cabina A</legend>
+<label><input type="checkbox" id="t_cbDGT" checked> DGT cerrado</label>
+<label><input type="checkbox" id="t_cbSGTS"> SGTS cerrado <span style="color:#2BA6A6">(socorro)</span></label>
+<label><input type="checkbox" id="t_cbDVM" checked> DVM cerrado</label>
+<label><input type="checkbox" id="t_cbSVMS"> SVMS cerrado <span style="color:#2BA6A6">(socorro)</span></label>
+<label><input type="checkbox" id="t_cbCTP" checked> CTP cerrado</label>
+<label><input type="checkbox" id="t_cbSCVP" checked> SCVP cerrado</label>
+<label><input type="checkbox" id="t_cbSVC1" checked> SVC1 cerrado</label>
+<label><input type="checkbox" id="t_cbSVC2" checked> SVC2 cerrado</label>
+</fieldset>
+<fieldset class="grp">
+<legend>Cabina C1 · Cocheras de Operación</legend>
+<label><input type="checkbox" id="t_cbDVC1" checked> DVC1 cerrado</label>
+<label><input type="checkbox" id="t_cbSVC1S"> SVC1S cerrado <span style="color:#2BA6A6">(socorro)</span></label>
+<label><input type="checkbox" id="t_cbSVH1" checked> SVH1 · haz cocheras 1-9</label>
+<label><input type="checkbox" id="t_cbSVH2" checked> SVH2 · haz cocheras 10-16</label>
+<label><input type="checkbox" id="t_cbSGC1" checked> SGC1 · G1-G4</label>
+<label><input type="checkbox" id="t_cbSGC2" checked> SGC2 · G5-G8</label>
+<label><input type="checkbox" id="t_cbSGC3" checked> SGC3 · G9-G12</label>
+<label><input type="checkbox" id="t_cbSGC4" checked> SGC4 · G13-G16</label>
+</fieldset>
+<fieldset class="grp">
+<legend>Cabina C2 · Material Rodante</legend>
+<label><input type="checkbox" id="t_cbDVC2" checked> DVC2 cerrado</label>
+<label><input type="checkbox" id="t_cbSVTM" checked> SVTM · armario de troles</label>
+<label><input type="checkbox" id="t_cbSVL" checked> SVL · cabina de lavado</label>
+<label><input type="checkbox" id="t_cbSVCL" checked> SVCL · nave de lavado (motorizado)</label>
+<label><input type="checkbox" id="t_cbSVM2" checked> SVM2 · Torno en Foso</label>
+<label><input type="checkbox" id="t_cbSVM1" checked> SVM1 · mantención</label>
+</fieldset>
+<fieldset class="grp">
+<legend>Cabina VP · vía de pruebas</legend>
+<label><input type="checkbox" id="t_cbDVP" checked> DVP cerrado</label>
+<label><input type="checkbox" id="t_cbSA" checked> SA cerrado</label>
+<label><input type="checkbox" id="t_cbSAE" checked> SAE cerrado</label>
+<label><input type="checkbox" id="t_cbC1" checked> C1 · resistencia 1</label>
+<label><input type="checkbox" id="t_cbC2" checked> C2 · resistencia 2</label>
+</fieldset>
+</div>
+<div id="t_status">Alimentación normal por el IAT.</div>
+</main>
+</section>
+
 <!-- ================= MÓDULO: CONDICIÓN COCHERAS · APERTURA ZONA C ================= -->
 <section id="mod-l4cin" class="mod">
 <header>
@@ -3683,6 +4093,12 @@ var MODULOS = [
   { id:"mod-l4zc", linea:"Línea 4", titulo:"Condición de Zona C · Sección 4",
     desc:"Estación Las Torres. Una sección como la Zona A, más el enclavamiento R A ZC: el ramal de Cocheras puede abrir la zona (plano Condición Cocheras).",
     disponible:true },
+  { id:"mod-l4iat", linea:"Línea 4", titulo:"Condición RS IAT · Taller Puente Alto",
+    desc:"La lógica de 48 V que habilita el cierre del IAT. Muestra la secuencia: primero la condición de zona G en Las Mercedes, y con el RR CE S11 energizado, la condición RS del taller.",
+    disponible:true },
+  { id:"mod-l4tpa", linea:"Línea 4", titulo:"Taller Puente Alto · Alimentación con corriente de tracción",
+    desc:"El árbol completo de 750 Vcc del taller: S/ER, Cabina A y las cabinas C1, C2 y VP. Muestra los socorros de cada nivel y los dos modos del corte de emergencia.",
+    disponible:true },
   { id:"mod-l4cin", linea:"Línea 4", titulo:"Condición Cocheras · Apertura de la Zona C",
     desc:"Local Técnico Talleres Cocheras Intermedia. La cadena de las tres vías del recinto que arma el R A ZC y su repetidor RR A ZC en Las Torres: el ramal puede abrir la Zona C.",
     disponible:true },
@@ -4091,6 +4507,329 @@ g('c_btnIAa').onclick=function(){st.iaAb=true;render();};
 render();
 })();
 
+
+
+
+/* ============ MÓDULO IAT: CONDICIÓN RS IAT · TALLER PUENTE ALTO ============ */
+(function(){
+function g(id){return document.getElementById(id);}
+var BW=2120, BH=1020;
+function setZoom(p){var s=g('i_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('i_zoom').value=p;g('i_zoomVal').textContent=Math.round(p)+'%';}
+function fit(){var w=g('i_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
+MODFIT['mod-l4iat'] = fit;
+g('i_zoom').oninput=function(){setZoom(parseFloat(this.value));};
+g('i_btnFit').onclick=fit;
+
+var st = {zg:true, ceS11:false, fsS11:false, sgts:false, iatAb:true,
+  DVM:false, SVMS:false, SVC1S:false, DVC1:false, DVC2:false, DVP:false, SVT:false,
+  ceVM:false, ceVC:false, ceVT:false, ceVP:false,
+  fsVM:false, fsVC:false, fsVT:false, fsVP:false};
+
+function solve(){
+  // PASO 1 — condición de zona G, en Las Mercedes:
+  // con el RR.ZG energizado y el CE S11 sano (o inhibido) se energiza el RR CE S11
+  // en Las Mercedes: el contacto RR.ZG, y después el CE S11 con dos ramas en paralelo:
+  // su propio R.CEFS.S11, y el SVT (socorro). De ahí sale el 0V a la cadena del taller.
+  var ceS11 = !st.ceS11 || st.fsS11;
+  var rrces11 = st.zg && ceS11;
+  // PASO 2 — condición RS del taller:
+  // la fila de aparatos en serie, con el SGTS puenteándola en paralelo
+  // por recinto: los aparatos en serie entre ellos, y esa rama en paralelo con su CE (o su RCEFS)
+  // la rama de aparatos da paso con el recinto DESCONECTADO (aparatos abiertos):
+  // si diera paso con ellos cerrados, estaría puenteando el CE en operación normal
+  // y el corte de emergencia no podría cortar nunca.
+  var apVM = st.DVM && st.SVMS;        // DVM en serie con SVMS
+  var apVC = st.SVC1S && st.DVC1;      // SVC1S en serie con DVC1
+  var apVT = st.DVC2;
+  var apVP = st.DVP;
+  var ceVM = !st.ceVM || st.fsVM, ceVC = !st.ceVC || st.fsVC;
+  var ceVT = !st.ceVT || st.fsVT, ceVP = !st.ceVP || st.fsVP;
+  var gVM = apVM || ceVM, gVC = apVC || ceVC, gVT = apVT || ceVT, gVP = apVP || ceVP;
+  var fila = gVM && gVC && gVT && gVP;
+  var aparatos = fila || st.sgts;   // el SGTS puentea toda la fila
+  // ENTRADA de la cadena: arriba el SVT (socorro), abajo el contacto del RR CE S11.
+  // El 0V pasa por cualquiera de los dos.
+  var entrada = rrces11 || !st.SVT;
+  var rsiat = entrada && aparatos;
+  return {ceS11:ceS11, rrces11:rrces11, fila:fila, aparatos:aparatos,
+    apVM:apVM, apVC:apVC, apVT:apVT, apVP:apVP,
+    ceVM:ceVM, ceVC:ceVC, ceVT:ceVT, ceVP:ceVP,
+    gVM:gVM, gVC:gVC, gVT:gVT, gVP:gVP, entrada:entrada, rsiat:rsiat};
+}
+
+function statusMsg(r){
+  if(!r.entrada) return 'Sin entrada a la cadena: el contacto RR CE S11 está abierto y el SVT también, así que el 0V no pasa a los recintos.' + (st.iatAb?'':' El IAT se abrió.');
+  if(!r.rrces11 && st.SVT){
+    if(!st.zg) return 'PASO 1 PENDIENTE: la zona G no está armada, así que el RR.ZG está caído y el RR CE S11 no se energiza. Sin ese contacto la cadena del taller no puede formar la condición RS. Primero hay que armar la condición de zona.';
+    return 'PASO 1 PENDIENTE: el CE S11 está golpeado en Las Mercedes y sin inhibir, así que el RR CE S11 no se energiza. Repone el corte o inhíbelo con su R.CEFS.S11.';
+  }
+  if(!r.aparatos){
+    var v = !r.gVM?'VM':(!r.gVC?'VC':(!r.gVT?'VT':'VP'));
+    return 'PASO 1 LISTO (RR CE S11 energizado), pero el recinto '+v+' no da paso: su CE está golpeado sin inhibir y sus aparatos tampoco cierran la rama. La cadena se corta y no se forma el RS IAT.' + (st.iatAb?'':' El IAT se abrió.');
+  }
+  return 'CONDICIÓN RS IAT FORMADA: se energiza la bobina RS IAT y la señal llega por cable túnel al Local S/ER TPA. El IAT queda HABILITADO — ahora el PMT puede cerrarlo por comando.' + (st.iatAb?'':' IAT cerrado.');
+}
+
+function setOn(id,on){var e=g(id);if(e)e.classList.toggle('on',on);}
+function setW(id,on){var e=g(id);if(e)e.querySelectorAll('.w').forEach(function(w){w.classList.toggle('live',!!on);});}
+function setConm(id, abierto, live){
+  var e=g(id); if(!e) return;
+  function act(sel,on){var el=e.querySelector(sel); if(el) el.classList.toggle('on',on);}
+  act('.blade.a',abierto); act('.barra.a',abierto);
+  act('.blade.c',!abierto); act('.barra.c',!abierto);
+  e.classList.toggle('live', !!live);
+}
+
+var timers=[];
+function render(){
+  timers.forEach(clearTimeout); timers=[];
+  var r = solve();
+  // disparo: sin condición RS el IAT se abre solo
+  if(!r.rsiat && !st.iatAb){ st.iatAb = true; }
+  var stages=[
+    function(){
+      setW('i_gZG', true); setOn('i_coRRZG', st.zg); setW('i_gZG2', st.zg);
+      setOn('i_ctCES11', !st.ceS11); setOn('i_ctFSS11', st.fsS11);
+      setW('i_gFSS11', st.zg && st.fsS11);
+
+      setW('i_gS11out', r.rrces11);
+      setOn('i_coRRCES11', r.rrces11); setW('i_gBob', r.rrces11);
+    },
+    function(){
+      setW('i_gCEout', r.rsiat);
+      setConm('i_ctDVM', st.DVM, r.apVM && !st.sgts); setConm('i_ctSVMS', st.SVMS, r.apVM && !st.sgts);
+      setConm('i_ctSVC1S', st.SVC1S, r.apVC && !st.sgts); setConm('i_ctDVC1', st.DVC1, r.apVC && !st.sgts);
+      setConm('i_ctDVC2', st.DVC2, r.apVT && !st.sgts);
+      setConm('i_ctDVP', st.DVP, r.apVP && !st.sgts);
+      setConm('i_ctSGTS', !st.sgts, st.sgts); setW('i_gSGTS', st.sgts);
+    },
+    function(){
+      [['VM',r.apVM,r.ceVM,st.fsVM],['VC',r.apVC,r.ceVC,st.fsVC],
+       ['VT',r.apVT,r.ceVT,st.fsVT],['VP',r.apVP,r.ceVP,st.fsVP]].forEach(function(q){
+        var t=q[0], ap=q[1], ce=q[2], fs=q[3], vivo=!st.sgts;
+        setOn('i_ctCE'+t, !st['ce'+t]); setOn('i_ctFS'+t, fs);
+        setW('i_gAp'+t, vivo && ap);
+        setW('i_gCE'+t, vivo && ce && !fs);
+        setW('i_gFS'+t, vivo && fs);
+      });
+    },
+    function(){
+      setW('i_gSrc', true);
+      setOn('i_ctRR', r.rrces11); setW('i_gRR2', r.rrces11);
+      setConm('i_ctSVT', st.SVT, !st.SVT); setW('i_gSVT2', !st.SVT);
+      setOn('i_coRSIAT', r.rsiat); setW('i_gCoil', r.rsiat);
+    },
+    function(){
+      setW('i_gLink', r.rsiat); setOn('i_coRSIATb', r.rsiat); setW('i_gLink2', r.rsiat);
+      g('i_btnCerrar').disabled = !r.rsiat || !st.iatAb;
+      g('i_btnAbrir').disabled = st.iatAb;
+      g('i_estIAT').textContent = st.iatAb ? 'IAT abierto' : 'IAT cerrado';
+      g('i_status').textContent = statusMsg(r);
+    }
+  ];
+  stages.forEach(function(fn,i){timers.push(setTimeout(fn,i*280));});
+}
+
+[['i_cbZG','zg'],['i_cbCES11','ceS11'],['i_cbFSS11','fsS11'],['i_cbSGTS','sgts'],
+ ['i_cbDVM','DVM'],['i_cbSVMS','SVMS'],['i_cbSVC1S','SVC1S'],['i_cbDVC1','DVC1'],
+ ['i_cbDVC2','DVC2'],['i_cbDVP','DVP'],['i_cbSVT','SVT'],
+ ['i_cbCEVM','ceVM'],['i_cbCEVC','ceVC'],['i_cbCEVT','ceVT'],['i_cbCEVP','ceVP'],
+ ['i_cbFSVM','fsVM'],['i_cbFSVC','fsVC'],['i_cbFSVT','fsVT'],['i_cbFSVP','fsVP']
+].forEach(function(pr){
+  g(pr[0]).onchange=function(){ st[pr[1]]=this.checked; render(); };
+});
+g('i_btnCerrar').onclick=function(){ if(solve().rsiat){ st.iatAb=false; render(); } };
+g('i_btnAbrir').onclick=function(){ st.iatAb=true; render(); };
+g('i_btnRep').onclick=function(){
+  st.zg=true; st.ceS11=false; st.fsS11=false; st.sgts=false; st.iatAb=true;
+  ['DVM','SVMS','SVC1S','DVC1','DVC2','DVP','SVT'].forEach(function(k){ st[k]=false; });
+  ['ceVM','ceVC','ceVT','ceVP','fsVM','fsVC','fsVT','fsVP'].forEach(function(k){ st[k]=false; });
+  [['i_cbZG','zg'],['i_cbCES11','ceS11'],['i_cbFSS11','fsS11'],['i_cbSGTS','sgts'],
+   ['i_cbDVM','DVM'],['i_cbSVMS','SVMS'],['i_cbSVC1S','SVC1S'],['i_cbDVC1','DVC1'],
+   ['i_cbDVC2','DVC2'],['i_cbDVP','DVP'],['i_cbSVT','SVT'],
+   ['i_cbCEVM','ceVM'],['i_cbCEVC','ceVC'],['i_cbCEVT','ceVT'],['i_cbCEVP','ceVP'],
+   ['i_cbFSVM','fsVM'],['i_cbFSVC','fsVC'],['i_cbFSVT','fsVT'],['i_cbFSVP','fsVP']
+  ].forEach(function(pr){ g(pr[0]).checked = st[pr[1]]; });
+  render();
+};
+render();
+})();
+
+/* ============ MÓDULO TPA: TALLER PUENTE ALTO · ALIMENTACIÓN 750 V ============ */
+(function(){
+function g(id){return document.getElementById(id);}
+var BW=1720, BH=1180;
+function setZoom(p){var s=g('t_plano');s.setAttribute('width',Math.round(BW*p/100));s.setAttribute('height',Math.round(BH*p/100));g('t_zoom').value=p;g('t_zoomVal').textContent=Math.round(p)+'%';}
+function fit(){var w=g('t_wrap').clientWidth-12;setZoom(Math.max(30,Math.min(140,(w/BW)*100)));}
+MODFIT['mod-l4tpa'] = fit;
+g('t_zoom').oninput=function(){setZoom(parseFloat(this.value));};
+g('t_btnFit').onclick=fit;
+
+var AP = ['IA','SV','IAT','IATS','SVT','SIAT','DGT','SGTS','DVM','SVMS','CTP','SCVP','SVC1','SVC2','C1','C2',
+          'DVC1','SVC1S','SVH1','SVH2','SGC1','SGC2','SGC3','SGC4',
+          'DVC2','SVTM','SVL','SVCL','SVM2','SVM1','DVP','SA','SAE'];
+var st = {ser:false, zg:false};
+AP.forEach(function(k){ st[k]=false; });
+['IA','SV','IAT','SIAT','DGT','DVM','CTP','SCVP','SVC1','SVC2','DVC1','SVH1','SVH2',
+ 'SGC1','SGC2','SGC3','SGC4','DVC2','SVTM','SVL','SVCL','SVM2','SVM1','DVP','SA','SAE','C1','C2'
+].forEach(function(k){ st[k]=true; });
+
+function solve(){
+  var r={};
+  // origen: la S/ER entrega tensión salvo que esté fuera de servicio
+  r.ser = !st.ser;
+  // la vía de enlace se energiza desde la Zona G: si la zona está sin tensión, el enlace también
+  r.enlace = !st.zg;
+  // camino normal: S/ER -> IAT ; camino de socorro: IATS + SVT
+  r.porIAT  = r.ser && st.IAT;
+  r.porSER  = r.ser && st.IA && st.SV && st.SVT && st.IATS;      // socorro desde la propia S/ER
+  r.porVias = r.enlace && st.SVT && st.IATS && !r.ser;           // socorro desde vías principales
+  r.porVias = r.enlace && st.SVT && st.IATS;                     // el enlace alimenta si hay camino
+  r.entrada = r.porIAT || r.porSER || r.porVias;
+  r.origen  = r.porIAT ? 'IAT' : (r.porSER ? 'S/ER' : (r.porVias ? 'vías principales' : null));
+  // cabina A
+  r.entA  = r.entrada && st.SIAT;
+  r.barA  = r.entA && (st.DGT || st.SGTS);
+  // vía de maniobras: por el DVM o por su socorro SVMS
+  r.vm    = r.barA && (st.DVM || st.SVMS);
+  // cortes de tramo: la energía de las vías principales llega hasta la vía de enlace y ahí se detiene.
+  // El tramo de protección se alimenta SOLO desde la cabina A, por el DVM y su CTP.
+  r.ctp   = r.vm && st.CTP;
+  // derivaciones de la barra A
+  r.vp    = r.barA && st.SCVP;
+  r.c1in  = r.barA && st.SVC1;
+  r.c2in  = r.barA && st.SVC2;
+  // cabina C1
+  r.barC1 = r.c1in && (st.DVC1 || st.SVC1S);
+  ['SVH1','SVH2','SGC1','SGC2','SGC3','SGC4'].forEach(function(k){ r[k] = r.barC1 && st[k]; });
+  // cabina C2
+  r.barC2 = r.c2in && st.DVC2;
+  ['SVTM','SVL','SVM2','SVM1'].forEach(function(k){ r[k] = r.barC2 && st[k]; });
+  r.lavado = r.SVL && st.SVCL;
+  // cabina VP
+  r.vpBar = r.vp && st.DVP;
+  r.recup = r.vpBar && st.SA && st.SAE;
+  return r;
+}
+
+function statusMsg(r){
+  if(!r.entrada) return 'SIN ALIMENTACIÓN: no hay camino desde la S/ER ni desde las vías principales. Revisa el IAT, o el par SVT + IATS si vas a alimentar en socorro.';
+  var t = 'Alimentado desde ' + (r.origen==='IAT' ? 'el IAT (camino normal)' :
+          (r.origen==='S/ER' ? 'la S/ER del Taller por SVT + IATS, con el IA cerrado (socorro)' :
+           'las vías principales por la vía de enlace, con SVT + IATS (socorro, Zona G)')) + '. ';
+  if(!r.entA) return t + 'Pero el SIAT está abierto: no entra a la Cabina A.';
+  if(!r.barA) return t + 'Pero el DGT está abierto y el SGTS no lo puentea: la barra de la Cabina A quedó sin tensión.';
+  var sin=[];
+  if(!r.vm) sin.push('vías de maniobras');
+  if(!r.vpBar) sin.push('vía de pruebas');
+  if(!r.barC1) sin.push('cocheras de operación');
+  if(!r.barC2) sin.push('material rodante');
+  if(sin.length) return t + 'Sin tensión: ' + sin.join(', ') + '.';
+  var soc=[];
+  if(st.SGTS) soc.push('SGTS puenteando el DGT');
+  if(st.SVMS && !st.DVM) soc.push('SVMS puenteando el DVM');
+  if(st.SVC1S && !st.DVC1) soc.push('SVC1S puenteando el DVC1');
+  if(soc.length) return t + 'Todo el taller con tensión, con ' + soc.join(' y ') + '.';
+  return t + 'Todo el taller con tensión.' + (r.recup ? ' La vía de pruebas admite frenado de recuperación (SA y SAE cerrados).' : ' La vía de pruebas sin frenado de recuperación: falta cerrar SA y/o SAE.');
+}
+
+function setAp(k,on,live){var e=g('t_'+k);if(!e)return;e.classList.toggle('on',on);e.classList.toggle('live',!!live&&on);}
+function setW(id,on){var e=g(id);if(e)e.querySelectorAll('.w').forEach(function(w){w.classList.toggle('live',!!on);});}
+
+var timers=[];
+function render(){
+  timers.forEach(clearTimeout); timers=[];
+  var r = solve();
+  AP.forEach(function(k){ setAp(k, st[k], false); });
+  var stages=[
+    function(){
+      setW('t_gRect', r.ser); setW('t_gBarSER', r.ser);
+      setW('t_gIAcol', r.ser); setAp('IA', st.IA, r.ser);
+      setW('t_gIAmid', r.ser && st.IA); setAp('SV', st.SV, r.ser && st.IA);
+      setW('t_gIAbot', r.ser && st.IA && st.SV);
+      setW('t_gIATcol', r.ser); setAp('IAT', st.IAT, r.ser);
+      setW('t_gIATmid', r.porIAT);
+      setW('t_gEnl', r.porVias || r.porSER); setW('t_gEnl2', r.enlace);
+      setAp('SVT', st.SVT, r.porSER || r.porVias);
+      setW('t_gSVTbot', (r.porSER||r.porVias) && st.SVT);
+      setAp('IATS', st.IATS, r.porSER || r.porVias);
+      setW('t_gIATSbot', (r.porSER||r.porVias) && st.IATS);
+    },
+    function(){
+      setW('t_gEntA', r.entrada); setAp('SIAT', st.SIAT, r.entrada);
+      setW('t_gSIAT', r.entA);
+      setW('t_gDGTin', r.entA); setAp('DGT', st.DGT, r.entA);
+      setW('t_gDGTout', r.entA && st.DGT);
+      setAp('SGTS', st.SGTS, r.entA); setW('t_gSGTS', r.entA && st.SGTS);
+      setW('t_gBarA', r.barA);
+    },
+    function(){
+      setW('t_gDVMin', r.barA); setAp('DVM', st.DVM, r.barA); setW('t_gDVMout', r.barA && st.DVM);
+      setAp('SVMS', st.SVMS, r.barA); setW('t_gSVMSin', r.barA && st.SVMS); setW('t_gSVMSout', r.barA && st.SVMS);
+      setW('t_gVM', r.vm);
+      setW('t_gVMder', r.vm);
+      setW('t_gCTPin', r.vm); setAp('CTP', st.CTP, r.vm); setW('t_gCTPout', r.ctp);
+      setAp('SCVP', st.SCVP, r.barA); setW('t_SCVP_in', r.barA);
+      setAp('SVC1', st.SVC1, r.barA); setW('t_SVC1_in', r.barA);
+      setAp('SVC2', st.SVC2, r.barA); setW('t_SVC2_in', r.barA);
+    },
+    function(){
+      setW('t_gToVP', r.vp); setW('t_gVPin', r.vp);
+      setAp('DVP', st.DVP, r.vp); setW('t_gDVPout', r.vpBar);
+      setAp('SA', st.SA, r.vpBar); setW('t_gSA', r.vpBar && st.SA);
+      setAp('SAE', st.SAE, r.vpBar); setW('t_gSAE', r.recup);
+      setAp('C1', st.C1, r.recup); setW('t_gC1', r.recup && st.C1);
+      setAp('C2', st.C2, r.recup); setW('t_gC2', r.recup && st.C2);
+      setW('t_gVPvia', r.vpBar); setW('t_gVPret', r.recup);
+      setW('t_gToC1', r.c1in);
+      setAp('DVC1', st.DVC1, r.c1in); setW('t_gDVC1out', r.c1in && st.DVC1);
+      setAp('SVC1S', st.SVC1S, r.c1in); setW('t_gSVC1S', r.c1in && st.SVC1S);
+      setW('t_gBarC1', r.barC1);
+      setW('t_gToC2', r.c2in);
+      setAp('DVC2', st.DVC2, r.c2in); setW('t_gDVC2out', r.barC2); setW('t_gBarC2', r.barC2);
+    },
+    function(){
+      ['SVH1','SVH2','SGC1','SGC2','SGC3','SGC4'].forEach(function(k){
+        setAp(k, st[k], r.barC1); setW('t_'+k+'_in', r.barC1); setW('t_'+k+'_out', r[k]);
+      });
+      ['SVTM','SVL','SVM2','SVM1'].forEach(function(k){
+        setAp(k, st[k], r.barC2); setW('t_'+k+'_in', r.barC2);
+      });
+      setW('t_SVTM_out', r.SVTM); setW('t_SVL_out', r.SVL);
+      setAp('SVCL', st.SVCL, r.SVL); setW('t_SVCL_out', r.lavado);
+      setW('t_SVM2_out', r.SVM2); setW('t_SVM1_out', r.SVM1);
+      g('t_status').textContent = statusMsg(r);
+    }
+  ];
+  stages.forEach(function(fn,i){timers.push(setTimeout(fn,i*260));});
+}
+
+function sync(){ AP.forEach(function(k){ var c=g('t_cb'+k); if(c) c.checked=st[k]; }); var c=g('t_cbSER'); if(c) c.checked=st.ser; var z=g('t_cbZG'); if(z) z.checked=st.zg; }
+AP.forEach(function(k){ var c=g('t_cb'+k); if(c) c.onchange=function(){ st[k]=this.checked; render(); }; });
+g('t_cbSER').onchange=function(){ st.ser=this.checked; render(); };
+
+function escenario(n){
+  ['t_e0','t_e1','t_e2','t_e3','t_e4','t_e5'].forEach(function(id,k){ g(id).classList.toggle('act', k===n); });
+  // punto de partida: todo normal
+  st.ser=false; st.zg=false;
+  ['IA','SV','IAT','SIAT','DGT','DVM','CTP','SCVP','SVC1','SVC2','DVC1','SVH1','SVH2',
+   'SGC1','SGC2','SGC3','SGC4','DVC2','SVTM','SVL','SVCL','SVM2','SVM1','DVP','SA','SAE','C1','C2'
+  ].forEach(function(k){ st[k]=true; });
+  ['IATS','SVT','SGTS','SVMS','SVC1S'].forEach(function(k){ st[k]=false; });
+  if(n===1){ st.IAT=false; st.SVT=true; st.IATS=true; }
+  if(n===2){ st.IAT=false; st.ser=true; st.SVT=true; st.IATS=true; }
+  if(n===3){ st.DGT=false; st.SGTS=true; }
+  if(n===4){ st.DVM=false; st.SVMS=true; }
+  if(n===5){ st.DVC1=false; st.SVC1S=true; }
+  sync(); render();
+}
+['t_e0','t_e1','t_e2','t_e3','t_e4','t_e5'].forEach(function(id,k){ g(id).onclick=function(){ escenario(k); }; });
+
+g('t_cbZG').onchange=function(){ st.zg=this.checked; render(); };
+g('t_btnRep').onclick=function(){ escenario(0); };
+
+escenario(0);
+})();
 
 /* ================= MÓDULO CIN: CONDICIÓN COCHERAS · APERTURA ZONA C ================= */
 (function(){
