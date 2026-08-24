@@ -200,7 +200,7 @@ td.right{text-align:right;font-weight:600}
 .hist-acts{display:flex;gap:6px;align-items:center}
 .config-section{margin-bottom:20px}
 .config-section h3{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
-.prod-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)}
+.prod-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .prod-row:last-child{border-bottom:none}
 .prod-row input{border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;background:var(--surface2);font-family:inherit;font-size:12px;color:var(--text);outline:none}
 .prod-row input:focus{border-color:var(--primary)}
@@ -239,11 +239,14 @@ td.right{text-align:right;font-weight:600}
     <nav class="sidebar-nav">
       <div class="nav-section">Gestión</div>
       <div class="nav-item on" id="nav-pedidos"><span>📦</span>Pedidos</div>
-      <div class="nav-item" id="nav-pedidosweb"><span>📥</span>Pedidos web <span id="webBadge" style="display:none;background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto"></span></div>
+      <div class="nav-item" id="nav-pedidosweb"><span>📥</span>Pedidos por confirmar <span id="webBadge" style="display:none;background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:auto"></span></div>
+      <div class="nav-item" id="nav-envios"><span>📨</span>Envíos Lun/Mar</div>
+      <div class="nav-item" id="nav-contadora"><span>💼</span>Contadora</div>
+      <div class="nav-item" id="nav-repartidor"><span>🚚</span>Repartidor</div>
       <div class="nav-item" id="nav-preparar"><span>📋</span>Preparar pedidos</div>
-      <div class="nav-item" id="nav-parsear"><span>📲</span>Parsear WhatsApp</div>
+      
       <div class="nav-item" id="nav-plantillas"><span>✏️</span>Plantillas WA</div>
-      <div class="nav-item" id="nav-difusion-lista"><span>📢</span>Lista difusión</div>
+      
       <div class="nav-item" id="nav-historial"><span>📋</span>Historial</div>
       <div class="nav-item" id="nav-periodos"><span>🗂️</span>Períodos</div>
       <div class="nav-section">Datos</div>
@@ -288,6 +291,7 @@ td.right{text-align:right;font-weight:600}
 
       <!-- PEDIDOS -->
       <div id="t-pedidos" class="view on">
+        <div id="avisoRevisada"></div>
         <div class="week-bar">
           <select id="wSel"></select>
           <button class="btn" id="btnExportarResumen">📄 Exportar resumen</button>
@@ -304,8 +308,8 @@ td.right{text-align:right;font-weight:600}
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn" id="btnCopyDif">📋 Copiar difusión</button>
             <button class="btn btn-wa" id="btnWaDif">📱 Difusión WA</button>
-            <button class="btn btn-warn" id="btnRuta">🚚 Ruta al repartidor</button>
-            <button class="btn" id="btnListaDif" style="background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20">📋 Lista difusión</button>
+            
+            
           </div>
         </div>
         <div class="kpi-row" id="kpis"></div>
@@ -328,12 +332,66 @@ td.right{text-align:right;font-weight:600}
         <div class="gram-bar" id="gramBar"></div>
       </div>
 
-      <!-- PEDIDOS WEB -->
+      <!-- ENVIOS LUN/MAR -->
+      <div id="t-envios" class="view">
+        <div style="max-width:860px">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-header-title">📨 Envíos Lun/Mar</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn" id="btnEditarMsgs">✏️ Editar mensajes</button>
+                <button class="btn" id="btnResetEnvios">🔄 Reiniciar semana</button>
+              </div>
+            </div>
+            <div style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)">
+              Envía desde tu WhatsApp el recordatorio a los socios al día, y el aviso de renovación a los vencidos.
+            </div>
+            <div id="enviosList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTADORA -->
+      <div id="t-contadora" class="view">
+        <div style="max-width:860px">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-header-title">💼 Pagos (vista contadora)</span>
+              <button class="btn" id="btnRecargarPagos">🔄 Actualizar</button>
+            </div>
+            <div style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)">
+              Lo mismo que ve la contadora. El estado de pago lo controla ella.
+            </div>
+            <div id="pagosList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPARTIDOR -->
+      <div id="t-repartidor" class="view">
+        <div style="max-width:860px">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-header-title">🚚 Ruta del repartidor</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn" id="btnLimpiarPruebas" style="font-size:12px">🧹 Limpiar pruebas</button>
+                <button class="btn" id="btnRecargarRuta">🔄 Actualizar</button>
+              </div>
+            </div>
+            <div style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)">
+              Lo mismo que ve el repartidor en su página. Pedidos confirmados de la semana.
+            </div>
+            <div id="rutaList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PEDIDOS POR CONFIRMAR -->
       <div id="t-pedidosweb" class="view">
         <div style="max-width:860px">
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-header-title">📥 Pedidos desde la web</span>
+              <span class="panel-header-title">📥 Pedidos por confirmar</span>
               <button class="btn" id="btnRecargarWeb">🔄 Actualizar</button>
             </div>
             <div style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)">
@@ -710,6 +768,7 @@ td.right{text-align:right;font-weight:600}
             </div>
             <div class="config-section">
               <h3>Productos activos</h3>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6">✅ hay stock (aparece en menú) · 👁️ ocultar de pedidos nuevos · 📋 tope: gramos disponibles en el menú (vacío = sin límite)</div>
               <div id="prodList"></div>
               <div class="add-row">
                 <input type="text" id="nName" placeholder="Nombre del producto" style="flex:1;min-width:130px">
@@ -965,7 +1024,27 @@ function showModal(title,msg,onConfirm,confirmLabel='Confirmar',infoHtml=''){
 function closeModal(){document.getElementById('modalBg').classList.remove('on');}
 
 // ── TABS ──────────────────────────────────────────────────────────
-const TAB_TITLES={pedidos:'Pedidos de la semana',pedidosweb:'Pedidos desde la web',preparar:'Preparar pedidos',parsear:'Parsear mensaje WhatsApp',plantillas:'Plantillas de WhatsApp','difusion-lista':'Lista de difusión',periodos:'Períodos',historial:'Historial de semanas','historial-cliente':'Historial por cliente',socios:'Nuevos Socios',clientes:'Base de clientes',recetas:'Control de recetas',stock:'Control de stock',stats:'Estadísticas',importar:'Importar desde Excel',config:'Configuración',backup:'Backup de datos'};
+const TAB_TITLES={pedidos:'Pedidos de la semana',pedidosweb:'Pedidos por confirmar',envios:'Envíos Lun/Mar',contadora:'Pagos (vista contadora)',repartidor:'Ruta del repartidor',preparar:'Preparar pedidos',parsear:'Parsear mensaje WhatsApp',plantillas:'Plantillas de WhatsApp','difusion-lista':'Lista de difusión',periodos:'Períodos',historial:'Historial de semanas','historial-cliente':'Historial por cliente',socios:'Nuevos Socios',clientes:'Base de clientes',recetas:'Control de recetas',stock:'Control de stock',stats:'Estadísticas',importar:'Importar desde Excel',config:'Configuración',backup:'Backup de datos'};
+function refrescarPagosSemana(){
+  const wk=cw(); if(!wk) return;
+  if(!db && typeof initFirebase==='function') initFirebase();
+  if(!db) return;
+  const wkIndex=weeks.findIndex(w=>w.label===wk.label);
+  if(wkIndex<0) return;
+  db.ref(DB_PATH+'/dds_weeks/'+wkIndex+'/rows').once('value').then(snap=>{
+    let rowsNube=snap.val();
+    rowsNube=Array.isArray(rowsNube)?rowsNube.filter(Boolean):(rowsNube?Object.values(rowsNube).filter(Boolean):[]);
+    if(!rowsNube.length) return;
+    // actualizar solo el campo pagado de cada fila (por id) sin pisar lo que estés editando
+    let cambio=false;
+    rowsNube.forEach(rn=>{
+      const local=wk.rows.find(r=>String(r.id)===String(rn.id));
+      if(local && !!local.pagado!==!!rn.pagado){ local.pagado=!!rn.pagado; cambio=true; }
+    });
+    if(cambio){ lsSet('dds_weeks', weeks); renderRows(); }
+  }).catch(()=>{});
+}
+
 function showTab(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
@@ -976,9 +1055,13 @@ function showTab(name){
   document.getElementById('topbarAddBtn').style.display=name==='pedidos'?'':'none';
   document.getElementById('btnCSV').style.display=name==='pedidos'?'':'none';
   if(name==='historial'){periodoFiltroHistorial=null;renderHistorial();}
+  if(name==='pedidos')refrescarPagosSemana();
   if(name==='periodos')renderPeriodos();
   if(name==='difusion-lista')renderDifusionLista();
   if(name==='pedidosweb')renderPedidosWeb();
+  if(name==='envios')renderEnvios();
+  if(name==='contadora')renderVistaPagos();
+  if(name==='repartidor')renderRutaRepartidor();
   if(name==='preparar')renderPreparar();
   if(name==='historial-cliente'){const el=document.getElementById('hcSearch');if(el)el.value='';renderHistorialCliente();}
   if(name==='socios')renderSocios();
@@ -1107,6 +1190,83 @@ function renderRows(){
     }
   });
   tbody.innerHTML=html;renderKpisAndGrams();
+  renderAvisoRevisada();
+}
+
+let _avisoRevListen=false;
+function renderAvisoRevisada(){
+  const cont=document.getElementById('avisoRevisada'); if(!cont) return;
+  const wk=cw(); if(!wk){ cont.innerHTML=''; return; }
+  if(!db && typeof initFirebase==='function') initFirebase();
+  if(!db){ cont.innerHTML=''; return; }
+  // pintar una vez con lo que haya
+  pintarAvisoRevisada();
+  // montar escucha en tiempo real (una sola vez)
+  if(!_avisoRevListen){
+    _avisoRevListen=true;
+    db.ref(DB_PATH+'/dds_semana_revisada').on('value', ()=>pintarAvisoRevisada());
+    db.ref(DB_PATH+'/dds_pedidos_web').on('value', ()=>pintarAvisoRevisada());
+    // escuchar cambios de pagos en las semanas (para reflejar lo que marca la contadora)
+    db.ref(DB_PATH+'/dds_weeks').on('value', snap=>{
+      const wkNow=cw(); if(!wkNow) return;
+      let wksNube=snap.val();
+      wksNube=Array.isArray(wksNube)?wksNube:(wksNube?Object.values(wksNube):[]);
+      const wkNube=(wksNube||[]).filter(Boolean).find(w=>w && w.label===wkNow.label);
+      if(!wkNube) return;
+      let rowsNube=wkNube.rows;
+      rowsNube=Array.isArray(rowsNube)?rowsNube.filter(Boolean):(rowsNube?Object.values(rowsNube).filter(Boolean):[]);
+      let cambio=false;
+      rowsNube.forEach(rn=>{
+        const local=wkNow.rows.find(r=>String(r.id)===String(rn.id));
+        if(local && !!local.pagado!==!!rn.pagado){ local.pagado=!!rn.pagado; cambio=true; }
+      });
+      if(cambio){
+        lsSet('dds_weeks', weeks);
+        // refrescar solo si estás viendo Pedidos, sin molestar otras pestañas
+        const tPedidos=document.getElementById('t-pedidos');
+        if(tPedidos && tPedidos.classList.contains('on')) renderRows();
+      }
+    });
+  }
+}
+
+function pintarAvisoRevisada(){
+  const cont=document.getElementById('avisoRevisada'); if(!cont) return;
+  const wk=cw(); if(!wk){ cont.innerHTML=''; return; }
+  if(!db){ cont.innerHTML=''; return; }
+  db.ref(DB_PATH).once('value').then(snap=>{
+    const dRoot=snap.val()||{};
+    const rev=(dRoot.dds_semana_revisada||{})[wk.label];
+    const totalActual=(wk.rows||[]).length;
+    let hayNuevos=false;
+    if(rev){
+      if(typeof rev.nPedidos==='number') hayNuevos = totalActual > rev.nPedidos;
+      if(!hayNuevos && rev.fecha){
+        const tMarca=new Date(rev.fecha).getTime();
+        const web=dRoot.dds_pedidos_web||{};
+        hayNuevos=Object.values(web).filter(Boolean).some(p=>
+          p.estado==='confirmado' && p.semanaLabel===wk.label && p.confirmadoEn && new Date(p.confirmadoEn).getTime()>tMarca
+        );
+      }
+    }
+    if(rev && !hayNuevos){
+      const fecha=rev.fecha?new Date(rev.fecha).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+      cont.innerHTML='<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">'
+        +'<span style="font-size:20px">✅</span>'
+        +'<div><div style="font-weight:700;font-size:14px;color:#166534">La contadora revisó esta semana</div>'
+        +'<div style="font-size:11px;color:var(--muted)">'+fecha+' · ya puedes empacar</div></div></div>';
+    } else if(hayNuevos){
+      cont.innerHTML='<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">'
+        +'<span style="font-size:20px">⚠️</span>'
+        +'<div><div style="font-weight:700;font-size:14px;color:#92400e">Entró un pedido nuevo tras la revisión</div>'
+        +'<div style="font-size:11px;color:var(--muted)">La contadora debe revisar de nuevo antes de empacar</div></div></div>';
+    } else {
+      cont.innerHTML='<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:11px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px">'
+        +'<span style="font-size:20px">⏳</span>'
+        +'<div><div style="font-weight:700;font-size:14px;color:#92400e">Pendiente de revisión</div>'
+        +'<div style="font-size:11px;color:var(--muted)">La contadora aún no marca esta semana como revisada</div></div></div>';
+    }
+  }).catch(()=>{ cont.innerHTML=''; });
 }
 function renderKpisAndGrams(){
   const wk=cw();let grand=0,despTotal=0,pagado=0,falta=0;
@@ -1335,6 +1495,219 @@ function exportarResumen(){
   showModal('Exportar resumen — '+cw().label,'',()=>{},'',html);
   document.getElementById('modalConfirmBtn').style.display='none';
 }
+function limpiarPruebasWeb(){
+  showModal('Limpiar pedidos de prueba','⚠️ Esto borra <strong>TODOS</strong> los pedidos que llegaron del menú web (los de prueba y los pendientes). Los que ya agregaste a tus semanas NO se tocan. ¿Continuar?',()=>{
+    if(!db){toast('⚠️ Sin conexión');return;}
+    db.ref(DB_PATH+'/dds_pedidos_web').remove().then(()=>{
+      db.ref(DB_PATH+'/dds_entregas_hechas').remove().catch(()=>{});
+      rutaEntregas=[]; pedidosWeb=[]; updateWebBadge();
+      pintarRuta();
+      toast('✅ Pedidos web limpiados');
+    }).catch(e=>toast('Error: '+e.message));
+  },'Sí, limpiar todo');
+}
+
+// ── ENVIOS LUN/MAR ────────────────────────────────────────────────
+const MENU_LINK='https://reservaclubdelsur.github.io/Dispensario/menu.html';
+const TPL_ENVIO_DEFAULT={
+  aldia:'Hola {nombre} 🌿 Te recordamos que los días lunes y martes recibimos los pedidos de la semana. Puedes hacer el tuyo directo acá:\n\n'+MENU_LINK+'\n\nCualquier duda quedamos disponibles 🙌',
+  vencida:'Hola {nombre} 🌿 Notamos que tu receta médica está vencida. Para poder seguir con tus dispensaciones necesitas renovarla. Nosotros te ayudamos con el proceso, es por videollamada y queda vigente por 1 año. ¿Te gustaría que te apoyemos con eso?'
+};
+let tplEnvio=lsGet('dds_tpl_envio', {});
+Object.entries(TPL_ENVIO_DEFAULT).forEach(([k,v])=>{ if(!tplEnvio[k]) tplEnvio[k]=v; });
+let enviadosEnvio=lsGet('dds_envios_hechos', {});
+
+function telDe(nombre){
+  const c=clientesDB.find(c=>nombreNorm(c.nombre)===nombreNorm(nombre));
+  return (c?.telefono||'').replace(/\D/g,'');
+}
+
+function renderEnvios(){
+  const list=document.getElementById('enviosList'); if(!list) return;
+
+  // Armar lista desde recetas, cruzando teléfono con clientes
+  // Deduplicar: una sola por persona (por RUT, o por nombre si no hay RUT), quedándose con el vencimiento más nuevo
+  const porPersona={};
+  recetasDB.filter(Boolean).forEach(r=>{
+    const clave=(r.rut||'').replace(/[^0-9kK]/gi,'')||nombreNorm(r.nombre);
+    if(!clave) return;
+    const f=parseExcelFecha(r.vencimiento);
+    const prev=porPersona[clave];
+    if(!prev || (f && (!prev._f || f>prev._f))){
+      porPersona[clave]={ nombre:r.nombre||'', rut:r.rut||'', vencimiento:r.vencimiento, _f:f };
+    }
+  });
+  const items=Object.values(porPersona).map(r=>{
+    const f=r._f;
+    const est=recetaEstado(f);
+    return { nombre:r.nombre||'', rut:r.rut||'', tel:telDe(r.nombre), estado:est, vence:f };
+  }).sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
+
+  const alDia=items.filter(x=>x.estado==='vigente'||x.estado==='urgente');
+  const vencidas=items.filter(x=>x.estado==='vencida');
+  const totalEnviables=items.filter(x=>x.tel).length;
+  const enviados=Object.keys(enviadosEnvio).length;
+
+  const cardPersona=(x, tipo)=>{
+    const yaEnv=!!enviadosEnvio[x.rut||x.nombre];
+    const sinTel=!x.tel;
+    const badge = x.estado==='vencida'
+      ? '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600">🔴 vencida</span>'
+      : x.estado==='urgente'
+        ? '<span style="background:#fff3cd;color:#92400e;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600">🟠 por vencer</span>'
+        : '<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600">🟢 al día</span>';
+    return '<div style="display:flex;align-items:center;gap:11px;padding:11px 18px;border-bottom:1px solid var(--border);'+(yaEnv?'background:#f0fdf4':'')+'">'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-weight:600;font-size:14px">'+esc(x.nombre||'—')+' '+badge+'</div>'
+        +'<div style="font-size:11px;color:var(--muted)">'+(sinTel?'⚠️ sin teléfono en Clientes':'📱 '+(x.tel))+'</div>'
+      +'</div>'
+      +(sinTel?'<span style="font-size:11px;color:var(--hint)">—</span>'
+        :'<button class="btn '+(yaEnv?'':'btn-primary')+'" style="font-size:12px;white-space:nowrap" onclick="enviarWhatsapp(\''+esc((x.rut||x.nombre).replace(/'/g,''))+'\',\''+tipo+'\',\''+x.tel+'\',\''+esc((x.nombre||'').split(' ')[0].replace(/'/g,''))+'\')">'
+          +(yaEnv?'✅ Enviado':'📲 Enviar')+'</button>')
+    +'</div>';
+  };
+
+  list.innerHTML=
+    '<div style="padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:13px;font-weight:600">📊 Enviados: '+enviados+'/'+totalEnviables+'</div>'
+    +'<div style="padding:10px 18px;background:#f0fdf4;font-weight:700;font-size:13px;color:#166534;border-bottom:1px solid var(--border)">🟢 Al día — recordatorio de pedidos ('+alDia.length+')</div>'
+    +(alDia.length?alDia.map(x=>cardPersona(x,'aldia')).join(''):'<div class="empty" style="padding:1.2rem">Ninguno</div>')
+    +'<div style="padding:10px 18px;background:#fef2f2;font-weight:700;font-size:13px;color:#991b1b;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">🔴 Vencidas — aviso de renovación ('+vencidas.length+')</div>'
+    +(vencidas.length?vencidas.map(x=>cardPersona(x,'vencida')).join(''):'<div class="empty" style="padding:1.2rem">Ninguna</div>');
+}
+
+function enviarWhatsapp(clave, tipo, tel, primerNombre){
+  const plantilla=tplEnvio[tipo]||'';
+  const msg=plantilla.replace(/\{nombre\}/g, primerNombre||'');
+  // whatsapp:// abre la app de escritorio directo (sin abrir también WhatsApp Web)
+  window.location.href='whatsapp://send?phone=56'+tel+'&text='+encodeURIComponent(msg);
+  // marcar enviado
+  enviadosEnvio[clave]=true;
+  lsSet('dds_envios_hechos', enviadosEnvio);
+  renderEnvios();
+}
+
+function resetEnvios(){
+  showModal('Reiniciar semana','¿Borrar las marcas de enviados para empezar la semana nueva? Los mensajes y contactos no se tocan.',()=>{
+    enviadosEnvio={};
+    lsSet('dds_envios_hechos', {});
+    renderEnvios();
+    toast('✅ Marcas reiniciadas');
+  },'Sí, reiniciar');
+}
+
+function editarMensajesEnvio(){
+  const cont='<div style="text-align:left">'
+    +'<label style="font-size:12px;font-weight:700;color:#166534;display:block;margin-bottom:5px">🟢 Mensaje "Al día" (usa {nombre})</label>'
+    +'<textarea id="tplAldia" style="width:100%;min-height:120px;border:1px solid var(--border2);border-radius:8px;padding:10px;font-family:inherit;font-size:13px;resize:vertical">'+esc(tplEnvio.aldia)+'</textarea>'
+    +'<label style="font-size:12px;font-weight:700;color:#991b1b;display:block;margin:12px 0 5px">🔴 Mensaje "Vencida" (usa {nombre})</label>'
+    +'<textarea id="tplVencida" style="width:100%;min-height:120px;border:1px solid var(--border2);border-radius:8px;padding:10px;font-family:inherit;font-size:13px;resize:vertical">'+esc(tplEnvio.vencida)+'</textarea>'
+    +'</div>';
+  showModal('✏️ Editar mensajes', cont, ()=>{
+    const a=document.getElementById('tplAldia').value;
+    const v=document.getElementById('tplVencida').value;
+    tplEnvio.aldia=a; tplEnvio.vencida=v;
+    lsSet('dds_tpl_envio', tplEnvio);
+    renderEnvios();
+    toast('✅ Mensajes guardados');
+  },'Guardar');
+}
+
+// ── VISTA PAGOS (reflejo contadora) ───────────────────────────────
+function renderVistaPagos(){
+  const list=document.getElementById('pagosList'); if(!list) return;
+  const wk=cw();
+  if(!wk){ list.innerHTML='<div class="empty" style="padding:2rem">Sin semana actual 🌿</div>'; return; }
+  if(!db && typeof initFirebase==='function') initFirebase();
+  if(!db){ pintarVistaPagos(wk.rows||[]); return; }
+  list.innerHTML='<div class="empty" style="padding:1.5rem">Consultando…</div>';
+  const wkIndex=weeks.findIndex(w=>w.label===wk.label);
+  if(wkIndex<0){ pintarVistaPagos(wk.rows||[]); return; }
+  db.ref(DB_PATH+'/dds_weeks/'+wkIndex+'/rows').once('value').then(snap=>{
+    let rowsNube=snap.val();
+    rowsNube=Array.isArray(rowsNube)?rowsNube.filter(Boolean):(rowsNube?Object.values(rowsNube).filter(Boolean):[]);
+    // reflejar en memoria para que el resto de la app también quede al día
+    wk.rows=rowsNube; lsSet('dds_weeks', weeks);
+    pintarVistaPagos(rowsNube);
+  }).catch(()=>pintarVistaPagos(wk.rows||[]));
+}
+
+function pintarVistaPagos(rows){
+  const list=document.getElementById('pagosList'); if(!list) return;
+  if(!rows.length){ list.innerHTML='<div class="empty" style="padding:2rem">Sin pedidos en la semana actual 🌿</div>'; return; }
+  const pagados=rows.filter(r=>r.pagado).length;
+  const totalSemana=rows.reduce((a,r)=>a+rowTotal(r),0);
+  const cobrado=rows.filter(r=>r.pagado).reduce((a,r)=>a+rowTotal(r),0);
+  const falta=totalSemana-cobrado;
+
+  const resumen='<div style="display:flex;gap:8px;padding:12px 18px;flex-wrap:wrap;border-bottom:1px solid var(--border)">'
+    +'<div style="flex:1;min-width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;text-align:center"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600">Total</div><div style="font-size:15px;font-weight:800">'+fmt(totalSemana)+'</div></div>'
+    +'<div style="flex:1;min-width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;text-align:center"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600">Cobrado</div><div style="font-size:15px;font-weight:800;color:var(--green)">'+fmt(cobrado)+'</div></div>'
+    +'<div style="flex:1;min-width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;text-align:center"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600">Falta</div><div style="font-size:15px;font-weight:800;color:'+(falta>0?'#dc2626':'var(--green)')+'">'+fmt(falta)+'</div></div>'
+    +'<div style="flex:1;min-width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;text-align:center"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600">Pagados</div><div style="font-size:15px;font-weight:800">'+pagados+'/'+rows.length+'</div></div>'
+  +'</div>';
+
+  const filas=rows.map(r=>{
+    const pag=!!r.pagado;
+    return '<div style="display:flex;align-items:center;gap:11px;padding:11px 18px;border-bottom:1px solid var(--border);'+(pag?'background:#f0fdf4':'')+'">'
+      +'<span style="font-size:18px">'+(pag?'✅':'⏳')+'</span>'
+      +'<div style="flex:1;min-width:0;font-weight:600;'+(pag?'color:var(--muted)':'')+'">'+esc(r.nombre||'—')+'</div>'
+      +'<div style="font-weight:800;color:'+(pag?'var(--green)':'#0f172a')+'">'+fmt(rowTotal(r))+'</div>'
+    +'</div>';
+  }).join('');
+
+  list.innerHTML=resumen+filas;
+}
+
+// ── RUTA REPARTIDOR (vista admin) ─────────────────────────────────
+let rutaEntregas=[], rutaHechas={};
+
+function renderRutaRepartidor(){
+  const list=document.getElementById('rutaList'); if(!list) return;
+  if(!db && typeof initFirebase==='function') initFirebase();
+  const wk=cw();
+  if(!wk||!wk.rows.length){ list.innerHTML='<div class="empty" style="padding:2rem">Sin pedidos en la semana actual 🌿</div>'; return; }
+  // Solo los que tienen delivery
+  rutaEntregas=wk.rows.filter(r=>r.hasDesp!==false);
+  // estado de entregado (compartido con la página del repartidor)
+  if(db){
+    db.ref(DB_PATH+'/dds_entregas_hechas').once('value').then(snap=>{
+      rutaHechas=snap.val()||{};
+      rutaEntregas.sort((a,b)=>(a.comuna||'').localeCompare(b.comuna||''));
+      pintarRuta();
+    }).catch(()=>{ rutaHechas={}; pintarRuta(); });
+  } else {
+    rutaHechas={}; pintarRuta();
+  }
+}
+
+function pintarRuta(){
+  const list=document.getElementById('rutaList'); if(!list) return;
+  if(!rutaEntregas.length){
+    list.innerHTML='<div class="empty" style="padding:2rem">Sin entregas confirmadas todavía 🌿</div>';
+    return;
+  }
+  const total=rutaEntregas.length;
+  const done=rutaEntregas.filter(e=>rutaHechas[e.id]).length;
+  list.innerHTML=
+    '<div style="padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:13px;font-weight:600">📦 '+total+' entregas · '+done+' listas</div>'
+    +rutaEntregas.map((e,i)=>{
+      const hecha=!!rutaHechas[e.id];
+      const tel=(e.telefono||'').replace(/\D/g,'');
+      return '<div style="padding:14px 18px;border-bottom:1px solid var(--border);'+(hecha?'opacity:.5':'')+'">'
+        +'<div style="display:flex;align-items:flex-start;gap:10px">'
+          +'<div style="background:var(--primary);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+(i+1)+'</div>'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="font-weight:700;font-size:15px;'+(hecha?'text-decoration:line-through':'')+'">'+esc(e.nombre||'—')+'</div>'
+            +'<div style="font-size:12px;color:var(--muted);margin-top:2px">📍 '+esc(e.direccion||'—')+(e.comuna?', '+esc(e.comuna):'')+'</div>'
+            +(tel?'<div style="font-size:12px;color:var(--muted)">📱 '+esc(e.telefono)+'</div>':'')
+            +'<div style="font-size:12px;color:var(--hint);margin-top:6px">📦 1 paquete</div>'
+          +'</div>'
+          +'<span style="font-size:18px">'+(hecha?'✅':'⏳')+'</span>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+}
+
 // ── PEDIDOS WEB ───────────────────────────────────────────────────
 let pedidosWeb = [];
 
@@ -1343,7 +1716,7 @@ function cargarPedidosWeb(cb){
   if(!db){ pedidosWeb=[]; if(cb)cb(); return; }
   db.ref(DB_PATH+'/dds_pedidos_web').once('value').then(snap=>{
     const d = snap.val()||{};
-    pedidosWeb = Object.values(d).filter(Boolean).filter(p=>p.estado!=='agregado');
+    pedidosWeb = Object.values(d).filter(Boolean).filter(p=>p.estado!=='agregado'&&p.estado!=='confirmado'&&p.estado!=='descartado');
     pedidosWeb.sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
     updateWebBadge();
     if(cb)cb();
@@ -1373,6 +1746,7 @@ function renderPedidosWeb(){
         +'<div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px">'
           +'<div style="flex:1;min-width:180px">'
             +'<div style="font-weight:700;font-size:15px">'+esc(p.nombre||'—')
+              +(p.recetaEstado==='urgente'?' <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:99px;font-weight:600">🩺 receta por vencer</span>':'')
               +(p.pagoDeclarado?' <span style="font-size:10px;background:#dcfce7;color:#166534;padding:2px 7px;border-radius:99px;font-weight:600">💰 dice que transfirió</span>':'')
               +(yaExiste?' <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:99px;font-weight:600">ya está en la semana</span>':'')
             +'</div>'
@@ -1384,7 +1758,7 @@ function renderPedidosWeb(){
         +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+items+'</div>'
         +(p.obs?'<div style="font-size:11px;color:#92400e;background:#fffbeb;padding:6px 10px;border-radius:var(--radius);margin-bottom:10px">📝 '+esc(p.obs)+'</div>':'')
         +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
-          +'<button class="btn btn-primary" style="font-size:12px" onclick="agregarPedidoWeb(\''+p.id+'\')">➕ Agregar a la semana</button>'
+          +'<button class="btn btn-primary" style="font-size:12px" onclick="agregarPedidoWeb(\''+p.id+'\')">✅ Confirmar pedido</button>'
           +'<button class="btn btn-danger" style="font-size:12px" onclick="descartarPedidoWeb(\''+p.id+'\')">🗑 Descartar</button>'
         +'</div>'
       +'</div>';
@@ -1397,7 +1771,7 @@ function agregarPedidoWeb(id){
   const wk=cw();
   const qtys={};
   products.forEach(x=>qtys[x.id]=(p.qtys||{})[x.id]||0);
-  wk.rows.push({
+  const nuevaFila={
     id:uid(),
     nombre:p.nombre||'',
     telefono:p.telefono||'',
@@ -1407,17 +1781,49 @@ function agregarPedidoWeb(id){
     hasDesp:p.hasDesp!==false,
     pagado:false,
     obs:p.obs||''
-  });
-  saveAll();
-  marcarWebAgregado(id);
-  renderRows();
-  toast('✅ '+p.nombre+' agregado a la semana '+wk.label);
+  };
+  const wkIndex=weeks.findIndex(w=>w.label===wk.label);
+
+  const confirmarWeb=()=>{
+    if(db) db.ref(DB_PATH+'/dds_pedidos_web/'+id).update({
+      estado:'confirmado', semanaLabel:wk.label,
+      confirmadoPor:'Admin', confirmadoEn:new Date().toISOString()
+    }).catch(()=>{});
+    pedidosWeb=pedidosWeb.filter(x=>x.id!==id);
+    updateWebBadge();
+    renderPedidosWeb();
+    toast('✅ '+p.nombre+' enviado al repartidor · falta validar el pago');
+  };
+
+  if(db && wkIndex>=0){
+    // Releer las filas frescas de la nube para no pisar pagos recientes de la contadora
+    db.ref(DB_PATH+'/dds_weeks/'+wkIndex+'/rows').once('value').then(snap=>{
+      let rowsNube=snap.val();
+      rowsNube=Array.isArray(rowsNube)?rowsNube.filter(Boolean):(rowsNube?Object.values(rowsNube).filter(Boolean):[]);
+      rowsNube.push(nuevaFila);
+      // reflejar en memoria local
+      wk.rows=rowsNube;
+      lsSet('dds_weeks', weeks);
+      // guardar el arreglo completo ya fusionado
+      db.ref(DB_PATH+'/dds_weeks/'+wkIndex+'/rows').set(JSON.parse(JSON.stringify(rowsNube)))
+        .then(()=>{ renderRows(); confirmarWeb(); })
+        .catch(()=>{ renderRows(); confirmarWeb(); });
+    }).catch(()=>{
+      // si no se pudo releer, agregar local y seguir
+      wk.rows.push(nuevaFila); lsSet('dds_weeks', weeks); renderRows(); confirmarWeb();
+    });
+  } else {
+    wk.rows.push(nuevaFila); lsSet('dds_weeks', weeks); renderRows(); confirmarWeb();
+  }
 }
 
 function descartarPedidoWeb(id){
   const p=pedidosWeb.find(x=>x.id===id); if(!p) return;
   showModal('Descartar pedido','¿Descartar el pedido de <strong>'+esc(p.nombre)+'</strong>? No se agregará a ninguna semana.',()=>{
-    marcarWebAgregado(id);
+    if(db) db.ref(DB_PATH+'/dds_pedidos_web/'+id+'/estado').set('descartado').catch(()=>{});
+    pedidosWeb=pedidosWeb.filter(x=>x.id!==id);
+    updateWebBadge();
+    renderPedidosWeb();
     toast('Pedido descartado');
   },'Descartar');
 }
@@ -3099,6 +3505,8 @@ function renderConfig(){
       <input type="text" value="${esc(p.name)}" style="flex:1;min-width:120px" oninput="products[${i}].name=this.value;saveAll();renderRows()">
       <span style="font-size:12px;color:var(--muted);white-space:nowrap">$/u</span>
       <input type="number" value="${p.price}" style="width:100px;text-align:right" oninput="products[${i}].price=parseInt(this.value)||0;saveAll();renderRows()">
+      <span style="font-size:14px;white-space:nowrap" title="Tope del menú: gramos disponibles en el menú público. Vacío = sin límite. Al llegar a 0 la cepa desaparece del menú.">📋</span>
+      <input type="number" value="${p.topeMenu!=null?p.topeMenu:''}" placeholder="tope" style="width:60px;text-align:right" title="Gramos disponibles en el menú. Vacío = sin límite." oninput="products[${i}].topeMenu=(this.value===''?null:parseFloat(this.value));saveAll()">
       <button class="btn btn-danger" onclick="removeProd(${i})">✕</button>
     </div>`).join('')||'<div class="empty">Sin productos</div>';
 }
@@ -3562,11 +3970,19 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('btnForzarSync').addEventListener('click',forzarSync);
   document.getElementById('nav-pedidos').addEventListener('click',()=>showTab('pedidos'));
   document.getElementById('nav-pedidosweb').addEventListener('click',()=>showTab('pedidosweb'));
+  document.getElementById('nav-envios').addEventListener('click',()=>showTab('envios'));
+  document.getElementById('btnResetEnvios').addEventListener('click',resetEnvios);
+  document.getElementById('btnEditarMsgs').addEventListener('click',editarMensajesEnvio);
+  document.getElementById('nav-contadora').addEventListener('click',()=>showTab('contadora'));
+  document.getElementById('btnRecargarPagos').addEventListener('click',renderVistaPagos);
+  document.getElementById('nav-repartidor').addEventListener('click',()=>showTab('repartidor'));
+  document.getElementById('btnRecargarRuta').addEventListener('click',renderRutaRepartidor);
+  document.getElementById('btnLimpiarPruebas').addEventListener('click',limpiarPruebasWeb);
   document.getElementById('btnRecargarWeb').addEventListener('click',renderPedidosWeb);
   document.getElementById('nav-preparar').addEventListener('click',()=>showTab('preparar'));
-  document.getElementById('nav-parsear').addEventListener('click',()=>showTab('parsear'));
+  
   document.getElementById('nav-plantillas').addEventListener('click',()=>showTab('plantillas'));
-  document.getElementById('nav-difusion-lista').addEventListener('click',()=>showTab('difusion-lista'));
+  
   document.getElementById('nav-periodos').addEventListener('click',()=>showTab('periodos'));
   document.getElementById('btnReorganizarPeriodos').addEventListener('click',reorganizarPeriodos);
   document.getElementById('btnCerrarPeriodo').addEventListener('click',()=>showModal(
@@ -3610,8 +4026,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Acciones rapidas
   document.getElementById('btnCopyDif').addEventListener('click',()=>navigator.clipboard.writeText(buildDifusion()).then(()=>toast('✅ Mensaje copiado')).catch(()=>toast('No se pudo copiar')));
   document.getElementById('btnWaDif').addEventListener('click',()=>window.open('https://wa.me/?text='+encodeURIComponent(buildDifusion()),'_blank'));
-  document.getElementById('btnRuta').addEventListener('click',()=>{const msg=buildRuta();if(!msg){toast('⚠️ No hay pedidos con delivery');return;}const tel=repartidorTel.replace(/\D/g,'');window.open((tel?'https://wa.me/56'+tel:'https://wa.me/')+'?text='+encodeURIComponent(msg),'_blank');});
-  document.getElementById('btnListaDif').addEventListener('click',()=>showTab('difusion-lista'));
+  
+  
   // Plantillas WA
   document.querySelectorAll('.tpl-tab').forEach(b=>b.addEventListener('click',()=>{
     tplActiva=b.dataset.tpl;renderPlantillasTab();
